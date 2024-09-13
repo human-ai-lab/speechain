@@ -1,6 +1,6 @@
-# SpeeChain: A PyTorch-based Speech&Language Processing Toolkit for the Machine Speech Chain
+# SpeeChain: A PyTorch-based Machine Speech Chain Toolkit for ASR and TTS 
 _SpeeChain_ is an open-source PyTorch-based speech and language processing toolkit produced by the [_AHC lab_](https://ahcweb01.naist.jp/en/) at Nara Institute of Science and Technology (NAIST). 
-This toolkit is designed for simplifying the pipeline of the research on the machine speech chain, 
+This toolkit is designed to simplify the pipeline of the research on the machine speech chain, 
 i.e. the joint model of automatic speech recognition (ASR) and text-to-speech synthesis (TTS). 
 
 _SpeeChain is currently in beta._ Contribution to this toolkit is warmly welcomed anywhere anytime! 
