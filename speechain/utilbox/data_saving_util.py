@@ -1,9 +1,9 @@
 import os
-import torch
+from typing import List, Union
+
 import numpy as np
 import soundfile as sf
-
-from typing import List, Union
+import torch
 
 from speechain.utilbox.tensor_util import to_cpu
 

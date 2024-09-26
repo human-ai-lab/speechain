@@ -1,6 +1,6 @@
-import torch
-
 from typing import List
+
+import torch
 
 from speechain.module.abs import Module
 from speechain.module.prenet.conv1d import Conv1dEv

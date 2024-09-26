@@ -5,14 +5,15 @@
     Date: 2022.07
 """
 
+from typing import Any, Dict
+
 import torch
 from torch import nn
-from typing import Dict, Any
 
 from speechain.module.abs import Module
-from speechain.module.transformer.pos_enc import PositionalEncoding
 from speechain.module.transformer.attention import MultiHeadedAttention
 from speechain.module.transformer.feed_forward import PositionwiseFeedForward
+from speechain.module.transformer.pos_enc import PositionalEncoding
 
 
 class TransformerEncoderLayer(Module):

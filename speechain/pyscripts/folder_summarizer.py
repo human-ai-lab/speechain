@@ -1,11 +1,11 @@
 import argparse
 import os
-import numpy as np
 
+import numpy as np
 from tqdm import tqdm
 
-from speechain.utilbox.import_util import parse_path_args
 from speechain.utilbox.data_loading_util import search_file_in_subfolder
+from speechain.utilbox.import_util import parse_path_args
 
 
 def parse():

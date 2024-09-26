@@ -4,18 +4,17 @@
     Date: 2023.02
 """
 
-import torch
 import warnings
-
-from torch.cuda.amp import autocast
 from typing import Dict
+
+import torch
+from torch.cuda.amp import autocast
 
 from speechain.module.abs import Module
 from speechain.module.norm.feat_norm import FeatureNormalization
 from speechain.module.prenet.spk_embed import SpeakerEmbedPrenet
-
-from speechain.utilbox.train_util import make_len_from_mask, make_mask_from_len
 from speechain.utilbox.import_util import import_class
+from speechain.utilbox.train_util import make_len_from_mask, make_mask_from_len
 
 
 class FastSpeech2Decoder(Module):

@@ -5,20 +5,19 @@
 """
 
 import os.path
+import random
 import warnings
+from functools import partial
+from typing import Any, Dict, List
 
 import numpy as np
 import torch
-import random
-
 import torchaudio
 from g2p_en import G2p
-from typing import Dict, Any, List
-from functools import partial
-from speechain.tokenizer.g2p import abnormal_phns
 
 from speechain.dataset.abs import Dataset
-from speechain.utilbox.data_loading_util import read_data_by_path, load_idx2data_file
+from speechain.tokenizer.g2p import abnormal_phns
+from speechain.utilbox.data_loading_util import load_idx2data_file, read_data_by_path
 from speechain.utilbox.feat_util import convert_wav_to_pitch
 from speechain.utilbox.train_util import get_min_indices_by_freq
 

@@ -4,27 +4,26 @@
     Date: 2022.07
 """
 
+import argparse
 import copy
 import os
-import argparse
+import shutil
 import time
 import warnings
-
-import GPUtil
-import shutil
 from contextlib import contextmanager
 
-import torch
+import GPUtil
 import numpy as np
+import torch
 
 try:
     pass
 except OSError as e:
     warnings.warn(f"Monitor meets {e} when importing soundfile.")
 
-from typing import Dict, List
 from abc import ABC, abstractmethod
-from multiprocessing import Process, Queue, Event
+from multiprocessing import Event, Process, Queue
+from typing import Dict, List
 
 try:
     from speechain.snapshooter import snapshot_logs
@@ -33,14 +32,13 @@ except ImportError as e:
         f"Monitor meets {e} when importing speechain.snapshooter.snapshot_logs."
     )
 from speechain.model.abs import Model
-from speechain.utilbox.md_util import get_table_strings, get_list_strings
-
-from speechain.utilbox.import_util import parse_path_args
-from speechain.utilbox.data_saving_util import save_data_by_format
 from speechain.utilbox.data_loading_util import (
-    search_file_in_subfolder,
     get_file_birthtime,
+    search_file_in_subfolder,
 )
+from speechain.utilbox.data_saving_util import save_data_by_format
+from speechain.utilbox.import_util import parse_path_args
+from speechain.utilbox.md_util import get_list_strings, get_table_strings
 
 
 class Monitor(ABC):

@@ -8,11 +8,13 @@
     Date: 2022.09
 """
 
-import torch
 from typing import Dict
+
+import torch
+
 from speechain.module.abs import Module
-from speechain.utilbox.train_util import make_mask_from_len
 from speechain.utilbox.import_util import import_class
+from speechain.utilbox.train_util import make_mask_from_len
 
 
 class TTSEncoder(Module):

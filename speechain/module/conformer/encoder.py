@@ -1,14 +1,13 @@
-from typing import Dict, Any
+from typing import Any, Dict
 
 import torch
 from torch import nn
 
 from speechain.module.abs import Module
-from speechain.module.conformer.pos_enc import RelPositionalEncoding
 from speechain.module.conformer.attention import RelPosMultiHeadedAttention
-from speechain.module.transformer.feed_forward import PositionwiseFeedForward
+from speechain.module.conformer.pos_enc import RelPositionalEncoding
 from speechain.module.prenet.conv1d import Conv1dEv
-
+from speechain.module.transformer.feed_forward import PositionwiseFeedForward
 from speechain.utilbox.train_util import swish_activation
 
 

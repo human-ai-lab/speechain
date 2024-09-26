@@ -6,34 +6,32 @@
 
 import argparse
 import os
+import random
 import sys
 import warnings
 from contextlib import contextmanager
+from typing import Any, Dict, List
 
-from packaging.version import parse as V
-
-import torch
 import numpy as np
-import random
-import yaml
-import torch.multiprocessing as mp
+import torch
 import torch.distributed as dist
+import torch.multiprocessing as mp
+import yaml
+from packaging.version import parse as V
 from torch.cuda.amp import autocast
-from typing import Dict, Any, List
 
-from speechain.monitor import Monitor, TrainValidMonitor, TestMonitor
 from speechain.iterator.abs import Iterator
 from speechain.model.abs import Model
+from speechain.monitor import Monitor, TestMonitor, TrainValidMonitor
 from speechain.optim_sche.abs import OptimScheduler
-
-from speechain.utilbox.log_util import logger_stdout_file, model_summary
 from speechain.utilbox.import_util import (
-    import_class,
-    get_idle_port,
-    parse_path_args,
     get_idle_gpu,
+    get_idle_port,
+    import_class,
+    parse_path_args,
 )
-from speechain.utilbox.type_util import str2bool, str2list, str2dict, str2none
+from speechain.utilbox.log_util import logger_stdout_file, model_summary
+from speechain.utilbox.type_util import str2bool, str2dict, str2list, str2none
 from speechain.utilbox.yaml_util import load_yaml
 
 

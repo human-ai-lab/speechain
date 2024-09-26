@@ -1,12 +1,12 @@
-from tqdm import tqdm
-
 import argparse
 import os
-import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
+from tqdm import tqdm
+
+from speechain.snapshooter import HistPlotter
 from speechain.utilbox.data_loading_util import load_idx2data_file
 from speechain.utilbox.import_util import parse_path_args
-from speechain.snapshooter import HistPlotter
 
 
 def parse():

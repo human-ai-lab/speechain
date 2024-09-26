@@ -8,9 +8,9 @@
 import torch
 
 from speechain.module.abs import Module
-from speechain.module.transformer.pos_enc import *
 from speechain.module.transformer.attention import *
 from speechain.module.transformer.feed_forward import *
+from speechain.module.transformer.pos_enc import *
 
 
 class TransformerDecoderLayer(Module):

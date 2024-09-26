@@ -5,14 +5,15 @@
 """
 
 import os
+from typing import Dict, List
 
 import ruamel.yaml
 from ruamel.yaml.scalarfloat import ScalarFloat
 from ruamel.yaml.scalarstring import PlainScalarString
-from typing import Dict, List
+
 from speechain.utilbox.regex_util import (
-    regex_angle_bracket,
     has_nested_structure,
+    regex_angle_bracket,
 )
 
 

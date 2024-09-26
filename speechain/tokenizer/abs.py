@@ -4,14 +4,14 @@
     Date: 2022.07
 """
 
+import os
 from abc import ABC, abstractmethod
 
-import os
-import torch
 import numpy as np
+import torch
 
-from speechain.utilbox.import_util import parse_path_args
 from speechain.utilbox.data_loading_util import load_idx2data_file
+from speechain.utilbox.import_util import parse_path_args
 
 
 class Tokenizer(ABC):

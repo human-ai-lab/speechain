@@ -4,7 +4,7 @@
     Date: 2022.07
 """
 
-from typing import List, Dict
+from typing import Dict, List
 
 from speechain.iterator.abs import Iterator
 

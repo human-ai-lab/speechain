@@ -8,8 +8,8 @@ import os
 import shutil
 from typing import List
 
-import torch
 import sentencepiece as spm
+import torch
 
 from speechain.tokenizer.abs import Tokenizer
 from speechain.utilbox.import_util import parse_path_args

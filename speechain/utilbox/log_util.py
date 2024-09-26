@@ -4,16 +4,17 @@
     Date: 2022.07
 """
 
-import os
 import logging
 import logging.handlers
+import os
 import time
-import numpy as np
+from contextlib import contextmanager
+
 import humanfriendly
+import numpy as np
 import torch
 
 from speechain.model.abs import Model
-from contextlib import contextmanager
 
 
 @contextmanager

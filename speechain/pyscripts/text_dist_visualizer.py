@@ -1,19 +1,17 @@
 import argparse
 import os
+from collections import Counter
+
 import matplotlib.pyplot as plt
 import numpy as np
 
-from collections import Counter
-
-from speechain.utilbox.data_loading_util import load_idx2data_file
-from speechain.utilbox.text_util import text2word_list
-from speechain.utilbox.import_util import parse_path_args
-
+from speechain.snapshooter import HistPlotter
 from speechain.tokenizer.char import CharTokenizer
 from speechain.tokenizer.g2p import GraphemeToPhonemeTokenizer
 from speechain.tokenizer.sp import SentencePieceTokenizer
-
-from speechain.snapshooter import HistPlotter
+from speechain.utilbox.data_loading_util import load_idx2data_file
+from speechain.utilbox.import_util import parse_path_args
+from speechain.utilbox.text_util import text2word_list
 
 
 def parse():

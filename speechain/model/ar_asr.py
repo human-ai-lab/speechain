@@ -7,35 +7,31 @@
 import copy
 import os
 import warnings
+from collections import OrderedDict
+from typing import Any, Dict, List
 
 import numpy as np
 import torch
-from typing import Dict, Any, List
-from collections import OrderedDict
-
 import yaml
 
-from speechain.model.abs import Model
-from speechain.tokenizer.char import CharTokenizer
-from speechain.tokenizer.sp import SentencePieceTokenizer
-from speechain.infer_func.beam_search import beam_searching
-from speechain.utilbox.tensor_util import to_cpu
-from speechain.utilbox.eval_util import get_word_edit_alignment
-
-from speechain.module.encoder.asr import ASREncoder
-from speechain.module.decoder.ar_asr import ARASRDecoder
-from speechain.module.postnet.token import TokenPostnet
-from speechain.module.standalone.lm import LanguageModel
-
+from speechain.criterion.accuracy import Accuracy
+from speechain.criterion.att_guid import AttentionGuidance
 from speechain.criterion.cross_entropy import CrossEntropy
 from speechain.criterion.ctc import CTCLoss
-from speechain.criterion.att_guid import AttentionGuidance
-from speechain.criterion.accuracy import Accuracy
-from speechain.criterion.perplexity import Perplexity
 from speechain.criterion.error_rate import ErrorRate
-
-from speechain.utilbox.yaml_util import load_yaml
+from speechain.criterion.perplexity import Perplexity
+from speechain.infer_func.beam_search import beam_searching
+from speechain.model.abs import Model
+from speechain.module.decoder.ar_asr import ARASRDecoder
+from speechain.module.encoder.asr import ASREncoder
+from speechain.module.postnet.token import TokenPostnet
+from speechain.module.standalone.lm import LanguageModel
+from speechain.tokenizer.char import CharTokenizer
+from speechain.tokenizer.sp import SentencePieceTokenizer
+from speechain.utilbox.eval_util import get_word_edit_alignment
 from speechain.utilbox.import_util import parse_path_args
+from speechain.utilbox.tensor_util import to_cpu
+from speechain.utilbox.yaml_util import load_yaml
 
 
 class ARASR(Model):

@@ -47,7 +47,7 @@ The preferred way to contribute to speechain is to fork the [main repository](ht
 
 	```bash
 	black speechain/
-	isort --profile black speechain/
+	ruff check --select I speechain --fix/
 	# Alternatively and additionaly, use ruff:
 	ruff check --fix --output-format=full speechain
 	```

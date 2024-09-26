@@ -10,8 +10,8 @@
 
 import torch
 
-from speechain.model.lm import LM
 from speechain.infer_func.ctc_decoding import CTCPrefixScorer
+from speechain.model.lm import LM
 from speechain.utilbox.train_util import make_len_from_mask
 
 eps = 1e-20

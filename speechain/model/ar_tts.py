@@ -11,31 +11,26 @@
 import copy
 import math
 import warnings
+from typing import Any, Dict, List
 
 import numpy as np
 import torch
-
-from typing import Dict, Any, List
-
 import torchaudio
 
+from speechain.criterion.accuracy import Accuracy
+from speechain.criterion.att_guid import AttentionGuidance
+from speechain.criterion.bce_logits import BCELogits
+from speechain.criterion.fbeta_score import FBetaScore
+from speechain.criterion.least_error import LeastError
+from speechain.infer_func.tts_decoding import auto_regression
 from speechain.model.abs import Model
+from speechain.module.decoder.ar_tts import ARTTSDecoder
+from speechain.module.encoder.tts import TTSEncoder
 from speechain.tokenizer.char import CharTokenizer
 from speechain.tokenizer.g2p import GraphemeToPhonemeTokenizer
-from speechain.utilbox.train_util import make_mask_from_len
 from speechain.utilbox.data_loading_util import parse_path_args
-
-from speechain.module.encoder.tts import TTSEncoder
-from speechain.module.decoder.ar_tts import ARTTSDecoder
-
-from speechain.criterion.least_error import LeastError
-from speechain.criterion.bce_logits import BCELogits
-from speechain.criterion.att_guid import AttentionGuidance
-from speechain.criterion.accuracy import Accuracy
-from speechain.criterion.fbeta_score import FBetaScore
-
-from speechain.infer_func.tts_decoding import auto_regression
 from speechain.utilbox.tensor_util import to_cpu
+from speechain.utilbox.train_util import make_mask_from_len
 
 
 class ARTTS(Model):

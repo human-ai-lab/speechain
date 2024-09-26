@@ -9,8 +9,8 @@ from typing import List
 import editdistance
 import torch
 
-from speechain.tokenizer.abs import Tokenizer
 from speechain.criterion.abs import Criterion
+from speechain.tokenizer.abs import Tokenizer
 
 
 def text_preprocess(text, tokenizer: Tokenizer):

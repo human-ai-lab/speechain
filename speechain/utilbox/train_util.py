@@ -4,10 +4,10 @@
     Date: 2022.07
 """
 
-import torch
 import random
+from typing import Any, Dict, List, Tuple, Union
 
-from typing import Dict, List, Any, Union, Tuple
+import torch
 
 from speechain.criterion.abs import Criterion
 

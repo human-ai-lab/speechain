@@ -4,11 +4,11 @@
     Date: 2022.07
 """
 
-import torch
-import numpy as np
-
-from typing import List, Dict, Any, Union, Optional
 from abc import ABC
+from typing import Any, Dict, List, Optional, Union
+
+import numpy as np
+import torch
 
 from speechain.utilbox.data_loading_util import (
     load_idx2data_file,

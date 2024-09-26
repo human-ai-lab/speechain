@@ -1,11 +1,10 @@
 import os
-import torch
-
 from typing import Union
 
-from speechain.utilbox.data_loading_util import parse_path_args
-
+import torch
 from speechbrain.pretrained import HIFIGAN
+
+from speechain.utilbox.data_loading_util import parse_path_args
 
 
 class SpeechBrainWrapper(object):

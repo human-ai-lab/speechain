@@ -4,27 +4,26 @@
     Date: 2022.07
 """
 
-import os
 import math
+import os
 import warnings
 from contextlib import contextmanager
 
-import seaborn as sns
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
 
 try:
     import soundfile as sf
 except OSError:
     pass
-import torchvision
-
-from typing import Dict, List, Any
 from abc import ABC, abstractmethod
+from multiprocessing import Event, Queue
+from typing import Any, Dict, List
 
 import torch
+import torchvision
 from torch.utils.tensorboard import SummaryWriter
-from multiprocessing import Event, Queue
 
 
 class Plotter(ABC):

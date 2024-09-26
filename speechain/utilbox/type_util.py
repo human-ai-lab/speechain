@@ -5,10 +5,11 @@
 """
 
 from typing import Dict, List
+
 from speechain.utilbox.regex_util import (
+    regex_brace,
     regex_square_bracket,
     regex_square_bracket_large,
-    regex_brace,
 )
 
 

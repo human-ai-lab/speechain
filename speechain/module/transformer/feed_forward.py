@@ -5,7 +5,7 @@
     Date: 2022.07
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
 
 import torch
 import torch.nn as nn

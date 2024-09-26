@@ -5,6 +5,7 @@
 """
 
 from typing import List
+
 import torch
 
 from speechain.module.abs import Module

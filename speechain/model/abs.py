@@ -4,23 +4,22 @@
     Date: 2022.07
 """
 
-import os
-import torch
 import copy
-import numpy as np
-
-from typing import Dict, List
+import os
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from contextlib import nullcontext
+from typing import Dict, List
+
+import numpy as np
+import torch
 
 from speechain.module.abs import Module
 from speechain.module.transformer.pos_enc import PositionalEncoding
-
-from speechain.utilbox.yaml_util import load_yaml
-from speechain.utilbox.md_util import get_list_strings
 from speechain.utilbox.data_loading_util import parse_path_args
-from speechain.utilbox.train_util import text2tensor_and_len, spk2tensor
+from speechain.utilbox.md_util import get_list_strings
+from speechain.utilbox.train_util import spk2tensor, text2tensor_and_len
+from speechain.utilbox.yaml_util import load_yaml
 
 
 class Model(torch.nn.Module, ABC):

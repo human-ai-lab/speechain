@@ -5,9 +5,10 @@
 """
 
 import math
-import torch
-import numpy as np
 from typing import Dict
+
+import numpy as np
+import torch
 
 from speechain.criterion.abs import Criterion
 from speechain.utilbox.train_util import make_mask_from_len

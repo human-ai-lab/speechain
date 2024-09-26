@@ -4,23 +4,22 @@
     Date: 2022.07
 """
 
+import os
+import random
 import warnings
+from abc import ABC
+from functools import partial
+from typing import Dict, List
 
 import numpy as np
-import random
 import torch
-import os
-
-from functools import partial
 from torch.utils.data import DataLoader
-from typing import Dict, List
-from abc import ABC
 
-from speechain.utilbox.import_util import import_class
 from speechain.utilbox.data_loading_util import (
     load_idx2data_file,
     read_idx2data_file_to_dict,
 )
+from speechain.utilbox.import_util import import_class
 
 
 def worker_init_fn(worker_id: int, base_seed: int, same_worker_seed: bool):

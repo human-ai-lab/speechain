@@ -5,10 +5,11 @@
 """
 
 import torch
+
 from speechain.module.abs import Module
-from speechain.module.frontend.speech2linear import Speech2LinearSpec
-from speechain.module.frontend.linear2mel import LinearSpec2MelSpec
 from speechain.module.frontend.delta_feat import DeltaFeature
+from speechain.module.frontend.linear2mel import LinearSpec2MelSpec
+from speechain.module.frontend.speech2linear import Speech2LinearSpec
 
 
 class Speech2MelSpec(Module):

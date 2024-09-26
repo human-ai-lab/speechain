@@ -4,8 +4,9 @@
     Date: 2022.07
 """
 
-import torch
 import math
+
+import torch
 
 from speechain.module.abs import Module
 

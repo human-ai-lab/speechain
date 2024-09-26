@@ -4,15 +4,16 @@
     Date: 2022.07
 """
 
+from typing import Dict
+
 import torch
 from torch.cuda.amp import autocast
-from typing import Dict
-from speechain.module.abs import Module
-from speechain.utilbox.train_util import make_mask_from_len
-from speechain.utilbox.import_util import import_class
 
-from speechain.module.norm.feat_norm import FeatureNormalization
+from speechain.module.abs import Module
 from speechain.module.augment.specaug import SpecAugment
+from speechain.module.norm.feat_norm import FeatureNormalization
+from speechain.utilbox.import_util import import_class
+from speechain.utilbox.train_util import make_mask_from_len
 
 
 class ASREncoder(Module):

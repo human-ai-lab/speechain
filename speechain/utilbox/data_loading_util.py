@@ -4,16 +4,16 @@
     Date: 2022.11
 """
 
+import json
+import os
 import time
 import warnings
-import json
-import numpy as np
-import h5py
-import os
-import torch
-import soundfile as sf
+from typing import Any, Dict, List
 
-from typing import Dict, List, Any
+import h5py
+import numpy as np
+import soundfile as sf
+import torch
 
 from speechain.utilbox.import_util import parse_path_args
 

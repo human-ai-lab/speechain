@@ -5,30 +5,25 @@
 """
 
 import copy
-
-import torch
 import warnings
-import numpy as np
-
 from typing import Dict, List
 
+import numpy as np
+import torch
 import torchaudio
 
-from speechain.tokenizer.char import CharTokenizer
-from speechain.tokenizer.g2p import GraphemeToPhonemeTokenizer
-from speechain.model.abs import Model
-
-from speechain.module.encoder.tts import TTSEncoder
-from speechain.module.decoder.nar_tts import FastSpeech2Decoder
-
-from speechain.criterion.least_error import LeastError
 from speechain.criterion.bce_logits import BCELogits
 from speechain.criterion.fbeta_score import FBetaScore
-
+from speechain.criterion.least_error import LeastError
+from speechain.model.abs import Model
+from speechain.module.decoder.nar_tts import FastSpeech2Decoder
+from speechain.module.encoder.tts import TTSEncoder
+from speechain.tokenizer.char import CharTokenizer
+from speechain.tokenizer.g2p import GraphemeToPhonemeTokenizer
 from speechain.utilbox.data_loading_util import parse_path_args
+from speechain.utilbox.sb_util import get_speechbrain_hifigan
 from speechain.utilbox.tensor_util import to_cpu
 from speechain.utilbox.train_util import get_min_indices_by_freq
-from speechain.utilbox.sb_util import get_speechbrain_hifigan
 
 
 class FastSpeech2(Model):

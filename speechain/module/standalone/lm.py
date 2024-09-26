@@ -1,12 +1,11 @@
-import torch
-
 from typing import Dict
 
+import torch
+
 from speechain.module.abs import Module
+from speechain.module.postnet.token import TokenPostnet
 from speechain.module.prenet.embed import EmbedPrenet
 from speechain.module.transformer.encoder import TransformerEncoder
-from speechain.module.postnet.token import TokenPostnet
-
 from speechain.utilbox.train_util import make_mask_from_len
 
 

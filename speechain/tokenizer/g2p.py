@@ -1,10 +1,9 @@
-import torch
-
 from typing import List
+
+import torch
 from g2p_en import G2p
 
 from speechain.tokenizer.abs import Tokenizer
-
 
 # some abnormal phonemes G2P may give during decoding
 abnormal_phns = [

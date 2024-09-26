@@ -5,6 +5,7 @@
 """
 
 import edit_distance
+
 from speechain.utilbox.md_util import get_table_strings
 
 

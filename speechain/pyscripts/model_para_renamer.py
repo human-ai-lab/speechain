@@ -1,16 +1,16 @@
 import argparse
 import os
-import torch
-
-from tqdm import tqdm
+from collections import OrderedDict
 from functools import partial
 from multiprocessing import Pool
-from typing import List, Dict
-from collections import OrderedDict
+from typing import Dict, List
 
-from speechain.utilbox.import_util import parse_path_args
+import torch
+from tqdm import tqdm
+
 from speechain.utilbox.data_loading_util import search_file_in_subfolder
-from speechain.utilbox.type_util import str2list, str2dict
+from speechain.utilbox.import_util import parse_path_args
+from speechain.utilbox.type_util import str2dict, str2list
 
 
 def parse():

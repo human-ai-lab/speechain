@@ -4,10 +4,10 @@
     Date: 2022.07
 """
 
-import torch
-
-from typing import Dict
 from abc import ABC, abstractmethod
+from typing import Dict
+
+import torch
 
 
 class Module(torch.nn.Module, ABC):

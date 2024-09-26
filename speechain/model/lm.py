@@ -1,16 +1,14 @@
+import copy
 from typing import Dict, List
 
 import torch
-import copy
 
+from speechain.criterion.accuracy import Accuracy
+from speechain.criterion.cross_entropy import CrossEntropy
 from speechain.model.abs import Model
+from speechain.module.standalone.lm import LanguageModel
 from speechain.tokenizer.char import CharTokenizer
 from speechain.tokenizer.sp import SentencePieceTokenizer
-
-from speechain.module.standalone.lm import LanguageModel
-from speechain.criterion.cross_entropy import CrossEntropy
-from speechain.criterion.accuracy import Accuracy
-
 from speechain.utilbox.tensor_util import to_cpu
 from speechain.utilbox.train_util import make_mask_from_len
 

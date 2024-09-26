@@ -4,13 +4,13 @@
     Date: 2022.07
 """
 
-import torch
 import itertools
-
 from abc import ABC, abstractmethod
-from typing import Dict, List, Any
-from torch.cuda.amp import GradScaler
 from contextlib import nullcontext
+from typing import Any, Dict, List
+
+import torch
+from torch.cuda.amp import GradScaler
 
 from speechain.model.abs import Model
 from speechain.utilbox.import_util import import_class

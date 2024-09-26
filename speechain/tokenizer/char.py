@@ -4,9 +4,9 @@
     Date: 2022.07
 """
 
-from speechain.tokenizer.abs import Tokenizer
-
 import torch
+
+from speechain.tokenizer.abs import Tokenizer
 
 
 class CharTokenizer(Tokenizer):
