@@ -74,9 +74,12 @@ class MultiHeadedAttention(Module):
         q = self.q_layer(q)
 
         # separate all heads of q, k, v
-        k = k.view(batch_size, -1, self.num_heads, self.head_size).transpose(1, 2)
-        v = v.view(batch_size, -1, self.num_heads, self.head_size).transpose(1, 2)
-        q = q.view(batch_size, -1, self.num_heads, self.head_size).transpose(1, 2)
+        k = k.view(batch_size, -1, self.num_heads,
+                   self.head_size).transpose(1, 2)
+        v = v.view(batch_size, -1, self.num_heads,
+                   self.head_size).transpose(1, 2)
+        q = q.view(batch_size, -1, self.num_heads,
+                   self.head_size).transpose(1, 2)
 
         return k, v, q
 

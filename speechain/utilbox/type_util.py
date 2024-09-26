@@ -47,12 +47,14 @@ def str2dict(input_str: str) -> Dict or str:
     """
 
     def recur_dict_init(unproc_string: str):
-        assert (not unproc_string.startswith("{")) and (not unproc_string.endswith("}"))
+        assert (not unproc_string.startswith(
+            "{")) and (not unproc_string.endswith("}"))
 
         # there is no commas inside
         if "," not in unproc_string:
             assert ":" in unproc_string and unproc_string.count(":") == 1
-            key, value = unproc_string.split(":")[0], unproc_string.split(":")[-1]
+            key, value = unproc_string.split(
+                ":")[0], unproc_string.split(":")[-1]
 
             # continue the recursion for the register matches in the Dict
             if value.startswith("match_"):
@@ -194,7 +196,8 @@ def str2list(input_str: str) -> List:
                 return single_string
 
     def recur_list_init(unproc_string: str):
-        assert (not unproc_string.startswith("[")) and (not unproc_string.endswith("]"))
+        assert (not unproc_string.startswith(
+            "[")) and (not unproc_string.endswith("]"))
 
         # there is no commas inside
         if "," not in unproc_string:

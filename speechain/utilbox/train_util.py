@@ -210,7 +210,8 @@ def get_min_indices_by_freq(
             random.shuffle(index_freq_list)
 
         # Sort the indices based on their values in the input frequency dictionary
-        sorted_indices = [idx for idx, _ in sorted(index_freq_list, key=lambda x: x[1])]
+        sorted_indices = [idx for idx, _ in sorted(
+            index_freq_list, key=lambda x: x[1])]
 
         # Append the last index (minimum value) to the list of minimum indices
         min_indices.append(sorted_indices[0])

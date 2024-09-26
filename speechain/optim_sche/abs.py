@@ -223,7 +223,8 @@ class OptimScheduler(ABC):
             # do optimization only when the real step number meets the updating interval
             if real_step % self.step_per_update == 0:
                 # update the learning rate for the current step (scaled by the finetuning factor)
-                curr_lr = self.update_lr(real_step=real_step, epoch_num=epoch_num)
+                curr_lr = self.update_lr(
+                    real_step=real_step, epoch_num=epoch_num)
                 for param_group in self.optimizer.param_groups:
                     param_group["lr"] = self.ft_factor * curr_lr
 
@@ -333,7 +334,8 @@ class OptimScheduler(ABC):
             f"{self.__class__.__name__}("
             f"optimizer={self.optimizer.__class__.__name__}, "
             f"optim_loss={self.optim_loss}, "
-            f"updated_modules={self.updated_modules}, " + self.extra_repr_fn() + ")"
+            f"updated_modules={self.updated_modules}, " +
+            self.extra_repr_fn() + ")"
         )
 
     def extra_repr_fn(self) -> str:

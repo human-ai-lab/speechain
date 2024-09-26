@@ -159,9 +159,11 @@ class SpecAugment(Module):
                 device=feat.device,
             ).unsqueeze(2)
             # (1, 1, feat_dim)
-            freq_axis = torch.arange(feat_dim, device=feat.device)[None, None, :]
+            freq_axis = torch.arange(feat_dim, device=feat.device)[
+                None, None, :]
             # (batch_size, freq_mask_num, feat_dim) -> (batch_size, 1, feat_dim)
-            feat_mask = (mask_pos <= freq_axis) * (freq_axis < (mask_pos + mask_len))
+            feat_mask = (mask_pos <= freq_axis) * \
+                (freq_axis < (mask_pos + mask_len))
             mask = feat_mask.any(dim=1, keepdim=True)
 
         # time mask generation
@@ -192,13 +194,16 @@ class SpecAugment(Module):
                 device=feat.device,
             ).unsqueeze(1)
             # (1, time_maxlen, 1)
-            time_axis = torch.arange(time_maxlen, device=feat.device)[None, :, None]
+            time_axis = torch.arange(time_maxlen, device=feat.device)[
+                None, :, None]
             # (batch_size, time_maxlen, time_mask_num) -> (batch_size, time_maxlen, 1)
-            time_mask = (mask_pos <= time_axis) * (time_axis < (mask_pos + mask_len))
+            time_mask = (mask_pos <= time_axis) * \
+                (time_axis < (mask_pos + mask_len))
             time_mask = time_mask.any(dim=-1, keepdim=True)
             # combine time mask with frequency mask if both are specified
             # (batch_size, time_maxlen, 1) or (batch_size, 1, feat_dim) = (batch_size, time_maxlen, feat_dim)
-            mask = time_mask if mask is None else torch.logical_or(mask, time_mask)
+            mask = time_mask if mask is None else torch.logical_or(
+                mask, time_mask)
 
         # one-shot feature masking
         if mask is not None:

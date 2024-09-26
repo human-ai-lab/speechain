@@ -34,17 +34,21 @@ class ARASRDecoder(Module):
         embedding["conf"] = (
             dict() if "conf" not in embedding.keys() else embedding["conf"]
         )
-        self.embedding = embedding_class(vocab_size=vocab_size, **embedding["conf"])
+        self.embedding = embedding_class(
+            vocab_size=vocab_size, **embedding["conf"])
         _prev_output_size = self.embedding.output_size
 
         # main body of the E2E ASR decoder
         decoder_class = import_class("speechain.module." + decoder["type"])
-        decoder["conf"] = dict() if "conf" not in decoder.keys() else decoder["conf"]
-        self.decoder = decoder_class(input_size=_prev_output_size, **decoder["conf"])
+        decoder["conf"] = dict(
+        ) if "conf" not in decoder.keys() else decoder["conf"]
+        self.decoder = decoder_class(
+            input_size=_prev_output_size, **decoder["conf"])
         _prev_output_size = self.decoder.output_size
 
         # token prediction layer for the E2E ASR decoder
-        self.postnet = TokenPostnet(input_size=_prev_output_size, vocab_size=vocab_size)
+        self.postnet = TokenPostnet(
+            input_size=_prev_output_size, vocab_size=vocab_size)
 
     def forward(
         self,

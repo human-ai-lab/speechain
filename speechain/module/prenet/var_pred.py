@@ -118,7 +118,8 @@ class Conv1dVarPredictor(Module):
 
         # --- 1. Convolutional Part Initialization --- #
         # register convolution arguments
-        self.conv_dims = conv_dims if isinstance(conv_dims, List) else [conv_dims]
+        self.conv_dims = conv_dims if isinstance(
+            conv_dims, List) else [conv_dims]
         self.conv_kernel = conv_kernel
         self.conv_stride = conv_stride
         self.conv_dropout = conv_dropout

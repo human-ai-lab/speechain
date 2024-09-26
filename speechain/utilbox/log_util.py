@@ -4,7 +4,8 @@
     Date: 2022.07
 """
 
-import sys, os
+import sys
+import os
 import logging
 import logging.handlers
 import time
@@ -135,7 +136,8 @@ def model_summary(model: Model) -> str:
         labels = [" ", "K", "M", "B", "T"]
         num_digits = int(np.floor(np.log10(number)) + 1 if number > 0 else 1)
         num_groups = int(np.ceil(num_digits / 3))
-        num_groups = min(num_groups, len(labels))  # don't abbreviate beyond trillions
+        # don't abbreviate beyond trillions
+        num_groups = min(num_groups, len(labels))
         shift = -3 * (num_groups - 1)
         return f"{number * (10 ** shift):.2f} {labels[num_groups - 1]}"
 

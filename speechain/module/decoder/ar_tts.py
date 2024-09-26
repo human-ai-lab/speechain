@@ -43,7 +43,8 @@ class ARTTSDecoder(Module):
         # --- Acoustic Feature Extraction Part --- #
         # acoustic feature extraction frontend of the E2E TTS decoder
         if frontend is not None:
-            frontend_class = import_class("speechain.module." + frontend["type"])
+            frontend_class = import_class(
+                "speechain.module." + frontend["type"])
             frontend["conf"] = (
                 dict() if "conf" not in frontend.keys() else frontend["conf"]
             )
@@ -66,8 +67,10 @@ class ARTTSDecoder(Module):
         # feature embedding layer of the E2E TTS decoder
         if prenet is not None:
             prenet_class = import_class("speechain.module." + prenet["type"])
-            prenet["conf"] = dict() if "conf" not in prenet.keys() else prenet["conf"]
-            self.prenet = prenet_class(input_size=_prev_output_size, **prenet["conf"])
+            prenet["conf"] = dict(
+            ) if "conf" not in prenet.keys() else prenet["conf"]
+            self.prenet = prenet_class(
+                input_size=_prev_output_size, **prenet["conf"])
             _prev_output_size = self.prenet.output_size
 
         # initialize speaker embedding layer
@@ -85,20 +88,24 @@ class ARTTSDecoder(Module):
 
         # Initialize decoder
         decoder_class = import_class("speechain.module." + decoder["type"])
-        decoder["conf"] = dict() if "conf" not in decoder.keys() else decoder["conf"]
-        self.decoder = decoder_class(input_size=_prev_output_size, **decoder["conf"])
+        decoder["conf"] = dict(
+        ) if "conf" not in decoder.keys() else decoder["conf"]
+        self.decoder = decoder_class(
+            input_size=_prev_output_size, **decoder["conf"])
         _prev_output_size = self.decoder.output_size
 
         # initialize prediction layers (feature prediction & stop prediction)
         self.feat_pred = torch.nn.Linear(
             in_features=_prev_output_size, out_features=feat_dim
         )
-        self.stop_pred = torch.nn.Linear(in_features=_prev_output_size, out_features=1)
+        self.stop_pred = torch.nn.Linear(
+            in_features=_prev_output_size, out_features=1)
         self.output_size = feat_dim
 
         # Initialize postnet of the decoder
         postnet_class = import_class("speechain.module." + postnet["type"])
-        postnet["conf"] = dict() if "conf" not in postnet.keys() else postnet["conf"]
+        postnet["conf"] = dict(
+        ) if "conf" not in postnet.keys() else postnet["conf"]
         self.postnet = postnet_class(input_size=feat_dim, **postnet["conf"])
 
     def forward(
@@ -151,7 +158,8 @@ class ARTTSDecoder(Module):
                 ).type(torch.long)
 
             # padding zeros at the beginning of acoustic feature sequence
-            padded_feat = torch.nn.functional.pad(feat, (0, 0, 1, 0), "constant", 0)
+            padded_feat = torch.nn.functional.pad(
+                feat, (0, 0, 1, 0), "constant", 0)
             feat = padded_feat[:, :-1]
             # target feature & length, used for loss & metric calculation
             tgt_feat, tgt_feat_len = padded_feat[:, 1:], feat_len
@@ -173,7 +181,8 @@ class ARTTSDecoder(Module):
         # Speaker Embedding
         if hasattr(self, "spk_emb"):
             # extract and process the speaker features (activation is not performed for random speaker feature)
-            spk_feat_lookup, spk_feat = self.spk_emb(spk_ids=spk_ids, spk_feat=spk_feat)
+            spk_feat_lookup, spk_feat = self.spk_emb(
+                spk_ids=spk_ids, spk_feat=spk_feat)
             # combine the speaker features with the encoder outputs (and the decoder prenet outputs if specified)
             enc_text, feat = self.spk_emb.combine_spk_feat(
                 spk_feat=spk_feat,
@@ -188,7 +197,8 @@ class ARTTSDecoder(Module):
         )
         pred_stop = self.stop_pred(dec_feat)
         pred_feat_before = self.feat_pred(dec_feat)
-        pred_feat_after = pred_feat_before + self.postnet(pred_feat_before, feat_len)
+        pred_feat_after = pred_feat_before + \
+            self.postnet(pred_feat_before, feat_len)
 
         return (
             pred_stop,

@@ -55,12 +55,15 @@ def get_table_strings(
     table_strings = ""
     if headers is not None:
         table_strings += (
-            "|" + "|".join([f"**{h}**" if header_bold else h for h in headers]) + "|\n"
+            "|" +
+            "|".join(
+                [f"**{h}**" if header_bold else h for h in headers]) + "|\n"
         )
     else:
         if first_col is None:
             table_strings += "|"
-        table_strings += "|" + "|".join(["" for _ in range(len(contents[0]))]) + "|\n"
+        table_strings += "|" + \
+            "|".join(["" for _ in range(len(contents[0]))]) + "|\n"
 
     table_strings += "|---|" + "".join(["---|" for _ in contents[0]]) + "\n"
 

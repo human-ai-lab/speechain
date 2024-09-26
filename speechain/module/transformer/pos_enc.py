@@ -136,11 +136,13 @@ class PositionalEncoding(Module):
         # 'sep' positional encoding: sine functions and cosine functions occupy the positional encoding separately
         elif self.posenc_type == "sep":
             div_term_ext = torch.exp(
-                torch.arange(self.d_model, self.d_model * 2, 2, dtype=torch.float)
+                torch.arange(self.d_model, self.d_model *
+                             2, 2, dtype=torch.float)
                 * (math.log(10000.0) / self.d_model)
             )
             posenc[:, : int(self.d_model / 2)] = torch.sin(position / div_term)
-            posenc[:, int(self.d_model / 2) :] = torch.cos(position / div_term_ext)
+            posenc[:, int(self.d_model / 2)
+                          :] = torch.cos(position / div_term_ext)
 
         # posenc = posenc.unsqueeze(0) does not put posenc into the buffer
         # here register_buffer() allows posenc to be automatically put onto GPUs as a buffer member

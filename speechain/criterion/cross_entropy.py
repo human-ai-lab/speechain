@@ -87,7 +87,8 @@ class CrossEntropy(Criterion):
             ), "Please specify a token dictionary by 'token_vocab' if you want to customize the token weights."
 
             token_dict = np.loadtxt(token_vocab, dtype=str, delimiter="\n")
-            token_dict = dict(zip(token_dict, np.arange(0, token_dict.shape[0])))
+            token_dict = dict(
+                zip(token_dict, np.arange(0, token_dict.shape[0])))
             self.token_weights = torch.ones(len(token_dict)).cuda().detach()
 
             for token, weight in new_weights.items():
@@ -140,7 +141,8 @@ class CrossEntropy(Criterion):
         if self.label_smoothing > 0:
             smooth_pos = 1 - self.label_smoothing
             smooth_neg = self.label_smoothing / vocab_size
-            loss = (log_prob_target * smooth_pos) + (log_prob * smooth_neg).sum(dim=1)
+            loss = (log_prob_target * smooth_pos) + \
+                (log_prob * smooth_neg).sum(dim=1)
         else:
             loss = log_prob_target
 
@@ -161,7 +163,8 @@ class CrossEntropy(Criterion):
             # padding the token predictions whose token-level confidences are lower than the threshold
             if self.confid_level == "token":
                 # confid_mask: (batch * seq_maxlen,)
-                confid_mask = log_prob_target <= math.log(self.confid_threshold)
+                confid_mask = log_prob_target <= math.log(
+                    self.confid_threshold)
                 loss_mask = torch.logical_or(loss_mask, confid_mask)
                 # update text_len by confid_mask for normalization (mask the extra part of each sentence)
                 # (batch * seq_maxlen,) -> (batch, seq_maxlen) -> (batch,)
@@ -197,7 +200,8 @@ class CrossEntropy(Criterion):
         else:
             valid_sent = None
 
-        loss = loss.masked_fill(loss_mask, 0.0).reshape(batch, seq_maxlen).sum(dim=-1)
+        loss = loss.masked_fill(loss_mask, 0.0).reshape(
+            batch, seq_maxlen).sum(dim=-1)
 
         # normalize the loss by the token sequence length if specified
         if self.length_normalized:

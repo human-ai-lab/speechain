@@ -237,7 +237,8 @@ class Iterator(ABC):
                 if self.is_descending or self.is_descending is None
                 else torch.distributed.get_rank()
             )
-            self.batches = [batch[start_point::stride] for batch in self.batches]
+            self.batches = [batch[start_point::stride]
+                            for batch in self.batches]
 
             # delete all the empty elements in the multi-GPU distributed mode
             while [] in self.batches:
@@ -249,7 +250,8 @@ class Iterator(ABC):
             assert isinstance(
                 group_info, Dict
             ), f"group_info must be given in Dict, but got type(main_data)={type(group_info)}"
-            self.group_info, self.data_index = read_idx2data_file_to_dict(group_info)
+            self.group_info, self.data_index = read_idx2data_file_to_dict(
+                group_info)
 
             # --- 6.2. Data Instance Index Checking between self.group_info and self.dataset.main_data --- #
             # check the data index in self.group_info and self.dataset
@@ -309,7 +311,7 @@ class Iterator(ABC):
 
         # divide the data into individual batches with equal amount of instances
         batches = [
-            data_index[i : i + batch_size]
+            data_index[i: i + batch_size]
             for i in range(0, len(data_index) - batch_size + 1, batch_size)
         ]
         # in case that there are several uncovered instances at the end of self.sorted_data
@@ -394,7 +396,7 @@ class Iterator(ABC):
             cursor = (self.batches_per_epoch * (epoch - 1)) % len(self.batches)
             # the remaining part of existing batches is enough for this epoch
             if len(self.batches) - cursor >= self.batches_per_epoch:
-                batches = self.batches[cursor : cursor + self.batches_per_epoch]
+                batches = self.batches[cursor: cursor + self.batches_per_epoch]
             # the remaining part is not enough, we need to go back to the beginning of existing batches
             else:
                 batches = (
@@ -418,7 +420,7 @@ class Iterator(ABC):
                     >= self.batches_per_epoch
                 ):
                     last_remain = self.batches_per_epoch - current_batch_size
-                    batches += self.batches[cursor : cursor + last_remain]
+                    batches += self.batches[cursor: cursor + last_remain]
                     current_batch_size += last_remain
                 # the remaining is not enough, we need to go to the beginning and do again
                 else:

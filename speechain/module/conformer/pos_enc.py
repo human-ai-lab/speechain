@@ -67,18 +67,20 @@ class RelPositionalEncoding(Module):
             # 'sep' positional encoding: sine functions and cosine functions occupy the positional encoding separately
             elif self.posenc_type == "sep":
                 div_term_ext = torch.exp(
-                    torch.arange(self.d_model, self.d_model * 2, 2, dtype=torch.float)
+                    torch.arange(self.d_model, self.d_model *
+                                 2, 2, dtype=torch.float)
                     * (math.log(10000.0) / self.d_model)
                 )
-                posenc_past[:, : int(self.d_model / 2)] = torch.sin(position / div_term)
-                posenc_past[:, int(self.d_model / 2) :] = torch.cos(
+                posenc_past[:, : int(self.d_model / 2)
+                            ] = torch.sin(position / div_term)
+                posenc_past[:, int(self.d_model / 2):] = torch.cos(
                     position / div_term_ext
                 )
 
                 posenc_future[:, : int(self.d_model / 2)] = torch.sin(
                     -1 * position / div_term
                 )
-                posenc_future[:, int(self.d_model / 2) :] = torch.cos(
+                posenc_future[:, int(self.d_model / 2):] = torch.cos(
                     -1 * position / div_term_ext
                 )
 

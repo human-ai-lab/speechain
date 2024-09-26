@@ -204,7 +204,8 @@ class Model(torch.nn.Module, ABC):
                 if mapping is None:
                     self.load_state_dict(
                         _pt_model,
-                        strict=True if "strict" not in ptm.keys() else ptm["strict"],
+                        strict=True if "strict" not in ptm.keys(
+                        ) else ptm["strict"],
                     )
                 else:
                     assert isinstance(mapping, dict) and len(mapping) >= 1, (
@@ -226,13 +227,15 @@ class Model(torch.nn.Module, ABC):
                         _src_modules[name] = para
                     self.load_state_dict(
                         _src_modules,
-                        strict=True if "strict" not in ptm.keys() else ptm["strict"],
+                        strict=True if "strict" not in ptm.keys(
+                        ) else ptm["strict"],
                     )
 
         # --- 2.2. Model Parameter Initialization --- #
         else:
             # the default initialization method is xavier (i.e. xavier_normal)
-            init = model_conf["init"] if "init" in model_conf.keys() else "xavier"
+            init = model_conf["init"] if "init" in model_conf.keys(
+            ) else "xavier"
             assert (
                 init in self.init_class_dict.keys()
             ), f"Only the initialization methods {self.init_class_dict.keys()} are supported, but got init={init}."
@@ -405,21 +408,25 @@ class Model(torch.nn.Module, ABC):
                     raise e
                 else:
                     skip_flag_list = torch.LongTensor(
-                        [False for _ in range(torch.distributed.get_world_size())]
+                        [False for _ in range(
+                            torch.distributed.get_world_size())]
                     ).cuda(self.device)
                     skip_flag = torch.LongTensor([True]).cuda(self.device)
                     # as long as one node meets an error, all nodes will skip the current step at the same time
-                    torch.distributed.all_gather_into_tensor(skip_flag_list, skip_flag)
+                    torch.distributed.all_gather_into_tensor(
+                        skip_flag_list, skip_flag)
                     if skip_flag_list.sum() >= 1:
                         raise e
             else:
                 if self.distributed:
                     skip_flag_list = torch.LongTensor(
-                        [False for _ in range(torch.distributed.get_world_size())]
+                        [False for _ in range(
+                            torch.distributed.get_world_size())]
                     ).cuda(self.device)
                     skip_flag = torch.LongTensor([False]).cuda(self.device)
                     # as long as one node meets an error, all nodes will skip the current step at the same time
-                    torch.distributed.all_gather_into_tensor(skip_flag_list, skip_flag)
+                    torch.distributed.all_gather_into_tensor(
+                        skip_flag_list, skip_flag)
                     if skip_flag_list.sum() >= 1:
                         raise RuntimeError(
                             "Other ranks meet errors during model forwarding, "
@@ -433,7 +440,8 @@ class Model(torch.nn.Module, ABC):
             # if the input batch data is in the form of Dict, it means there are multiple dataloaders
             if isinstance(_batch_data[batch_keys[0]], Dict):
                 for key in batch_keys:
-                    combination[key] = dict(**_batch_data[key], **_model_outputs[key])
+                    combination[key] = dict(
+                        **_batch_data[key], **_model_outputs[key])
             # if the input batch data is in the form of Tensor, it means there is only one dataloader.
             else:
                 combination.update(_batch_data)
@@ -458,7 +466,8 @@ class Model(torch.nn.Module, ABC):
             # post-checking for validation metrics, they must be either non-trainable tensors or other datatypes
             assert sum(
                 [
-                    not isinstance(metric, torch.Tensor) or not metric.requires_grad
+                    not isinstance(
+                        metric, torch.Tensor) or not metric.requires_grad
                     for metric in metrics.values()
                 ]
             ) == len(
@@ -482,7 +491,8 @@ class Model(torch.nn.Module, ABC):
             # post-checking for validation metrics, they must be either non-trainable tensors or other datatypes
             assert sum(
                 [
-                    not isinstance(metric, torch.Tensor) or not metric.requires_grad
+                    not isinstance(
+                        metric, torch.Tensor) or not metric.requires_grad
                     for metric in metrics.values()
                 ]
             ) == len(
@@ -540,7 +550,8 @@ class Model(torch.nn.Module, ABC):
             return data_dict
 
         # check whether the batch_data is made by multiple dataloaders
-        leaf_flags = [not isinstance(value, Dict) for value in batch_data.values()]
+        leaf_flags = [not isinstance(value, Dict)
+                      for value in batch_data.values()]
         if sum(leaf_flags) == 0:
             return {key: process_strings(value) for key, value in batch_data.items()}
         elif sum(leaf_flags) == len(batch_data):
@@ -581,10 +592,12 @@ class Model(torch.nn.Module, ABC):
         ) == len(batch_data)
         # we take the summation of all data-labels pairs in a single batch made by multiple dataloaders
         if multi_flag:
-            batch_size = sum([get_batch_size(value) for value in batch_data.values()])
+            batch_size = sum([get_batch_size(value)
+                             for value in batch_data.values()])
         else:
             batch_size = get_batch_size(batch_data)
-        batch_size = torch.tensor([batch_size], dtype=torch.long, device=self.device)
+        batch_size = torch.tensor(
+            [batch_size], dtype=torch.long, device=self.device)
 
         # sum up all the weighed metrics at rank no.0
         for key in metrics.keys():
@@ -605,7 +618,8 @@ class Model(torch.nn.Module, ABC):
             )
 
         # sum up the batch size across at rank no.0 to get the overall batch size
-        torch.distributed.reduce(batch_size, dst=0, op=torch.distributed.ReduceOp.SUM)
+        torch.distributed.reduce(
+            batch_size, dst=0, op=torch.distributed.ReduceOp.SUM)
         if torch.distributed.get_rank() == 0:
             for key in metrics.keys():
                 # turn the object value to the overall batch-level
@@ -672,7 +686,8 @@ class Model(torch.nn.Module, ABC):
                 _output = dict()
                 for _key, _value in curr_node.items():
                     _output.update(
-                        recur_get_module_recordable_para(_value, prefix_list + [_key])
+                        recur_get_module_recordable_para(
+                            _value, prefix_list + [_key])
                     )
                 return _output
             else:
@@ -687,7 +702,8 @@ class Model(torch.nn.Module, ABC):
         for key, value in self._modules.items():
             if isinstance(value, Module):
                 output.update(
-                    recur_get_module_recordable_para(value.get_recordable_para(), [key])
+                    recur_get_module_recordable_para(
+                        value.get_recordable_para(), [key])
                 )
         return output
 
@@ -939,4 +955,5 @@ class Model(torch.nn.Module, ABC):
                 _curr_report += extra_string_list[i] + "\n"
             instance_reports.append(_curr_report)
 
-        self.instance_report_cache = dict(format="txt", content=instance_reports)
+        self.instance_report_cache = dict(
+            format="txt", content=instance_reports)

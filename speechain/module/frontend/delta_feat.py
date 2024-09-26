@@ -50,7 +50,8 @@ class DeltaFeature(Module):
         # move the weight from _parameters to _buffers
         _para_keys = list(_delta_filters._parameters.keys())
         for name in _para_keys:
-            _delta_filters._buffers[name] = _delta_filters._parameters.pop(name)
+            _delta_filters._buffers[name] = _delta_filters._parameters.pop(
+                name)
         self.delta_filters = _delta_filters
 
     def forward(self, feat: torch.Tensor, feat_len: torch.Tensor):
@@ -71,7 +72,8 @@ class DeltaFeature(Module):
 
         # (Optional) second-order derivative
         if self.delta_order == 2:
-            delta2_feat = self.delta_filters(delta_feat.unsqueeze(1)).squeeze(1)
+            delta2_feat = self.delta_filters(
+                delta_feat.unsqueeze(1)).squeeze(1)
             feat_stack.append(delta2_feat)
 
         # combine the original features with all delta features

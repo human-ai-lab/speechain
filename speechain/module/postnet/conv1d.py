@@ -91,7 +91,8 @@ class Conv1dPostnet(Module):
             assert feat_dim is not None
 
         # register convolution arguments
-        self.conv_dims = conv_dims if isinstance(conv_dims, List) else [conv_dims]
+        self.conv_dims = conv_dims if isinstance(
+            conv_dims, List) else [conv_dims]
         self.conv_kernel = conv_kernel
         self.conv_stride = conv_stride
         self.conv_padding_mode = conv_padding_mode

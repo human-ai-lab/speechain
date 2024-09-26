@@ -51,14 +51,16 @@ def main(src_folder: str, vocoder: str = "hifigan", ncpu: int = 16):
     ), load_idx2data_file(
         os.path.join(src_folder, f"idx2{vocoder}_wav_len"), data_type=int
     )
-    wav_and_len_list = [[idx2wav[idx], idx2wav_len[idx]] for idx in idx2wav.keys()]
+    wav_and_len_list = [[idx2wav[idx], idx2wav_len[idx]]
+                        for idx in idx2wav.keys()]
     func_args = [wav_and_len_list[i::ncpu] for i in range(ncpu)]
 
     # read all the assigned data files and get their lengths
     with Pool(ncpu) as executor:
         empty_file_list_nproc = executor.map(get_empty_file, func_args)
 
-    empty_file_list = [item for sublist in empty_file_list_nproc for item in sublist]
+    empty_file_list = [
+        item for sublist in empty_file_list_nproc for item in sublist]
     print(empty_file_list)
 
 

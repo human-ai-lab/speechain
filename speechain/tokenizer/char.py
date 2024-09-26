@@ -41,7 +41,8 @@ class CharTokenizer(Tokenizer):
         # attach the main body of the text
         tokens.extend(
             [
-                self.token2idx[char] if char in self.token2idx.keys() else self.unk_idx
+                self.token2idx[char] if char in self.token2idx.keys(
+                ) else self.unk_idx
                 for char in text
             ]
         )

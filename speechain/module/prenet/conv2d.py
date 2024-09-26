@@ -129,7 +129,8 @@ class Conv2dPrenet(Module):
 
         # --- 1. Convolutional Part Initialization --- #
         # register convolution arguments
-        self.conv_dims = conv_dims if isinstance(conv_dims, List) else [conv_dims]
+        self.conv_dims = conv_dims if isinstance(
+            conv_dims, List) else [conv_dims]
         self.conv_kernel = (
             tuple(conv_kernel)
             if isinstance(conv_kernel, List)
@@ -201,7 +202,8 @@ class Conv2dPrenet(Module):
 
         # feature dimension recalculation after convolutional layers
         for _ in self.conv_dims:
-            feat_dim = (feat_dim - self.conv_kernel[-1]) // self.conv_stride[-1] + 1
+            feat_dim = (
+                feat_dim - self.conv_kernel[-1]) // self.conv_stride[-1] + 1
         _prev_dim *= feat_dim
         self.output_size = _prev_dim
 

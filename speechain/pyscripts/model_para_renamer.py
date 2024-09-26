@@ -87,7 +87,8 @@ def main(
         model_file_path = parse_path_args(model_file_path)
         if os.path.isdir(model_file_path):
             model_file_path = search_file_in_subfolder(
-                model_file_path, lambda x: x.endswith(".pth") and x != "checkpoint.pth"
+                model_file_path, lambda x: x.endswith(
+                    ".pth") and x != "checkpoint.pth"
             )
         else:
             model_file_path = [model_file_path]

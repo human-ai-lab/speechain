@@ -45,7 +45,8 @@ class LanguageModel(Module):
             "type" in encoder.keys()
         ), "There must a key named 'type' in model['module_conf']['encoder']!"
         encoder_class = self.encoder_class_dict[encoder["type"]]
-        encoder["conf"] = dict() if "conf" not in encoder.keys() else encoder["conf"]
+        encoder["conf"] = dict(
+        ) if "conf" not in encoder.keys() else encoder["conf"]
         # the LM encoder is automatically set to unidirectional
         encoder["conf"]["uni_direction"] = True
         self.encoder = encoder_class(

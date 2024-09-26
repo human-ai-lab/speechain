@@ -207,7 +207,8 @@ class SpeakerEmbedPrenet(Module):
                     )
                 if spk_feat_lookup is not None:
                     tgt_feat = torch.cat(
-                        [tgt_feat, spk_feat_lookup.expand(-1, tgt_feat.size(1), -1)],
+                        [tgt_feat,
+                            spk_feat_lookup.expand(-1, tgt_feat.size(1), -1)],
                         dim=-1,
                     )
             else:

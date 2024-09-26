@@ -81,14 +81,17 @@ def main(
     idx2wav_len = load_idx2data_file(idx2wav_len_path, data_type=int)
 
     idx2text = load_idx2data_file(
-        os.path.join(dump_path, f"{dataset}/data/mfa/{mfa_model}/{subset}/idx2text")
+        os.path.join(
+            dump_path, f"{dataset}/data/mfa/{mfa_model}/{subset}/idx2text")
     )
     idx2duration = load_idx2data_file(
-        os.path.join(dump_path, f"{dataset}/data/mfa/{mfa_model}/{subset}/idx2duration")
+        os.path.join(
+            dump_path, f"{dataset}/data/mfa/{mfa_model}/{subset}/idx2duration")
     )
 
     total_duration_list, space_duration_list = [], []
-    hop_len = int(hop_len * sample_rate) if isinstance(hop_len, float) else hop_len
+    hop_len = int(hop_len * sample_rate) if isinstance(hop_len,
+                                                       float) else hop_len
     for idx in tqdm(idx2wav_len.keys()):
         if idx not in idx2duration.keys():
             continue

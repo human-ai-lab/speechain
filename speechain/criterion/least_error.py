@@ -82,7 +82,8 @@ class LeastError(Criterion):
         elif len(tgt.shape) != 3:
             raise RuntimeError
 
-        batch_size, feat_maxlen, feat_dim = pred.size(0), pred.size(1), pred.size(2)
+        batch_size, feat_maxlen, feat_dim = pred.size(
+            0), pred.size(1), pred.size(2)
         # updating range restriction, ndim is the dimension selected to be updated
         if self.update_range is not None:
             ndim = (

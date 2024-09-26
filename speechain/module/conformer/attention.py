@@ -20,8 +20,10 @@ class RelPosMultiHeadedAttention(MultiHeadedAttention):
 
         self.pos_layer = nn.Linear(d_model, d_model, bias=False)
 
-        self.pos_bias_u = nn.Parameter(torch.Tensor(self.num_heads, self.head_size))
-        self.pos_bias_v = nn.Parameter(torch.Tensor(self.num_heads, self.head_size))
+        self.pos_bias_u = nn.Parameter(
+            torch.Tensor(self.num_heads, self.head_size))
+        self.pos_bias_v = nn.Parameter(
+            torch.Tensor(self.num_heads, self.head_size))
 
     def rel_shift(self, matrix_bd: torch.Tensor):
 

@@ -74,7 +74,8 @@ class LinearPrenet(Module):
 
         # para recording
         if lnr_dims is not None:
-            self.lnr_dims = lnr_dims if isinstance(lnr_dims, List) else [lnr_dims]
+            self.lnr_dims = lnr_dims if isinstance(
+                lnr_dims, List) else [lnr_dims]
         self.lnr_dropout = lnr_dropout
 
         # --- 1. Linear Part Initialization --- #
@@ -85,7 +86,8 @@ class LinearPrenet(Module):
         # a useful blog: https://sebastianraschka.com/faq/docs/dropout-activation.html
         for i in range(len(self.lnr_dims)):
             _tmp_lnr.append(
-                torch.nn.Linear(in_features=_prev_dim, out_features=self.lnr_dims[i])
+                torch.nn.Linear(in_features=_prev_dim,
+                                out_features=self.lnr_dims[i])
             )
             if lnr_activation is not None:
                 # no 'ReLU'-series activation is added for the last layer if zero_centered is specified

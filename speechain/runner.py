@@ -93,7 +93,8 @@ class Runner(object):
         )
 
         # Experimental environment
-        group = parser.add_argument_group("Group 1: Calculation and System Backend")
+        group = parser.add_argument_group(
+            "Group 1: Calculation and System Backend")
         group.add_argument(
             "--seed",
             type=int,
@@ -581,7 +582,8 @@ class Runner(object):
                 "type" in _data_cfg.keys() and "conf" in _data_cfg.keys()
             )
             if leaf_flag:
-                iterator_class = import_class("speechain.iterator." + _data_cfg["type"])
+                iterator_class = import_class(
+                    "speechain.iterator." + _data_cfg["type"])
                 return iterator_class(
                     seed=args.seed,
                     ngpu=args.ngpu,
@@ -602,7 +604,8 @@ class Runner(object):
                 return len(_iterators)
             else:
                 sub_leaf_flag = sum(
-                    [isinstance(value, Iterator) for value in _iterators.values()]
+                    [isinstance(value, Iterator)
+                     for value in _iterators.values()]
                 ) == len(_iterators)
                 if sub_leaf_flag:
                     return [len(value) for value in _iterators.values()]
@@ -634,7 +637,8 @@ class Runner(object):
             ), "If args.test is set to True, please give 'test' as first-level keys of data_cfg."
             dset_keys = ["test"]
         else:
-            raise RuntimeError("Please set either args.train or args.test to True!")
+            raise RuntimeError(
+                "Please set either args.train or args.test to True!")
 
         # recursively initialize all the iterators in the Dict
         mode = "train" if args.train else "test"
@@ -646,7 +650,8 @@ class Runner(object):
         # set the relative reporting interval during training or testing
         if args.report_per_steps <= 0:
             _reports_per_epoch = (
-                10 if args.report_per_steps == 0 else int(-args.report_per_steps)
+                10 if args.report_per_steps == 0 else int(
+                    -args.report_per_steps)
             )
             args.report_per_steps = (
                 min(flatten_dict_to_list(batch_nums)) // _reports_per_epoch
@@ -689,10 +694,12 @@ class Runner(object):
         if "criterion_conf" not in model_cfg.keys():
             model_cfg["criterion_conf"] = None
 
-        model_class = import_class("speechain.model." + model_cfg["model_type"])
+        model_class = import_class(
+            "speechain.model." + model_cfg["model_type"])
         return model_class(
             model_conf=(
-                model_cfg["model_conf"] if "model_conf" in model_cfg.keys() else dict()
+                model_cfg["model_conf"] if "model_conf" in model_cfg.keys(
+                ) else dict()
             ),
             module_conf=model_cfg["module_conf"],
             criterion_conf=model_cfg["criterion_conf"],
@@ -751,7 +758,8 @@ class Runner(object):
         # multi-optimizer scenario
         if len(optim_sches) > 1:
             # adjust whether there are parameter overlapping among updated_modules of all the OptimSchedulers
-            is_all_para = [o.updated_modules is None for o in optim_sches.values()]
+            is_all_para = [
+                o.updated_modules is None for o in optim_sches.values()]
             # updated_modules of all the OptimSchedulers cannot be None at the same time
             if sum(is_all_para) == len(is_all_para):
                 raise RuntimeError
@@ -772,7 +780,8 @@ class Runner(object):
                     map_location=model.device,
                 )
                 for name in optim_sches.keys():
-                    optim_sches[name].load_state_dict(checkpoint["optim_sches"][name])
+                    optim_sches[name].load_state_dict(
+                        checkpoint["optim_sches"][name])
             except FileNotFoundError:
                 print(
                     f"No checkpoint is found in {args.train_result_path}. "
@@ -817,7 +826,8 @@ class Runner(object):
             else:
                 model.load_state_dict(
                     torch.load(
-                        os.path.join(args.train_result_path, "models", "latest.pth"),
+                        os.path.join(args.train_result_path,
+                                     "models", "latest.pth"),
                         map_location=model.device,
                     )
                 )
@@ -942,7 +952,8 @@ class Runner(object):
         elif isinstance(iterators["train"], Iterator):
             min_train_batch_num = len(iterators["train"])
         else:
-            raise RuntimeError("Please don't nest data_cfg['train'] more than twice!")
+            raise RuntimeError(
+                "Please don't nest data_cfg['train'] more than twice!")
 
         # --- checking the data lengths of all validation iterators --- #
         # multiple dataloaders scenario
@@ -960,7 +971,8 @@ class Runner(object):
         elif isinstance(iterators["valid"], Iterator):
             min_valid_batch_num = len(iterators["valid"])
         else:
-            raise RuntimeError("Please don't nest data_cfg['valid'] more than twice!")
+            raise RuntimeError(
+                "Please don't nest data_cfg['valid'] more than twice!")
 
         # synchronize the batch numbers across all the distributed processes
         if args.distributed:
@@ -1061,12 +1073,15 @@ class Runner(object):
                     # multi-GPU case, scatter the skip flag to all nodes
                     else:
                         skip_flag_list = torch.LongTensor(
-                            [False for _ in range(torch.distributed.get_world_size())]
+                            [False for _ in range(
+                                torch.distributed.get_world_size())]
                         ).cuda(model.device)
                         if cls.is_empty_batch(train_batch):
-                            skip_flag = torch.LongTensor([True]).cuda(model.device)
+                            skip_flag = torch.LongTensor(
+                                [True]).cuda(model.device)
                         else:
-                            skip_flag = torch.LongTensor([False]).cuda(model.device)
+                            skip_flag = torch.LongTensor(
+                                [False]).cuda(model.device)
                         # as long as one node meets an empty batch, all nodes will simultaneously skip the current step
                         torch.distributed.all_gather_into_tensor(
                             skip_flag_list, skip_flag
@@ -1194,7 +1209,8 @@ class Runner(object):
                                 None if monitor is None else monitor.valid_monitor
                             )("model_forward_time"):
                                 try:
-                                    valid_metrics = model(batch_data=valid_batch)
+                                    valid_metrics = model(
+                                        batch_data=valid_batch)
                                 except Exception as e:
                                     if args.ignore_train_exception:
                                         warnings.warn(
@@ -1349,7 +1365,8 @@ class Runner(object):
                 elif isinstance(cfg, Dict):
                     cfg = dict(sorted(cfg.items(), key=lambda x: x[0]))
                     infer_cfg_dict[
-                        "_".join([f"{key}={value}" for key, value in cfg.items()])
+                        "_".join(
+                            [f"{key}={value}" for key, value in cfg.items()])
                     ] = cfg
                 else:
                     raise TypeError(
@@ -1380,7 +1397,8 @@ class Runner(object):
                     cfg.update(args.infer_cfg["shared_args"])
                     cfg = dict(sorted(cfg.items(), key=lambda x: x[0]))
                     infer_cfg_dict[
-                        "_".join([f"{key}={value}" for key, value in cfg.items()])
+                        "_".join(
+                            [f"{key}={value}" for key, value in cfg.items()])
                     ] = cfg
 
             elif (
@@ -1395,7 +1413,8 @@ class Runner(object):
                     )
                     infer_cfg_dict = {
                         "_".join(
-                            [f"{key}={value}" for key, value in args.infer_cfg.items()]
+                            [f"{key}={value}" for key,
+                                value in args.infer_cfg.items()]
                         ): args.infer_cfg
                     }
 
@@ -1443,10 +1462,12 @@ class Runner(object):
                 name = name.replace("/", "%")
                 # add the identity symbol to the path for multi-GPU testing
                 if args.attach_model_folder_when_test:
-                    test_dset_path = os.path.join(test_result_path, test_model, name)
+                    test_dset_path = os.path.join(
+                        test_result_path, test_model, name)
                 else:
                     test_dset_path = os.path.join(test_result_path, name)
-                test_rank_path = os.path.join(test_dset_path, f"rank{args.rank}_tmp")
+                test_rank_path = os.path.join(
+                    test_dset_path, f"rank{args.rank}_tmp")
                 logger = logger_stdout_file(test_rank_path, file_name="test")
 
                 # initialize top-n bad case presentation
@@ -1491,11 +1512,13 @@ class Runner(object):
                         )
                 else:
                     start_step = 0
-                    logger.info(f"The testing process will start from scratch. ")
+                    logger.info(
+                        f"The testing process will start from scratch. ")
 
                 # initialize the dataloaders from the given starting point
                 data_loaders = cls.dict_transform(
-                    iterator, lambda x: iter(x.build_loader(start_step=start_step))
+                    iterator, lambda x: iter(
+                        x.build_loader(start_step=start_step))
                 )
                 test_indices = cls.dict_transform(
                     iterator, lambda x: x.get_batch_indices()
@@ -1554,7 +1577,8 @@ class Runner(object):
                             # save the checkpoint of the current step for both resuming and multi-GPU evaluation
                             # the iteration conditions of the test dataloader will also be saved for resuming
                             torch.save(
-                                dict(start_step=i + 1, monitor=monitor.state_dict()),
+                                dict(start_step=i + 1,
+                                     monitor=monitor.state_dict()),
                                 os.path.join(test_rank_path, "checkpoint.pth"),
                             )
 
@@ -1637,7 +1661,8 @@ class Runner(object):
             dtype=torch.int64,
             device=device,
         )
-        torch.distributed.all_gather_into_tensor(_iter_ascs, _iter_asc.cuda(device))
+        torch.distributed.all_gather_into_tensor(
+            _iter_ascs, _iter_asc.cuda(device))
         return [_iter_asc for _iter_asc in _iter_ascs], _iter_asc_lens
 
     @classmethod
@@ -1703,7 +1728,8 @@ class Runner(object):
             # if `--config` is given, attach the name of exp_cfg to the end of train_result_path
             if _config_split is not None:
                 args.train_result_path = os.path.join(
-                    args.train_result_path, ".".join(_config_split[-1].split(".")[:-1])
+                    args.train_result_path, ".".join(
+                        _config_split[-1].split(".")[:-1])
                 )
 
         # initialize the logger and save current script command
@@ -1715,7 +1741,8 @@ class Runner(object):
         )
 
         # logging the beginning info of the experiment
-        logger.info(f"Current script command: {' '.join([xi for xi in sys.argv])}")
+        logger.info(
+            f"Current script command: {' '.join([xi for xi in sys.argv])}")
         if args.distributed:
             logger.info(
                 f"Multi-GPU distribution information: "
@@ -1810,7 +1837,8 @@ class Runner(object):
                         # recover the codes from all the processes back to the text
                         for i, asc in enumerate(_iter_ascs):
                             _iter_text = "".join(
-                                [chr(a) for a in asc[: _iter_asc_lens[i]].tolist()]
+                                [chr(a)
+                                 for a in asc[: _iter_asc_lens[i]].tolist()]
                             )
                             _iter_message += f"\nThe {name} iterator in the {dset} set of the rank no.{i}: {_iter_text}"
                     # directly report the message in the single-GPU mode
@@ -1863,13 +1891,15 @@ class Runner(object):
             )
 
             # loading the model from the existing checkpoint for resuming the training process
-            args.start_epoch = cls.resume(args=args, model=model, monitor=monitor)
+            args.start_epoch = cls.resume(
+                args=args, model=model, monitor=monitor)
 
             # DDP Wrapping of the model must be done after model checkpoint loading
             if args.distributed:
                 if args.enable_syncbatchnorm:
                     # turn the batchnorm layers into the sync counterparts
-                    model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
+                    model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(
+                        model)
                 # Here the model buffers and parameters of the master process are broadcast to the other processes
                 model = torch.nn.parallel.DistributedDataParallel(
                     model, device_ids=[args.gpu], output_device=args.gpu
@@ -1911,16 +1941,19 @@ class Runner(object):
                 _models_path = os.path.join(args.train_result_path, "models")
                 # for compatibility with the older version
                 if os.path.exists(os.path.join(_models_path, f"{model_name}.mdl")):
-                    model_path = os.path.join(_models_path, f"{model_name}.mdl")
+                    model_path = os.path.join(
+                        _models_path, f"{model_name}.mdl")
                 elif os.path.exists(os.path.join(_models_path, f"{model_name}.pth")):
-                    model_path = os.path.join(_models_path, f"{model_name}.pth")
+                    model_path = os.path.join(
+                        _models_path, f"{model_name}.pth")
                 else:
                     raise RuntimeError(
                         f"{os.path.join(_models_path, '%s.pth' % model_name)} is not found!"
                     )
 
                 # load the target model parameters
-                model.load_state_dict(torch.load(model_path, map_location=model.device))
+                model.load_state_dict(torch.load(
+                    model_path, map_location=model.device))
 
                 # start the testing process
                 cls.test(

@@ -69,11 +69,13 @@ def remove_representer(parent_node, reference, curr_key=None):
                 "]"
             ) and not has_nested_structure(ref_key)
 
-            left_indices = [idx for idx, char in enumerate(ref_key) if char == "["]
-            right_indices = [idx for idx, char in enumerate(ref_key) if char == "]"]
+            left_indices = [idx for idx,
+                            char in enumerate(ref_key) if char == "["]
+            right_indices = [idx for idx,
+                             char in enumerate(ref_key) if char == "]"]
             ref_key_main = ref_key[: left_indices[0]]
             ref_key_indices = [
-                int(ref_key[left_idx + 1 : right_idx])
+                int(ref_key[left_idx + 1: right_idx])
                 for left_idx, right_idx in zip(left_indices, right_indices)
             ]
 
