@@ -1,4 +1,4 @@
-
+# os generated file
 .idea/deployment.xml
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/misc.xml
@@ -6,6 +6,7 @@
 .idea/remote-mappings.xml
 .idea/speechain.iml
 .idea/vcs.xml
+# pyc files
 speechain/utilbox/__init__.py
 speechain/utilbox/__pycache__/__init__.cpython-38.pyc
 speechain/utilbox/__pycache__/__init__.cpython-39.pyc
@@ -20,3 +21,20 @@ speechain/utilbox/__pycache__/tensor_util.cpython-38.pyc
 speechain/utilbox/__pycache__/thread_util.cpython-38.pyc
 speechain/utilbox/__pycache__/train_util.cpython-38.pyc
 speechain/utilbox/__pycache__/train_util.cpython-39.pyc
+
+# bak files and directories
+*.bak
+# cache files
+*.cache
+__pycache__
+# logs
+logs/
+# tmp files and directories
+tmp/
+# auto-generated files
+*.pyc
+*.pyo
+*.pyd
+# OS generated files
+.DS_Store
+# IDE files
