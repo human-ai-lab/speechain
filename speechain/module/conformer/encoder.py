@@ -139,8 +139,7 @@ class ConformerEncoderLayer(Module):
         """
         "Front Positional FeedForward Layer part"
         # go through the LayerNorm layer before the feedforward layer or not
-        src_norm = self.front_fdfwd_layernorm(
-            src) if self.layernorm_first else src
+        src_norm = self.front_fdfwd_layernorm(src) if self.layernorm_first else src
 
         # go through the feedforward layer and perform the residual connection
         front_fdfwd_hidden = self.front_feed_forward(src_norm)
@@ -169,8 +168,7 @@ class ConformerEncoderLayer(Module):
             mask,
             posenc,
         )
-        relpos_mha_output = self.dropout(
-            relpos_mha_hidden) + front_fdfwd_output
+        relpos_mha_output = self.dropout(relpos_mha_hidden) + front_fdfwd_output
 
         # go through the LayerNorm layer after the multi-head attention layer or not
         relpos_mha_output = (

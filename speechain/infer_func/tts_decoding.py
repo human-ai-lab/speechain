@@ -102,8 +102,7 @@ def auto_regression(
         curr_steps = hypo_feat.size(1)
         pred_stop = pred_stop[:, -1].squeeze()
         # update the stop points where the stop token is met at the first time only
-        stop_points[(pred_stop > logits_threshold) &
-                    (stop_points == 0)] = curr_steps
+        stop_points[(pred_stop > logits_threshold) & (stop_points == 0)] = curr_steps
         # there are two stop conditions:
         # 1. stop token is met and continual_steps of frames have been generated
         # 2. maxlen of this utterance is met

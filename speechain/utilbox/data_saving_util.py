@@ -3,7 +3,7 @@ import torch
 import numpy as np
 import soundfile as sf
 
-from typing import List, Any, Union
+from typing import List, Union
 
 from speechain.utilbox.tensor_util import to_cpu
 

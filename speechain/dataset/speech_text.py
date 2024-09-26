@@ -13,7 +13,7 @@ import random
 
 import torchaudio
 from g2p_en import G2p
-from typing import Dict, Any, List, Union
+from typing import Dict, Any, List
 from functools import partial
 from speechain.tokenizer.g2p import abnormal_phns
 
@@ -143,8 +143,7 @@ class SpeechTextDataset(Dataset):
         # --- 1. Pad Speech Data and Stack them together --- #
         if "feat" in batch_dict.keys():
             # para init
-            feat_len = torch.LongTensor([ele.shape[0]
-                                        for ele in batch_dict["feat"]])
+            feat_len = torch.LongTensor([ele.shape[0] for ele in batch_dict["feat"]])
             batch_size, feat_maxlen, feat_dim = (
                 len(batch_dict["feat"]),
                 feat_len.max().item(),
@@ -152,14 +151,12 @@ class SpeechTextDataset(Dataset):
             )
 
             # acoustic feature padding, feat.dtype needs to match the type of model parameters (torch.float32)
-            feat = torch.zeros(
-                (batch_size, feat_maxlen, feat_dim), dtype=torch.float32)
+            feat = torch.zeros((batch_size, feat_maxlen, feat_dim), dtype=torch.float32)
             # overwrite the padding matrix with each feat vector
             for i in range(batch_size):
                 # process feat data based on data type
                 if isinstance(batch_dict["feat"][i], np.ndarray):
-                    feat[i][: feat_len[i]] = torch.tensor(
-                        batch_dict["feat"][i])
+                    feat[i][: feat_len[i]] = torch.tensor(batch_dict["feat"][i])
                 elif isinstance(batch_dict["feat"][i], torch.Tensor):
                     feat[i][: feat_len[i]] = batch_dict["feat"][i]
                 # only support np.ndarray and torch.Tensor now
@@ -173,20 +170,16 @@ class SpeechTextDataset(Dataset):
         # --- 2. Pad Pitch Data and Stack them together --- #
         if "pitch" in batch_dict.keys():
             # para init
-            pitch_len = torch.LongTensor(
-                [ele.shape[0] for ele in batch_dict["pitch"]])
-            batch_size, pitch_maxlen = len(
-                batch_dict["pitch"]), pitch_len.max().item()
+            pitch_len = torch.LongTensor([ele.shape[0] for ele in batch_dict["pitch"]])
+            batch_size, pitch_maxlen = len(batch_dict["pitch"]), pitch_len.max().item()
 
             # pitch padding, pitch.dtype needs to match the type of model parameters (torch.float32)
-            pitch = torch.zeros((batch_size, pitch_maxlen),
-                                dtype=torch.float32)
+            pitch = torch.zeros((batch_size, pitch_maxlen), dtype=torch.float32)
             # overwrite the padding matrix with each pitch vector
             for i in range(batch_size):
                 # process feat data based on data type
                 if isinstance(batch_dict["pitch"][i], np.ndarray):
-                    pitch[i][: pitch_len[i]] = torch.tensor(
-                        batch_dict["pitch"][i])
+                    pitch[i][: pitch_len[i]] = torch.tensor(batch_dict["pitch"][i])
                 elif isinstance(batch_dict["pitch"][i], torch.Tensor):
                     pitch[i][: pitch_len[i]] = batch_dict["pitch"][i]
                 # only support np.ndarray and torch.Tensor now
@@ -304,8 +297,7 @@ class SpeechTextDataset(Dataset):
                     f"Your given sample rate ({self.sample_rate}) is different from the real one gotten from the "
                     f"waveform ({sample_rate})!"
                 )
-                resampler_index = torch.randint(
-                    len(self.speed_resampler_list), (1,))[0]
+                resampler_index = torch.randint(len(self.speed_resampler_list), (1,))[0]
                 main_data["feat"] = self.speed_resampler_list[resampler_index](
                     main_data["feat"].squeeze(-1)
                 ).unsqueeze(-1)
@@ -313,8 +305,7 @@ class SpeechTextDataset(Dataset):
             # extract the pitch from the speech on-the-fly
             if hasattr(self, "pitch_extract_fn"):
                 try:
-                    main_data["pitch"] = self.pitch_extract_fn(
-                        main_data["feat"])
+                    main_data["pitch"] = self.pitch_extract_fn(main_data["feat"])
                 # IndexError means all the pitch values are unvoiced (=0.0)
                 # return None to remove this utterance from the current batch
                 except IndexError:
@@ -479,7 +470,7 @@ class SpeechTextDataset(Dataset):
                     if "duration" in main_data.keys():
                         _sum_duration = sum(
                             main_data["duration"][
-                                word_start_indices[i]: word_end_indices[i]
+                                word_start_indices[i] : word_end_indices[i]
                             ]
                         )
                         _tmp_duration.append(round(_sum_duration, 2))
@@ -487,19 +478,18 @@ class SpeechTextDataset(Dataset):
                 # If the word shouldn't be masked, add the original tokens of the word
                 else:
                     _tmp_text += main_data["text"][
-                        word_start_indices[i]: word_end_indices[i]
+                        word_start_indices[i] : word_end_indices[i]
                     ]
                     if "duration" in main_data.keys():
                         _tmp_duration += main_data["duration"][
-                            word_start_indices[i]: word_end_indices[i]
+                            word_start_indices[i] : word_end_indices[i]
                         ]
 
                 # Add space tokens and their durations between words, except for the last word
                 if i != len(word_mask_flags) - 1:
                     _tmp_text.append(main_data["text"][word_end_indices[i]])
                     if "duration" in main_data.keys():
-                        _tmp_duration.append(
-                            main_data["duration"][word_end_indices[i]])
+                        _tmp_duration.append(main_data["duration"][word_end_indices[i]])
 
             # Update main_data with the new text and duration information
             main_data["text"] = _tmp_text
@@ -606,8 +596,7 @@ class RandomSpkFeatDataset(SpeechTextDataset):
         )
 
         # process 'feat' and 'text' by the parent class
-        main_data = super(RandomSpkFeatDataset,
-                          self).extract_main_data_fn(main_data)
+        main_data = super(RandomSpkFeatDataset, self).extract_main_data_fn(main_data)
         # None means empty batch received from the parent class
         if main_data is None:
             return main_data
@@ -617,8 +606,7 @@ class RandomSpkFeatDataset(SpeechTextDataset):
             random_spk_id, self.spk2freq = get_min_indices_by_freq(
                 self.spk2freq,
                 freq_weights=(
-                    len(main_data["text"]
-                        ) if "text" in main_data.keys() else None
+                    len(main_data["text"]) if "text" in main_data.keys() else None
                 ),
             )
             random_spk_id = random_spk_id[0]

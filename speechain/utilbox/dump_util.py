@@ -224,20 +224,16 @@ def parse_readable_number(read_number: str) -> int or float:
 
     # billion-level
     if "b" in read_number:
-        raw_number, read_number = split_and_record(
-            raw_number, read_number, "m")
+        raw_number, read_number = split_and_record(raw_number, read_number, "m")
     # million-level
     if "m" in read_number:
-        raw_number, read_number = split_and_record(
-            raw_number, read_number, "m")
+        raw_number, read_number = split_and_record(raw_number, read_number, "m")
     # kilo-level
     if "k" in read_number:
-        raw_number, read_number = split_and_record(
-            raw_number, read_number, "k")
+        raw_number, read_number = split_and_record(raw_number, read_number, "k")
     # hundred-level
     if "h" in read_number:
-        raw_number, read_number = split_and_record(
-            raw_number, read_number, "h")
+        raw_number, read_number = split_and_record(raw_number, read_number, "h")
     # 1~99
     if read_number.isdigit():
         raw_number = split_and_record(raw_number, read_number)

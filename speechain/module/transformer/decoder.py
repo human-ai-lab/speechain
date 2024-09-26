@@ -172,8 +172,7 @@ class TransformerDecoderLayer(Module):
 
         # go through the LayerNorm layer after the feedforward layer or not
         fdfwd_output = (
-            self.fdfwd_ln(
-                fdfwd_output) if not self.layernorm_first else fdfwd_output
+            self.fdfwd_ln(fdfwd_output) if not self.layernorm_first else fdfwd_output
         )
 
         return fdfwd_output, self_attmat, encdec_attmat

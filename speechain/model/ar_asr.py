@@ -168,8 +168,7 @@ class ARASR(Model):
         # --- 1. Module-independent Initialization --- #
         # initialize the tokenizer
         if token_type.lower() == "char":
-            self.tokenizer = CharTokenizer(
-                token_path, copy_path=self.result_path)
+            self.tokenizer = CharTokenizer(token_path, copy_path=self.result_path)
         elif token_type.lower() == "sentencepiece":
             self.tokenizer = SentencePieceTokenizer(
                 token_path, copy_path=self.result_path
@@ -469,7 +468,7 @@ class ARASR(Model):
                 self.return_att_layer_num != -1
                 and len(input_att_list) > self.return_att_layer_num
             ):
-                input_att_list = input_att_list[-self.return_att_layer_num:]
+                input_att_list = input_att_list[-self.return_att_layer_num :]
             # pick up the target attention heads
             if (
                 self.return_att_head_num != -1
@@ -485,8 +484,7 @@ class ARASR(Model):
             # encoder-decoder attention
             if "encdec" in self.return_att_type:
                 # register the encoder-decoder attention
-                outputs.update(
-                    att=dict(encdec=shrink_attention(encdec_attmat)))
+                outputs.update(att=dict(encdec=shrink_attention(encdec_attmat)))
             # encoder self-attention
             if enc_attmat is not None and "enc" in self.return_att_type:
                 outputs["att"].update(enc=shrink_attention(enc_attmat))
@@ -503,25 +501,21 @@ class ARASR(Model):
         ctc_loss_fn: callable,
     ):
 
-        ctc_text_confid = ctc_logits.log_softmax(
-            dim=-1).max(dim=-1)[0].sum(dim=-1)
+        ctc_text_confid = ctc_logits.log_softmax(dim=-1).max(dim=-1)[0].sum(dim=-1)
         ctc_recover_text = [
             self.tokenizer.tensor2text(ctc_text)
             for ctc_text in ctc_loss_fn.recover(ctc_logits, enc_feat_len)
         ]
         real_text = [self.tokenizer.tensor2text(t) for t in text]
         ctc_cer_wer = [
-            self.error_rate(
-                hypo_text=ctc_recover_text[i], real_text=real_text[i])
+            self.error_rate(hypo_text=ctc_recover_text[i], real_text=real_text[i])
             for i in range(len(real_text))
         ]
 
         return dict(
             ctc_text_confid=ctc_text_confid.clone().detach(),
-            ctc_cer=np.mean([ctc_cer_wer[i][0]
-                            for i in range(len(ctc_cer_wer))]),
-            ctc_wer=np.mean([ctc_cer_wer[i][1]
-                            for i in range(len(ctc_cer_wer))]),
+            ctc_cer=np.mean([ctc_cer_wer[i][0] for i in range(len(ctc_cer_wer))]),
+            ctc_wer=np.mean([ctc_cer_wer[i][1] for i in range(len(ctc_cer_wer))]),
             ctc_text=ctc_recover_text,
         )
 
@@ -581,14 +575,12 @@ class ARASR(Model):
             if ilm_loss_fn is None:
                 ilm_loss_fn = self.ilm_loss
 
-            ilm_loss = ilm_loss_fn(
-                logits=ilm_logits, text=text, text_len=text_len)
+            ilm_loss = ilm_loss_fn(logits=ilm_logits, text=text, text_len=text_len)
             metrics.update(ilm_loss=ilm_loss.clone().detach())
             loss += self.ilm_weight * ilm_loss
 
             # calculate perplexity
-            ilm_ppl = self.perplexity(
-                logits=ilm_logits, text=text, text_len=text_len)
+            ilm_ppl = self.perplexity(logits=ilm_logits, text=text, text_len=text_len)
             metrics.update(ilm_text_ppl=ilm_ppl.detach())
 
         # if att_guid_loss is given, record att_guid_loss in the metrics Dict
@@ -599,8 +591,7 @@ class ARASR(Model):
 
             # layer_num * (batch, head_num, ...) -> (batch, layer_num * head_num, ...)
             att_tensor = torch.cat(att["encdec"], dim=1)
-            att_guid_loss = att_guid_loss_fn(
-                att_tensor, text_len, enc_feat_len)
+            att_guid_loss = att_guid_loss_fn(att_tensor, text_len, enc_feat_len)
             loss += att_guid_loss
             metrics.update(att_guid_loss=att_guid_loss.clone().detach())
 
@@ -664,8 +655,7 @@ class ARASR(Model):
             if metric not in epoch_records[sample_index].keys():
                 epoch_records[sample_index][metric] = []
             if not isinstance(infer_results[metric]["content"], List):
-                infer_results[metric]["content"] = [
-                    infer_results[metric]["content"]]
+                infer_results[metric]["content"] = [infer_results[metric]["content"]]
             epoch_records[sample_index][metric].append(
                 infer_results[metric]["content"][0]
             )
@@ -701,8 +691,7 @@ class ARASR(Model):
                 dict(
                     materials=dict(
                         real_text=[
-                            copy.deepcopy(
-                                self.tokenizer.tensor2text(text[0][1:-1]))
+                            copy.deepcopy(self.tokenizer.tensor2text(text[0][1:-1]))
                         ]
                     ),
                     plot_type="text",
@@ -723,8 +712,7 @@ class ARASR(Model):
             vis_logs.append(
                 dict(
                     materials=dict(
-                        hypo_text=copy.deepcopy(
-                            epoch_records[sample_index][text_name])
+                        hypo_text=copy.deepcopy(epoch_records[sample_index][text_name])
                     ),
                     plot_type="text",
                     epoch=epoch,
@@ -825,8 +813,7 @@ class ARASR(Model):
 
                 # get the Dict-like configuration for the language model
                 if isinstance(self.lm_model_cfg, str):
-                    self.lm_model_cfg = load_yaml(
-                        parse_path_args(self.lm_model_cfg))
+                    self.lm_model_cfg = load_yaml(parse_path_args(self.lm_model_cfg))
                 if "model" in self.lm_model_cfg.keys():
                     self.lm_model_cfg = self.lm_model_cfg["model"]
                 if "module_conf" in self.lm_model_cfg.keys():
@@ -845,8 +832,7 @@ class ARASR(Model):
 
                 # use the built-in lm model if lm_model_path is not given
                 if self.lm_model_path is None:
-                    self.lm_model_path = os.path.join(
-                        self.result_path, "lm_model.pth")
+                    self.lm_model_path = os.path.join(self.result_path, "lm_model.pth")
 
                 # load the parameters of the target lm
                 _lm_model_para = torch.load(
@@ -860,8 +846,7 @@ class ARASR(Model):
 
                 # update the built-in lm parameters and load them into the lm for inference
                 torch.save(
-                    lm_model_para, os.path.join(
-                        self.result_path, "lm_model.pth")
+                    lm_model_para, os.path.join(self.result_path, "lm_model.pth")
                 )
                 self.lm.load_state_dict(lm_model_para)
 
@@ -872,16 +857,14 @@ class ARASR(Model):
             model_input = copy.deepcopy(dict(feat=feat, feat_len=feat_len))
 
             # Encoding input speech
-            enc_feat, enc_feat_mask, _, _ = self.encoder(
-                domain=domain, **model_input)
+            enc_feat, enc_feat_mask, _, _ = self.encoder(domain=domain, **model_input)
 
             # generate the model hypothesis
             infer_results = beam_searching(
                 enc_feat=enc_feat,
                 enc_feat_mask=enc_feat_mask,
                 asr_decode_fn=self.decoder,
-                ctc_decode_fn=self.ctc_layer if hasattr(
-                    self, "ctc_layer") else None,
+                ctc_decode_fn=self.ctc_layer if hasattr(self, "ctc_layer") else None,
                 lm_decode_fn=self.lm if hasattr(self, "lm") else None,
                 vocab_size=self.tokenizer.vocab_size,
                 sos_eos=self.tokenizer.sos_eos_idx,
@@ -920,8 +903,7 @@ class ARASR(Model):
                     outputs[key] = dict(
                         format="txt",
                         content=(
-                            content if isinstance(
-                                content, List) else to_cpu(content)
+                            content if isinstance(content, List) else to_cpu(content)
                         ),
                     )
 
@@ -929,8 +911,7 @@ class ARASR(Model):
                 infer_results["logits"] = torch.log_softmax(
                     infer_results["logits"][:, :-1], dim=-1
                 )
-                hypo_text_prob, hypo_text = torch.max(
-                    infer_results["logits"], dim=-1)
+                hypo_text_prob, hypo_text = torch.max(infer_results["logits"], dim=-1)
                 # the original text contains both sos at the beginning and eos at the end
                 hypo_text_len = text_len - 2
                 feat_token_len_ratio = feat_len / (hypo_text_len + 1e-10)
@@ -962,8 +943,7 @@ class ARASR(Model):
         outputs.update(
             text=dict(format="txt", content=hypo_text),
             text_len=dict(format="txt", content=hypo_text_len),
-            feat_token_len_ratio=dict(
-                format="txt", content=feat_token_len_ratio),
+            feat_token_len_ratio=dict(format="txt", content=feat_token_len_ratio),
             text_confid=dict(format="txt", content=hypo_text_confid),
         )
 
@@ -1011,8 +991,7 @@ class ARASR(Model):
             # --- 4. Supervised Metrics Calculation (Reference is involved here)  --- #
             if not decode_only:
                 # obtain the cer and wer metrics
-                cer, wer = self.error_rate(
-                    hypo_text=hypo_text[i], real_text=text[i])
+                cer, wer = self.error_rate(hypo_text=hypo_text[i], real_text=text[i])
                 i_num, d_num, s_num, align_table = get_word_edit_alignment(
                     hypo_text[i], text[i]
                 )
@@ -1111,8 +1090,7 @@ class MultiDataLoaderARASR(ARASR):
                         assert (
                             name in self.loss_weights.keys()
                         ), f"The key name {name} doesn't match anyone in the loss_weights!"
-                    nested_loss[name] = loss_class(
-                        **conf) if conf is not None else None
+                    nested_loss[name] = loss_class(**conf) if conf is not None else None
                 return nested_loss
 
         # cross-entropy will be initialized no matter whether ce_loss is given or not
@@ -1170,8 +1148,7 @@ class MultiDataLoaderARASR(ARASR):
 
         # whether the input batch_data is generated by multiple dataloaders
         multi_flag = sum(
-            [not isinstance(value, torch.Tensor)
-             for value in batch_data.values()]
+            [not isinstance(value, torch.Tensor) for value in batch_data.values()]
         ) == len(batch_data)
 
         # Single-dataloader scenario
@@ -1271,8 +1248,7 @@ class MultiDataLoaderARASR(ARASR):
                     metrics.update(
                         **{
                             (
-                                _key if len(
-                                    domain_list) == 1 else f"{domain}_{_key}"
+                                _key if len(domain_list) == 1 else f"{domain}_{_key}"
                             ): _value
                             for _key, _value in _criteria.items()
                         }
@@ -1286,16 +1262,14 @@ class MultiDataLoaderARASR(ARASR):
                         domain_list
                     ), "There is a number mismatch of the domains between your data_cfg and train_cfg."
                     assert sum(
-                        [domain in self.loss_weights.keys()
-                         for domain in domain_list]
+                        [domain in self.loss_weights.keys() for domain in domain_list]
                     ) == len(
                         domain_list
                     ), "There is a name mismatch of the domains between your data_cfg and train_cfg."
                     losses.update(
                         loss=sum(
                             [
-                                losses[f"{domain}_loss"] *
-                                self.loss_weights[domain]
+                                losses[f"{domain}_loss"] * self.loss_weights[domain]
                                 for domain in domain_list
                             ]
                         )
@@ -1304,8 +1278,7 @@ class MultiDataLoaderARASR(ARASR):
                 # average losses of all the domains if loss_weights is not given
                 else:
                     losses.update(
-                        loss=sum([losses[f"{domain}_loss"]
-                                 for domain in domain_list])
+                        loss=sum([losses[f"{domain}_loss"] for domain in domain_list])
                         / len(domain_list)
                     )
                 metrics.update(loss=losses["loss"].clone().detach())

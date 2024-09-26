@@ -59,8 +59,7 @@ class BCELogits(Criterion):
         # BCE loss calculation
         # make sure that the pos_weight is also on GPU
         if pred.is_cuda and not self.bce_loss.pos_weight.is_cuda:
-            self.bce_loss.pos_weight = self.bce_loss.pos_weight.cuda(
-                pred.device)
+            self.bce_loss.pos_weight = self.bce_loss.pos_weight.cuda(pred.device)
         # (batch_size, feat_maxlen)
         loss = self.bce_loss(pred, tgt)
         # (batch_size, feat_maxlen) -> (batch_size * feat_maxlen)

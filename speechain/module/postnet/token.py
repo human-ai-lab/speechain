@@ -37,8 +37,7 @@ class TokenPostnet(Module):
         self.vocab_size = vocab_size
 
         # initialize the output layer
-        self.linear = torch.nn.Linear(
-            in_features=input_dim, out_features=vocab_size)
+        self.linear = torch.nn.Linear(in_features=input_dim, out_features=vocab_size)
 
     def forward(self, input: torch.Tensor):
         """

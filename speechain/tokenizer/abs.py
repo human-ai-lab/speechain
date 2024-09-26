@@ -52,8 +52,7 @@ class Tokenizer(ABC):
         # if token_path is not given or vocab does not exist, use the backup one in copy_path
         if token_path is None or not os.path.exists(token_vocab):
             assert copy_path is not None, "Please give copy_path for vocabulary backup!"
-            token_vocab = os.path.join(
-                parse_path_args(copy_path), "token_vocab")
+            token_vocab = os.path.join(parse_path_args(copy_path), "token_vocab")
 
         # register token-related variables
         self.idx2token = load_idx2data_file(token_vocab, do_separate=False)

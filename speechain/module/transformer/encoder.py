@@ -7,7 +7,7 @@
 
 import torch
 from torch import nn
-from typing import List, Dict, Any
+from typing import Dict, Any
 
 from speechain.module.abs import Module
 from speechain.module.transformer.pos_enc import PositionalEncoding
@@ -116,21 +116,18 @@ class TransformerEncoderLayer(Module):
         src_norm = self.att_layernorm(src) if self.layernorm_first else src
 
         # go through the multi-head attention layer and perform the residual connection
-        att_hidden, attmat = self.multihead_att(
-            src_norm, src_norm, src_norm, mask)
+        att_hidden, attmat = self.multihead_att(src_norm, src_norm, src_norm, mask)
         att_output = self.dropout(att_hidden) + src
 
         # go through the LayerNorm layer after the multi-head attention layer or not
         att_output = (
-            self.att_layernorm(
-                att_output) if not self.layernorm_first else att_output
+            self.att_layernorm(att_output) if not self.layernorm_first else att_output
         )
 
         "Positional FeedForward Layer part"
         # go through the LayerNorm layer before the feedforward layer or not
         att_output_norm = (
-            self.fdfwd_layernorm(
-                att_output) if self.layernorm_first else att_output
+            self.fdfwd_layernorm(att_output) if self.layernorm_first else att_output
         )
 
         # go through the feedforward layer and perform the residual connection

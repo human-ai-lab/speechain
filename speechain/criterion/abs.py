@@ -4,8 +4,6 @@
     Date: 2022.07
 """
 
-import torch
-
 from abc import ABC, abstractmethod
 
 

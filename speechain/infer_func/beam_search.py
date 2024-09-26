@@ -107,8 +107,7 @@ class BeamHypotheses(object):
         else:
             if curr_len is None:
                 curr_len = self.max_length
-            curr_score = best_sum_logprobs / \
-                ((curr_len + eps) ** self.length_penalty)
+            curr_score = best_sum_logprobs / ((curr_len + eps) ** self.length_penalty)
 
             # whether the current score is worse than the worst score
             return curr_score < self.worst_score
@@ -210,8 +209,7 @@ def beam_searching(
     """
     # --- 0. Arguments Checking --- #
     if sent_per_beam > 1:
-        raise NotImplementedError(
-            "Currently, sent_per_beam > 1 is not supported....")
+        raise NotImplementedError("Currently, sent_per_beam > 1 is not supported....")
     assert (
         0.0 <= ctc_weight
     ), f"ctc_weight should be a non-negative float number, but got ctc_weight={ctc_weight}!"
@@ -252,8 +250,7 @@ def beam_searching(
     # (batch_size, 1, feat_maxlen , edim) -> (batch_size, beam_size, feat_maxlen, edim)
     enc_feat = enc_feat.repeat(1, beam_size, 1, 1)
     # (batch_size, beam_size, feat_maxlen, edim) -> (batch_size × beam_size, feat_maxlen, edim)
-    enc_feat = enc_feat.view(-1, enc_feat.size(2),
-                             enc_feat.size(3)).contiguous()
+    enc_feat = enc_feat.view(-1, enc_feat.size(2), enc_feat.size(3)).contiguous()
 
     # (batch_size, 1, feat_maxlen) -> (batch_size, 1, 1, feat_maxlen)
     enc_feat_mask = enc_feat_mask.unsqueeze(1).contiguous()
@@ -319,8 +316,7 @@ def beam_searching(
         )[0].detach()
         # (batch_size × beam_size, curr_len, vocab_size) -> (batch_size × beam_size, vocab_size)
         curr_outputs = curr_outputs[:, -1, :]
-        next_token_scores = torch.log_softmax(
-            curr_outputs / temperature, dim=-1)
+        next_token_scores = torch.log_softmax(curr_outputs / temperature, dim=-1)
 
         # --- 5.2. CTC Scorer Forward --- #
         if ctc_scorer is not None:
@@ -383,8 +379,7 @@ def beam_searching(
                     ),
                 )[0].detach()
                 # (batch_size × beam_size, curr_len, vocab_size) -> (batch_size × beam_size, vocab_size)
-                ilm_next_token_scores = torch.log_softmax(
-                    ilm_outputs[:, -1, :], dim=-1)
+                ilm_next_token_scores = torch.log_softmax(ilm_outputs[:, -1, :], dim=-1)
                 next_token_scores = (
                     next_token_scores - ilm_sub_weight * ilm_next_token_scores
                 )
@@ -429,8 +424,7 @@ def beam_searching(
             ):
                 # the index number of the beam in a single sentence, range from 0 to beam_size-1
                 # beam_id = beam_token_id // vocab_size
-                beam_id = torch.div(
-                    beam_token_id, vocab_size, rounding_mode="floor")
+                beam_id = torch.div(beam_token_id, vocab_size, rounding_mode="floor")
                 # the index number of the real token, range from 0 to vocab_size-1
                 token_id = beam_token_id % vocab_size
                 # the index number of the beam across the current batch
@@ -447,8 +441,7 @@ def beam_searching(
                     elif eos_filtering:
                         eos_score = next_token_scores[effective_beam_id][sos_eos]
                         # the largest token score other than eos is the reference score
-                        vocab_idx = torch.arange(
-                            0, vocab_size, dtype=torch.int)
+                        vocab_idx = torch.arange(0, vocab_size, dtype=torch.int)
                         ref_score = next_token_scores[effective_beam_id][
                             vocab_idx != sos_eos
                         ].max()
@@ -484,7 +477,7 @@ def beam_searching(
                 done[batch_idx] = generated_hyps[batch_idx].is_done(
                     best_sum_logprobs=next_scores[batch_idx].max().item(),
                     curr_len=hypo_text_len[
-                        batch_idx * beam_size: (batch_idx + 1) * beam_size
+                        batch_idx * beam_size : (batch_idx + 1) * beam_size
                     ]
                     .max()
                     .item()
@@ -502,8 +495,7 @@ def beam_searching(
         beam_idx = hypo_text.new([x[2] for x in next_batch_beam])
 
         # Update the length of generated sentences
-        hypo_text = torch.cat(
-            [hypo_text[beam_idx], beam_tokens.unsqueeze(1)], dim=1)
+        hypo_text = torch.cat([hypo_text[beam_idx], beam_tokens.unsqueeze(1)], dim=1)
         hypo_text_len = torch.sum(hypo_text != padding_idx, dim=-1)
 
         # align encoder_out with input_tokens
@@ -512,8 +504,7 @@ def beam_searching(
             token_idx = beam_tokens.view(batch_size, beam_size) + (
                 torch.arange(beam_size, device=cuda_device) * vocab_size
             ).unsqueeze(0)
-            ctc_memory = ctc_scorer.permute_mem(
-                ctc_memory, beam_idx, token_idx)
+            ctc_memory = ctc_scorer.permute_mem(ctc_memory, beam_idx, token_idx)
 
     # --- 6. Post-processing --- #
     # for the predictions that end without an eos token at the end because of the max length

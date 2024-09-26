@@ -6,7 +6,6 @@
 
 import torch
 import itertools
-import warnings
 
 from abc import ABC, abstractmethod
 from typing import Dict, List, Any
@@ -200,9 +199,9 @@ class OptimScheduler(ABC):
                 # pick up the target training loss
                 if self.optim_loss is None:
                     assert "loss" in losses.keys(), (
-                        f"In this toolkit when optim_loss is set to None, the optimizer will automatically optimize "
-                        f"the input loss named 'loss'. Therefore, please name one training loss in the returned Dict "
-                        f"of your criterion_forward() implementation as 'loss'."
+                        "In this toolkit when optim_loss is set to None, the optimizer will automatically optimize "
+                        "the input loss named 'loss'. Therefore, please name one training loss in the returned Dict "
+                        "of your criterion_forward() implementation as 'loss'."
                     )
                     loss = losses["loss"]
                 else:
@@ -223,8 +222,7 @@ class OptimScheduler(ABC):
             # do optimization only when the real step number meets the updating interval
             if real_step % self.step_per_update == 0:
                 # update the learning rate for the current step (scaled by the finetuning factor)
-                curr_lr = self.update_lr(
-                    real_step=real_step, epoch_num=epoch_num)
+                curr_lr = self.update_lr(real_step=real_step, epoch_num=epoch_num)
                 for param_group in self.optimizer.param_groups:
                     param_group["lr"] = self.ft_factor * curr_lr
 
@@ -334,8 +332,7 @@ class OptimScheduler(ABC):
             f"{self.__class__.__name__}("
             f"optimizer={self.optimizer.__class__.__name__}, "
             f"optim_loss={self.optim_loss}, "
-            f"updated_modules={self.updated_modules}, " +
-            self.extra_repr_fn() + ")"
+            f"updated_modules={self.updated_modules}, " + self.extra_repr_fn() + ")"
         )
 
     def extra_repr_fn(self) -> str:

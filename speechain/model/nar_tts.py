@@ -67,8 +67,7 @@ class FastSpeech2(Model):
         # --- 1. Model-Customized Part Initialization --- #
         # initialize the tokenizer
         if token_type == "char":
-            self.tokenizer = CharTokenizer(
-                token_path, copy_path=self.result_path)
+            self.tokenizer = CharTokenizer(token_path, copy_path=self.result_path)
         elif token_type == "mfa":
             self.tokenizer = GraphemeToPhonemeTokenizer(
                 token_path, copy_path=self.result_path
@@ -84,8 +83,7 @@ class FastSpeech2(Model):
             if not isinstance(spk_list, list):
                 spk_list = [spk_list]
             spk_list = np.concatenate(
-                [np.loadtxt(parse_path_args(s_l), dtype=str)
-                 for s_l in spk_list],
+                [np.loadtxt(parse_path_args(s_l), dtype=str) for s_l in spk_list],
                 axis=0,
             )
             # when the input file is idx2spk, only retain the column of speaker ids
@@ -455,7 +453,7 @@ class FastSpeech2(Model):
                 self.return_att_layer_num != -1
                 and len(input_att_list) > self.return_att_layer_num
             ):
-                input_att_list = input_att_list[-self.return_att_layer_num:]
+                input_att_list = input_att_list[-self.return_att_layer_num :]
             # pick up the target attention heads
             if (
                 self.return_att_head_num != -1
@@ -577,8 +575,7 @@ class FastSpeech2(Model):
         )
         if duration_gate_loss is not None:
             loss += duration_gate_loss
-            metrics.update(
-                duration_gate_loss=duration_gate_loss.clone().detach())
+            metrics.update(duration_gate_loss=duration_gate_loss.clone().detach())
         losses = dict(loss=loss)
         metrics.update(loss=loss.clone().detach())
 
@@ -657,8 +654,7 @@ class FastSpeech2(Model):
                 dict(
                     materials=dict(
                         real_text=[
-                            copy.deepcopy(
-                                self.tokenizer.tensor2text(text[0][1:-1]))
+                            copy.deepcopy(self.tokenizer.tensor2text(text[0][1:-1]))
                         ]
                     ),
                     plot_type="text",
@@ -692,8 +688,7 @@ class FastSpeech2(Model):
         vis_logs.append(
             dict(
                 materials=dict(
-                    hypo_duration=copy.deepcopy(
-                        epoch_records[sample_index]["duration"])
+                    hypo_duration=copy.deepcopy(epoch_records[sample_index]["duration"])
                 ),
                 plot_type="text",
                 epoch=epoch,
@@ -736,8 +731,7 @@ class FastSpeech2(Model):
                         else (text.size(0), text.size(1) - 2)
                     )
                 )
-                duration_alpha = (alpha_max - alpha_min) * \
-                    duration_alpha + alpha_min
+                duration_alpha = (alpha_max - alpha_min) * duration_alpha + alpha_min
             # fixed alpha
             else:
                 duration_alpha = torch.tensor(
@@ -760,8 +754,7 @@ class FastSpeech2(Model):
                         else (text.size(0), text.size(1) - 2)
                     )
                 )
-                energy_alpha = (alpha_max - alpha_min) * \
-                    energy_alpha + alpha_min
+                energy_alpha = (alpha_max - alpha_min) * energy_alpha + alpha_min
             # fixed alpha
             else:
                 energy_alpha = torch.tensor(
@@ -904,15 +897,12 @@ class FastSpeech2(Model):
 
         # arguments for controllable TTS if teacher-forcing is not used
         if not teacher_forcing:
-            alpha = infer_conf.pop(
-                "alpha") if "alpha" in infer_conf.keys() else 1.0
+            alpha = infer_conf.pop("alpha") if "alpha" in infer_conf.keys() else 1.0
             alpha_min = (
-                infer_conf.pop(
-                    "alpha_min") if "alpha_min" in infer_conf.keys() else 1.0
+                infer_conf.pop("alpha_min") if "alpha_min" in infer_conf.keys() else 1.0
             )
             alpha_max = (
-                infer_conf.pop(
-                    "alpha_max") if "alpha_max" in infer_conf.keys() else 1.0
+                infer_conf.pop("alpha_max") if "alpha_max" in infer_conf.keys() else 1.0
             )
             assert (alpha == 1.0) or (alpha_min == 1.0 and alpha_max == 1.0), (
                 "(1) set alpha to a non-one float number; "
@@ -1018,8 +1008,7 @@ class FastSpeech2(Model):
                     spk_feat_ids = ["rand_spk" for _ in range(batch_size)]
 
         # copy the input data in advance for data safety
-        model_input, outputs = copy.deepcopy(
-            dict(text=text, text_len=text_len)), dict()
+        model_input, outputs = copy.deepcopy(dict(text=text, text_len=text_len)), dict()
         # remove the sos at the beginning and eos at the end after copying
         text_len -= 2
 
@@ -1062,8 +1051,7 @@ class FastSpeech2(Model):
                 hypo_duration[i][: text_len[i]].type(torch.int)
                 for i in range(len(hypo_duration))
             ]
-            outputs.update(duration=dict(
-                format="txt", content=to_cpu(hypo_duration)))
+            outputs.update(duration=dict(format="txt", content=to_cpu(hypo_duration)))
 
         hypo_feat = infer_results[
             "pred_feat_before" if use_before else "pred_feat_after"
@@ -1100,8 +1088,7 @@ class FastSpeech2(Model):
         # convert the acoustic features back to GL waveforms if specified
         if return_wav:
             try:
-                hypo_wav, hypo_wav_len = self.vocode_func(
-                    hypo_feat, hypo_feat_len)
+                hypo_wav, hypo_wav_len = self.vocode_func(hypo_feat, hypo_feat_len)
             # do not save waveforms if there is a RuntimeError
             except RuntimeError:
                 pass
@@ -1125,8 +1112,7 @@ class FastSpeech2(Model):
                     group_ids=spk_ids,
                     content=to_cpu(hypo_wav, tgt="numpy"),
                 )
-                outputs["wav_len"] = dict(
-                    format="txt", content=to_cpu(hypo_wav_len))
+                outputs["wav_len"] = dict(format="txt", content=to_cpu(hypo_wav_len))
 
         # return the acoustic features if specified
         if return_feat:
@@ -1155,8 +1141,7 @@ class FastSpeech2(Model):
                 duration_alpha=dict(
                     format="txt",
                     content=[
-                        d_a[0] if len(d_a) == 1 else str(
-                            [round(i, 2) for i in d_a])
+                        d_a[0] if len(d_a) == 1 else str([round(i, 2) for i in d_a])
                         for d_a in to_cpu(duration_alpha)
                     ],
                 )
@@ -1166,8 +1151,7 @@ class FastSpeech2(Model):
                 energy_alpha=dict(
                     format="txt",
                     content=[
-                        e_a[0] if len(e_a) == 1 else str(
-                            [round(i, 2) for i in e_a])
+                        e_a[0] if len(e_a) == 1 else str([round(i, 2) for i in e_a])
                         for e_a in to_cpu(energy_alpha)
                     ],
                 )
@@ -1177,8 +1161,7 @@ class FastSpeech2(Model):
                 pitch_alpha=dict(
                     format="txt",
                     content=[
-                        p_a[0] if len(p_a) == 1 else str(
-                            [round(i, 2) for i in p_a])
+                        p_a[0] if len(p_a) == 1 else str([round(i, 2) for i in p_a])
                         for p_a in to_cpu(pitch_alpha)
                     ],
                 )
@@ -1197,8 +1180,7 @@ class FastSpeech2(Model):
         )
         # record the speaker embedding ID used as the reference
         if spk_feat_ids is not None:
-            outputs.update(ref_spk_feat=dict(
-                format="txt", content=spk_feat_ids))
+            outputs.update(ref_spk_feat=dict(format="txt", content=spk_feat_ids))
 
         # evaluation reports for all the testing instances
         instance_report_dict = {}
@@ -1212,8 +1194,7 @@ class FastSpeech2(Model):
 
             if "Feature Length" not in instance_report_dict.keys():
                 instance_report_dict["Feature Length"] = []
-            instance_report_dict["Feature Length"].append(
-                f"{hypo_feat_len[i]:d}")
+            instance_report_dict["Feature Length"].append(f"{hypo_feat_len[i]:d}")
         # register the instance reports for generating instance_reports.md
         self.register_instance_reports(md_list_dict=instance_report_dict)
 

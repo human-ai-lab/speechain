@@ -4,7 +4,6 @@
     Date: 2022.07
 """
 
-import sys
 import os
 import logging
 import logging.handlers

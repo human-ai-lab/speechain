@@ -1,9 +1,7 @@
-import warnings
 from typing import Dict, List
 
 import torch
 import copy
-import numpy as np
 
 from speechain.model.abs import Model
 from speechain.tokenizer.char import CharTokenizer
@@ -14,7 +12,7 @@ from speechain.criterion.cross_entropy import CrossEntropy
 from speechain.criterion.accuracy import Accuracy
 
 from speechain.utilbox.tensor_util import to_cpu
-from speechain.utilbox.train_util import text2tensor_and_len, make_mask_from_len
+from speechain.utilbox.train_util import make_mask_from_len
 
 
 class LM(Model):
@@ -46,8 +44,7 @@ class LM(Model):
         # --- 1. Module-independent Initialization --- #
         # initialize the tokenizer
         if token_type.lower() == "char":
-            self.tokenizer = CharTokenizer(
-                token_path, copy_path=self.result_path)
+            self.tokenizer = CharTokenizer(token_path, copy_path=self.result_path)
         elif token_type.lower() == "sentencepiece":
             self.tokenizer = SentencePieceTokenizer(
                 token_path, copy_path=self.result_path
@@ -135,7 +132,7 @@ class LM(Model):
                 self.return_att_layer_num != -1
                 and len(input_att_list) > self.return_att_layer_num
             ):
-                input_att_list = input_att_list[-self.return_att_layer_num:]
+                input_att_list = input_att_list[-self.return_att_layer_num :]
             # pick up the target attention heads
             if (
                 self.return_att_head_num != -1
@@ -182,8 +179,7 @@ class LM(Model):
             torch.sum(text_prob, dim=-1) * (-1 / (text_len - 1))
         ).mean()
 
-        metrics = dict(accuracy=accuracy.detach(),
-                       text_ppl=text_ppl.clone().detach())
+        metrics = dict(accuracy=accuracy.detach(), text_ppl=text_ppl.clone().detach())
 
         loss = self.ce_loss(logits=logits, text=text, text_len=text_len)
         losses = dict(loss=loss)
@@ -251,8 +247,7 @@ class LM(Model):
                 dict(
                     materials=dict(
                         real_text=[
-                            copy.deepcopy(
-                                self.tokenizer.tensor2text(text[0][1:-1]))
+                            copy.deepcopy(self.tokenizer.tensor2text(text[0][1:-1]))
                         ]
                     ),
                     plot_type="text",
@@ -296,8 +291,7 @@ class LM(Model):
         model_input = copy.deepcopy(dict(text=text, text_len=text_len))
 
         # LM Decoding by Teacher Forcing
-        infer_results = self.module_forward(
-            return_att=return_att, **model_input)
+        infer_results = self.module_forward(return_att=return_att, **model_input)
         outputs = dict()
 
         # add the attention matrix into the output Dict, only used for model visualization during training
@@ -359,13 +353,11 @@ class LM(Model):
         for i in range(len(text)):
             if "Text Confidence" not in instance_report_dict.keys():
                 instance_report_dict["Text Confidence"] = []
-            instance_report_dict["Text Confidence"].append(
-                f"{hypo_text_confid[i]:.6f}")
+            instance_report_dict["Text Confidence"].append(f"{hypo_text_confid[i]:.6f}")
 
             if "Text Perplexity" not in instance_report_dict.keys():
                 instance_report_dict["Text Perplexity"] = []
-            instance_report_dict["Text Perplexity"].append(
-                f"{hypo_text_ppl[i]:.4f}")
+            instance_report_dict["Text Perplexity"].append(f"{hypo_text_ppl[i]:.4f}")
         # register the instance reports for generating instance_reports.md
         self.register_instance_reports(md_list_dict=instance_report_dict)
 

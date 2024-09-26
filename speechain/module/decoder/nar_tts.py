@@ -75,8 +75,7 @@ class FastSpeech2Decoder(Module):
             "speechain.module." + pitch_predictor["type"]
         )
         pitch_predictor["conf"] = (
-            dict() if "conf" not in pitch_predictor.keys(
-            ) else pitch_predictor["conf"]
+            dict() if "conf" not in pitch_predictor.keys() else pitch_predictor["conf"]
         )
         # the conv1d embedding layer of pitch predictor is automatically turned on
         pitch_predictor["conf"]["use_conv_emb"] = True
@@ -106,8 +105,7 @@ class FastSpeech2Decoder(Module):
                 "speechain.module." + feat_frontend["type"]
             )
             feat_frontend["conf"] = (
-                dict() if "conf" not in feat_frontend.keys(
-                ) else feat_frontend["conf"]
+                dict() if "conf" not in feat_frontend.keys() else feat_frontend["conf"]
             )
             # feature frontend is automatically set to return frame-wise energy
             feat_frontend["conf"]["return_energy"] = True
@@ -139,10 +137,8 @@ class FastSpeech2Decoder(Module):
         # --- 4. Mel-Spectrogram Decoder Part --- #
         # Initialize decoder
         decoder_class = import_class("speechain.module." + decoder["type"])
-        decoder["conf"] = dict(
-        ) if "conf" not in decoder.keys() else decoder["conf"]
-        self.decoder = decoder_class(
-            input_size=self.input_size, **decoder["conf"])
+        decoder["conf"] = dict() if "conf" not in decoder.keys() else decoder["conf"]
+        self.decoder = decoder_class(input_size=self.input_size, **decoder["conf"])
 
         # initialize prediction layers (feature prediction & stop prediction)
         self.feat_pred = torch.nn.Linear(
@@ -151,8 +147,7 @@ class FastSpeech2Decoder(Module):
 
         # Initialize postnet of the decoder
         postnet_class = import_class("speechain.module." + postnet["type"])
-        postnet["conf"] = dict(
-        ) if "conf" not in postnet.keys() else postnet["conf"]
+        postnet["conf"] = dict() if "conf" not in postnet.keys() else postnet["conf"]
         self.postnet = postnet_class(input_size=feat_dim, **postnet["conf"])
 
     @staticmethod
@@ -264,8 +259,7 @@ class FastSpeech2Decoder(Module):
         # --- 1. Speaker Embedding Combination --- #
         if hasattr(self, "spk_emb"):
             # extract and process the speaker features (activation is not performed for random speaker feature)
-            spk_feat_lookup, spk_feat = self.spk_emb(
-                spk_ids=spk_ids, spk_feat=spk_feat)
+            spk_feat_lookup, spk_feat = self.spk_emb(spk_ids=spk_ids, spk_feat=spk_feat)
             # combine the speaker features with the encoder outputs (and the decoder prenet outputs if specified)
             enc_text, _ = self.spk_emb.combine_spk_feat(
                 spk_feat=spk_feat, spk_feat_lookup=spk_feat_lookup, enc_output=enc_text
@@ -427,8 +421,7 @@ class FastSpeech2Decoder(Module):
         emb_pitch = self.pitch_predictor.emb_pred_scalar(used_pitch)
 
         # --- 5. Energy Prediction and Embedding --- #
-        pred_energy, enc_text_len = self.energy_predictor(
-            enc_text, enc_text_len)
+        pred_energy, enc_text_len = self.energy_predictor(enc_text, enc_text_len)
         if energy is not None:
             # turn the frame-wise energy values into frame-averaged energy values
             energy, energy_len = self.average_scalar_by_duration(

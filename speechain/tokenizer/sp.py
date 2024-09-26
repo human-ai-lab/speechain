@@ -46,8 +46,7 @@ class SentencePieceTokenizer(Tokenizer):
             assert (
                 copy_path is not None
             ), "Please give copy_path for SentencePiece model backup!"
-            token_model = os.path.join(
-                parse_path_args(copy_path), "token_model")
+            token_model = os.path.join(parse_path_args(copy_path), "token_model")
 
         # initialize the tokenizer model by the sentencepiece package
         self.sp_model = spm.SentencePieceProcessor()
@@ -56,8 +55,7 @@ class SentencePieceTokenizer(Tokenizer):
         # save the backup if copy_path is given
         if copy_path is not None:
             try:
-                shutil.copy(src=token_model, dst=os.path.join(
-                    copy_path, "token_model"))
+                shutil.copy(src=token_model, dst=os.path.join(copy_path, "token_model"))
             except shutil.SameFileError:
                 pass
 

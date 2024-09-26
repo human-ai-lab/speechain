@@ -42,8 +42,7 @@ def read_data_by_path(
 
     """
     # get the folder directory and data file name
-    folder_path, data_file = os.path.dirname(
-        data_path), os.path.basename(data_path)
+    folder_path, data_file = os.path.dirname(data_path), os.path.basename(data_path)
     sample_rate = None
     # ':' means that the data is stored in a compressed chunk file
     if ":" in data_file:
@@ -77,8 +76,7 @@ def read_data_by_path(
             # 1. soundfile.read(self.src_data[index], always_2d=True, dtype='float32')[0]
             # 2. librosa.core.load(self.src_data[index], sr=self.sample_rate)[0].reshape(-1, 1)
             # 3. torchaudio.load(self.src_data[index], channels_first=False, normalize=False)[0]
-            data, sample_rate = sf.read(
-                data_path, always_2d=True, dtype="float32")
+            data, sample_rate = sf.read(data_path, always_2d=True, dtype="float32")
         else:
             raise NotImplementedError(f"unknown file extension: {data_ext}!")
 
@@ -145,8 +143,7 @@ def load_idx2data_file(
             else:
                 # (n,) List -> Dict[str, data_type]
                 return {
-                    key: data_type(value[0] if isinstance(
-                        value, List) else value)
+                    key: data_type(value[0] if isinstance(value, List) else value)
                     for key, value in enumerate(data)
                 }
         # .json metadata file
@@ -171,8 +168,7 @@ def load_idx2data_file(
         assert isinstance(file_path, List)
 
     # data file reading, List[str] -> List[Dict[str, str]]
-    idx2data_dict = [load_single_file(parse_path_args(f_p))
-                     for f_p in file_path]
+    idx2data_dict = [load_single_file(parse_path_args(f_p)) for f_p in file_path]
     # data Dict combination, List[Dict[str, str]] -> Dict[str, str]
     idx2data_dict = {
         key: value
@@ -206,8 +202,7 @@ def read_idx2data_file_to_dict(
     }
 
     # loop each kind of information
-    output_dict = {key: load_idx2data_file(
-        value) for key, value in path_dict.items()}
+    output_dict = {key: load_idx2data_file(value) for key, value in path_dict.items()}
 
     # for data_name in path_dict.keys():
     #     # data file reading, List[str] -> List[Dict[str, str]]
@@ -273,8 +268,7 @@ def search_file_in_subfolder(
 
     # If the input query is a file path
     if os.path.isfile(curr_query):
-        dir_name, node_name = os.path.dirname(
-            curr_query), os.path.basename(curr_query)
+        dir_name, node_name = os.path.dirname(curr_query), os.path.basename(curr_query)
         if tgt_match_fn is None or tgt_match_fn(node_name):
             # Skip the symbolic link and only return existing files
             if not os.path.islink(curr_query):

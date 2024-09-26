@@ -220,15 +220,12 @@ class Monitor(ABC):
         # Record data loading time
         _total_time = sum(self.step_records["consumed_time"]["data_load_time"])
         epoch_message += f"Total data load time: {_total_time:.2f}s -- "
-        self.epoch_records["consumed_time"]["data_load_time"].append(
-            _total_time)
+        self.epoch_records["consumed_time"]["data_load_time"].append(_total_time)
 
         # Record model forward time
-        _total_time = sum(
-            self.step_records["consumed_time"]["model_forward_time"])
+        _total_time = sum(self.step_records["consumed_time"]["model_forward_time"])
         epoch_message += f"Total model forward time: {_total_time:.2f}s -- "
-        self.epoch_records["consumed_time"]["model_forward_time"].append(
-            _total_time)
+        self.epoch_records["consumed_time"]["model_forward_time"].append(_total_time)
         epoch_message += "\n"
 
         return epoch_message
@@ -300,8 +297,7 @@ class Monitor(ABC):
 
             if f"Rank{rank}" not in self.epoch_records["consumed_memory"].keys():
                 self.epoch_records["consumed_memory"][f"Rank{rank}"] = []
-            self.epoch_records["consumed_memory"][f"Rank{rank}"].append(
-                memory_used)
+            self.epoch_records["consumed_memory"][f"Rank{rank}"].append(memory_used)
         epoch_message += "\n"
 
         return epoch_message
@@ -477,12 +473,12 @@ class TrainMonitor(Monitor):
             # calculate the accumulated time for reporting
             _data_load_time = sum(
                 self.step_records["consumed_time"]["data_load_time"][
-                    -self.report_per_steps:
+                    -self.report_per_steps :
                 ]
             )
             _model_forward_time = sum(
                 self.step_records["consumed_time"]["model_forward_time"][
-                    -self.report_per_steps:
+                    -self.report_per_steps :
                 ]
             )
             # initialize the returned message of the current step
@@ -496,7 +492,7 @@ class TrainMonitor(Monitor):
                 # report the values of criteria in each training step
                 step_message += "Training Criteria: "
                 for name, result in self.step_records["criteria"].items():
-                    _tmp_criteria = result[-self.report_per_steps:]
+                    _tmp_criteria = result[-self.report_per_steps :]
                     step_message += f"{name}: {np.mean(_tmp_criteria):.2e} -- "
 
                 if not self.no_optim:
@@ -507,18 +503,18 @@ class TrainMonitor(Monitor):
                         _loss_backward_time = sum(
                             self.step_records["consumed_time"]["loss_backward_time"][
                                 optim_name
-                            ][-self.report_per_steps:]
+                            ][-self.report_per_steps :]
                         )
                         _optim_time = sum(
                             self.step_records["consumed_time"]["optim_time"][
                                 optim_name
-                            ][-self.report_per_steps:]
+                            ][-self.report_per_steps :]
                         )
                         # average the learning rate
                         _lr = (
                             sum(
                                 self.step_records["optim_lr"][optim_name][
-                                    -self.report_per_steps:
+                                    -self.report_per_steps :
                                 ]
                             )
                             / self.report_per_steps
@@ -604,8 +600,7 @@ class TrainMonitor(Monitor):
                     epoch_message += f"Total optimization time: {_total_time:.2f}s, "
 
                     # average the learning rate
-                    aver_lr = np.mean(
-                        self.step_records["optim_lr"][optim_name]).item()
+                    aver_lr = np.mean(self.step_records["optim_lr"][optim_name]).item()
                     self.epoch_records["optim_lr"][optim_name].append(aver_lr)
                     epoch_message += f"Average learning rate: {aver_lr:.2e}\n"
                 epoch_message += "\n"
@@ -701,10 +696,8 @@ class ValidMonitor(Monitor):
             )
 
             if isinstance(self.best_model_selection[i], tuple):
-                self.best_model_selection[i] = list(
-                    self.best_model_selection[i])
-            self.best_model_selection[i][2] = self.best_model_selection[i][2].lower(
-            )
+                self.best_model_selection[i] = list(self.best_model_selection[i])
+            self.best_model_selection[i][2] = self.best_model_selection[i][2].lower()
             assert self.best_model_selection[i][2] in [
                 "max",
                 "min",
@@ -972,8 +965,7 @@ class ValidMonitor(Monitor):
                     else f"{metric_name}_best_{i + 1}.pth"
                 )
                 # create a soft link from the best model pointer to the model fi le of the current epoch
-                symlink_dst = os.path.join(
-                    self.model_save_path, _best_model_pointer)
+                symlink_dst = os.path.join(self.model_save_path, _best_model_pointer)
                 if os.path.islink(symlink_dst) or os.path.exists(symlink_dst):
                     os.unlink(symlink_dst)
                 os.symlink(
@@ -984,25 +976,22 @@ class ValidMonitor(Monitor):
         # update the symbol links of the last several models
         for epoch in range(self.epoch, max(0, self.epoch - self.last_model_number), -1):
             _last_model_pointer = (
-                f"latest.pth"
+                "latest.pth"
                 if epoch == self.epoch
                 else f"last_{self.epoch - epoch + 1}.pth"
             )
             # create a soft link from the best model pointer to the model file of the current epoch
-            symlink_dst = os.path.join(
-                self.model_save_path, _last_model_pointer)
+            symlink_dst = os.path.join(self.model_save_path, _last_model_pointer)
             if os.path.islink(symlink_dst) or os.path.exists(symlink_dst):
                 os.unlink(symlink_dst)
             os.symlink(
-                os.path.join(self.model_save_path,
-                             f"epoch_{epoch}.pth"), symlink_dst
+                os.path.join(self.model_save_path, f"epoch_{epoch}.pth"), symlink_dst
             )
 
         # remove the redundant model files
         saved_epochs = self.saved_model_epoch.copy()
         for epoch in saved_epochs:
-            epoch_model_path = os.path.join(
-                self.model_save_path, f"epoch_{epoch}.pth")
+            epoch_model_path = os.path.join(self.model_save_path, f"epoch_{epoch}.pth")
             if whether_remove(epoch):
                 # remove the record of epoch in the memory
                 self.saved_model_epoch.remove(epoch)
@@ -1124,8 +1113,7 @@ class ValidMonitor(Monitor):
                         avg_model[key] /= aver_num
 
                 # save the average model
-                _aver_model_path = os.path.join(
-                    self.model_save_path, aver_model_name)
+                _aver_model_path = os.path.join(self.model_save_path, aver_model_name)
                 torch.save(avg_model, _aver_model_path)
 
                 return f"{aver_model_name} has been updated to the average of epochs {aver_epoch_list}.\n"
@@ -1241,8 +1229,7 @@ class ValidMonitor(Monitor):
             )
 
             # save the average models of the best models so far if needed
-            epoch_message = self.save_aver_model(
-                epoch_message, metric_pop_flags)
+            epoch_message = self.save_aver_model(epoch_message, metric_pop_flags)
 
         # log the information of the current validation epoch
         self.logger.info(epoch_message)
@@ -1292,8 +1279,7 @@ class TrainValidMonitor(object):
         self.logger = logger
 
         self.train_monitor = TrainMonitor(logger=logger, args=args)
-        self.valid_monitor = ValidMonitor(
-            logger=logger, args=args, model=model)
+        self.valid_monitor = ValidMonitor(logger=logger, args=args, model=model)
 
     def start_train_epoch(self, epoch: int):
         """
@@ -1398,8 +1384,7 @@ class TrainValidMonitor(object):
                     message += "The training snapshooter is still snapshotting. "
                 if not self.valid_monitor.empty_queue():
                     message += "The validation snapshooter is still snapshotting. "
-                self.logger.info(
-                    message + f"Waiting for {sleep_time} seconds......")
+                self.logger.info(message + f"Waiting for {sleep_time} seconds......")
                 time.sleep(sleep_time)
             self.logger.info(
                 f"The maximal waiting time {max_wait_round * sleep_time} seconds is reached, "
@@ -1595,8 +1580,7 @@ class TestMonitor(Monitor):
         test_step_message = None
         # record the tesing time of the current step
         curr_test_time = time.time()
-        self.step_info["group_time"].append(
-            curr_test_time - self.prev_test_time)
+        self.step_info["group_time"].append(curr_test_time - self.prev_test_time)
         self.prev_test_time = curr_test_time
 
         # meet the reporting interval
@@ -1609,13 +1593,11 @@ class TestMonitor(Monitor):
             # other testing steps
             else:
                 # calculate the average time of all the previous groups
-                prev_group_time = self.step_info["total_time"] / \
-                    self.finished_group_num
+                prev_group_time = self.step_info["total_time"] / self.finished_group_num
 
             # calculate the number of remaining steps
             self.finished_group_num += 1
-            finish_step_num = int(
-                self.finished_group_num * self.report_per_steps)
+            finish_step_num = int(self.finished_group_num * self.report_per_steps)
             remaining_step_num = self.total_step_num - finish_step_num
             # take the weighted average consuming time of each group
             aver_group_time = (prev_group_time + curr_group_time) / 2
@@ -1728,8 +1710,7 @@ class TestMonitor(Monitor):
         if self.distributed:
             for rank in range(1, torch.distributed.get_world_size()):
                 _tmp_dict = torch.load(
-                    os.path.join(self.result_path,
-                                 f"rank{rank}_tmp", "checkpoint.pth")
+                    os.path.join(self.result_path, f"rank{rank}_tmp", "checkpoint.pth")
                 )["monitor"]["step_info"]
                 for key in self.step_info.keys():
                     self.step_info[key].update(_tmp_dict[key])
@@ -1772,8 +1753,7 @@ class TestMonitor(Monitor):
                 os.path.join(self.result_path, file_name),
                 tgt_match_fn=lambda x: len(x.split(".")) > 1,
             ):
-                data_index = ".".join(
-                    os.path.basename(data_file).split(".")[:-1])
+                data_index = ".".join(os.path.basename(data_file).split(".")[:-1])
 
                 # add new file into the Dict
                 if data_index not in idx2path.keys():
@@ -1843,13 +1823,11 @@ class TestMonitor(Monitor):
 
                             if metric not in table_headers:
                                 table_headers.append(metric)
-                            table_contents[group_name].append(
-                                np.mean(result_list))
+                            table_contents[group_name].append(np.mean(result_list))
 
                 # get the max and min group value for each numerical metric
                 for i in range(len(table_headers) - 1):
-                    metric_value_list = [value[i]
-                                         for value in table_contents.values()]
+                    metric_value_list = [value[i] for value in table_contents.values()]
                     max_value, min_value = max(metric_value_list), min(
                         metric_value_list
                     )
@@ -1917,8 +1895,7 @@ class TestMonitor(Monitor):
                 continue
 
             self.enqueue(
-                dict(materials=copy.deepcopy(
-                    {metric: result_list}), plot_type="hist")
+                dict(materials=copy.deepcopy({metric: result_list}), plot_type="hist")
             )
 
         if not self.empty_queue():

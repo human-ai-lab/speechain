@@ -31,7 +31,7 @@ class DeltaFeature(Module):
         # initialze the filters for extracting delta features
         assert (
             isinstance(delta_N, int) and delta_N >= 1
-        ), f"delta_N must be a positive integer equal to or larger than 1"
+        ), "delta_N must be a positive integer equal to or larger than 1"
         self.delta_N = delta_N
         _filter_weights = torch.arange(-delta_N, delta_N + 1) / (
             2 * sum([i**2 for i in range(1, delta_N + 1)])
@@ -50,8 +50,7 @@ class DeltaFeature(Module):
         # move the weight from _parameters to _buffers
         _para_keys = list(_delta_filters._parameters.keys())
         for name in _para_keys:
-            _delta_filters._buffers[name] = _delta_filters._parameters.pop(
-                name)
+            _delta_filters._buffers[name] = _delta_filters._parameters.pop(name)
         self.delta_filters = _delta_filters
 
     def forward(self, feat: torch.Tensor, feat_len: torch.Tensor):
@@ -72,8 +71,7 @@ class DeltaFeature(Module):
 
         # (Optional) second-order derivative
         if self.delta_order == 2:
-            delta2_feat = self.delta_filters(
-                delta_feat.unsqueeze(1)).squeeze(1)
+            delta2_feat = self.delta_filters(delta_feat.unsqueeze(1)).squeeze(1)
             feat_stack.append(delta2_feat)
 
         # combine the original features with all delta features

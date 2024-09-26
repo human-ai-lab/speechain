@@ -115,8 +115,7 @@ class Speech2MelSpec(Module):
             n_fft = win_length
 
         # para recording
-        self.output_size = n_mels if delta_order is None else n_mels * \
-            (delta_order + 1)
+        self.output_size = n_mels if delta_order is None else n_mels * (delta_order + 1)
 
         # Speech -> Linear Spectrogram (linear spectrograms are not logged for getting the mel spectrograms)
         self.return_energy = return_energy
@@ -171,8 +170,7 @@ class Speech2MelSpec(Module):
 
         # Speech -> Linear Spectrogram
         if self.return_energy:
-            feat, feat_len, energy, energy_len = self.speech2linear(
-                speech, speech_len)
+            feat, feat_len, energy, energy_len = self.speech2linear(speech, speech_len)
         else:
             feat, feat_len = self.speech2linear(speech, speech_len)
             energy, energy_len = None, None

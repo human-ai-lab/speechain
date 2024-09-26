@@ -24,13 +24,12 @@ class SpeechBrainWrapper(object):
         self.vocoder = vocoder
 
     def __call__(self, feat: torch.Tensor, feat_len: torch.Tensor):
-        wav = self.vocoder.decode_batch(
-            feat.transpose(-2, -1)).transpose(-2, -1)
+        wav = self.vocoder.decode_batch(feat.transpose(-2, -1)).transpose(-2, -1)
         # the lengths of the shorter utterances in the batch are estimated by their feature lengths
         wav_len = (feat_len * (wav.size(1) / feat.size(1))).long()
         # make sure that the redundant parts are set to silence
         for i in range(len(wav_len)):
-            wav[i][wav_len[i]:] = 0
+            wav[i][wav_len[i] :] = 0
         return wav[:, : wav_len.max()], wav_len
 
 

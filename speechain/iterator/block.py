@@ -7,7 +7,6 @@
 from typing import List, Dict
 
 from speechain.iterator.abs import Iterator
-import numpy as np
 
 
 class BlockIterator(Iterator):

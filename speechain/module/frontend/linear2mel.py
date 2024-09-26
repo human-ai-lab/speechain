@@ -219,7 +219,7 @@ class LinearSpec2MelSpec(Module):
         # turn the silence part of the shorter utterances to zeros
         for i in range(len(feat_len)):
             if feat_len[i] != feat_len.max():
-                feat[i][feat_len[i]:] = 0
+                feat[i][feat_len[i] :] = 0
 
         # clamp the spectrogram for numerical stability
         return torch.clamp(feat, min=1e-10)

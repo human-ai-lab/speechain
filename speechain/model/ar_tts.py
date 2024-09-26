@@ -147,8 +147,7 @@ class ARTTS(Model):
         # --- 1. Model-Customized Part Initialization --- #
         # initialize the tokenizer
         if token_type == "char":
-            self.tokenizer = CharTokenizer(
-                token_path, copy_path=self.result_path)
+            self.tokenizer = CharTokenizer(token_path, copy_path=self.result_path)
         elif token_type in ["g2p", "mfa"]:
             self.tokenizer = GraphemeToPhonemeTokenizer(
                 token_path, copy_path=self.result_path
@@ -240,8 +239,7 @@ class ARTTS(Model):
                         f"Currently, the spk_num is set to {len(self.spk2idx) + 1}."
                     )
                 # all seen speakers plus an unknown speaker (ID: 0)
-                spk_emb["spk_num"], spk_emb["use_lookup"] = len(
-                    self.spk2idx) + 1, True
+                spk_emb["spk_num"], spk_emb["use_lookup"] = len(self.spk2idx) + 1, True
             elif "use_lookup" in spk_emb.keys() and spk_emb["use_lookup"]:
                 raise RuntimeError(
                     "Please give spk_list in model['customize_conf'] if you want to use speaker lookup "
@@ -428,7 +426,7 @@ class ARTTS(Model):
                 self.return_att_layer_num != -1
                 and len(input_att_list) > self.return_att_layer_num
             ):
-                input_att_list = input_att_list[-self.return_att_layer_num:]
+                input_att_list = input_att_list[-self.return_att_layer_num :]
             # pick up the target attention heads
             if (
                 self.return_att_head_num != -1
@@ -444,8 +442,7 @@ class ARTTS(Model):
             # encoder-decoder attention
             if "encdec" in self.return_att_type:
                 # register the encoder-decoder attention
-                outputs.update(
-                    att=dict(encdec=shrink_attention(encdec_attmat)))
+                outputs.update(att=dict(encdec=shrink_attention(encdec_attmat)))
             # encoder self-attention
             if enc_attmat is not None and "enc" in self.return_att_type:
                 outputs["att"].update(enc=shrink_attention(enc_attmat))
@@ -515,8 +512,7 @@ class ARTTS(Model):
         if stop_loss_fn is None:
             stop_loss_fn = self.stop_loss
         # end-flag prediction
-        stop_loss = stop_loss_fn(
-            pred=pred_stop, tgt=tgt_stop, tgt_len=tgt_feat_len)
+        stop_loss = stop_loss_fn(pred=pred_stop, tgt=tgt_stop, tgt_len=tgt_feat_len)
 
         # combine all losses into the final one
         loss = feat_loss_before + feat_loss_after + stop_loss
@@ -529,8 +525,7 @@ class ARTTS(Model):
 
             # layer_num * (batch, head_num, ...) -> (batch, layer_num * head_num, ...)
             att_tensor = torch.cat(att["encdec"], dim=1)
-            att_guid_loss = att_guid_loss_fn(
-                att_tensor, tgt_feat_len, text_len)
+            att_guid_loss = att_guid_loss_fn(att_tensor, tgt_feat_len, text_len)
             loss += att_guid_loss
         else:
             att_guid_loss = None
@@ -538,8 +533,7 @@ class ARTTS(Model):
         # --- Metrics Calculation --- #
         logits_threshold = -math.log(1 / self.stop_threshold - 1)
         pred_stop_hard = pred_stop > logits_threshold
-        stop_accuracy = self.stop_accuracy(
-            pred_stop_hard, tgt_stop, tgt_feat_len)
+        stop_accuracy = self.stop_accuracy(pred_stop_hard, tgt_stop, tgt_feat_len)
         stop_fbeta = self.stop_fbeta(pred_stop_hard, tgt_stop, tgt_feat_len)
 
         losses = dict(loss=loss)
@@ -652,8 +646,7 @@ class ARTTS(Model):
                 dict(
                     materials=dict(
                         real_text=[
-                            copy.deepcopy(
-                                self.tokenizer.tensor2text(text[0][1:-1]))
+                            copy.deepcopy(self.tokenizer.tensor2text(text[0][1:-1]))
                         ]
                     ),
                     plot_type="text",
@@ -877,8 +870,7 @@ class ARTTS(Model):
                 )
                 outputs.update(
                     {
-                        cri_name: dict(
-                            format="txt", content=to_cpu(tensor_result))
+                        cri_name: dict(format="txt", content=to_cpu(tensor_result))
                         for cri_name, tensor_result in criterion_results.items()
                     }
                 )
@@ -888,8 +880,7 @@ class ARTTS(Model):
                 hypo_feat_len = infer_results["tgt_feat_len"]
                 # hypo_feat & hypo_feat_len recovery by reduction_factor
                 if self.reduction_factor > 1:
-                    batch_size, feat_dim = hypo_feat.size(
-                        0), hypo_feat.size(-1)
+                    batch_size, feat_dim = hypo_feat.size(0), hypo_feat.size(-1)
                     hypo_feat = hypo_feat.reshape(
                         batch_size,
                         hypo_feat.size(1) * self.reduction_factor,
@@ -901,8 +892,7 @@ class ARTTS(Model):
 
         # --- 1.3. The 3rd Pass: denormalize the acoustic feature and transformation to waveforms --- #
         if hasattr(self.decoder, "normalize"):
-            hypo_feat = self.decoder.normalize.recover(
-                hypo_feat, group_ids=spk_ids)
+            hypo_feat = self.decoder.normalize.recover(hypo_feat, group_ids=spk_ids)
 
         # turn the tensor-like spk_ids (preprocessed by self.spk2idx) into a list
         if isinstance(spk_ids, torch.Tensor):
@@ -964,8 +954,7 @@ class ARTTS(Model):
             outputs.update(ref_spk=dict(format="txt", content=spk_ids))
         # record the speaker embedding ID used as the reference
         if spk_feat_ids is not None:
-            outputs.update(ref_spk_feat=dict(
-                format="txt", content=spk_feat_ids))
+            outputs.update(ref_spk_feat=dict(format="txt", content=spk_feat_ids))
 
         # evaluation reports for all the testing instances
         instance_report_dict = {}
@@ -979,8 +968,7 @@ class ARTTS(Model):
 
             if "Feature Length" not in instance_report_dict.keys():
                 instance_report_dict["Feature Length"] = []
-            instance_report_dict["Feature Length"].append(
-                f"{hypo_feat_len[i]:d}")
+            instance_report_dict["Feature Length"].append(f"{hypo_feat_len[i]:d}")
         # register the instance reports for generating instance_reports.md
         self.register_instance_reports(md_list_dict=instance_report_dict)
 
@@ -1091,8 +1079,7 @@ class MultiDomainARTTS(ARTTS):
         """
         # whether the input batch_data is generated by multiple dataloaders
         multi_flag = sum(
-            [not isinstance(value, torch.Tensor)
-             for value in batch_data.values()]
+            [not isinstance(value, torch.Tensor) for value in batch_data.values()]
         ) == len(batch_data)
 
         # Single-dataloader scenario
@@ -1194,8 +1181,7 @@ class MultiDomainARTTS(ARTTS):
                     metrics.update(
                         **{
                             (
-                                _key if len(
-                                    domain_list) == 1 else f"{domain}_{_key}"
+                                _key if len(domain_list) == 1 else f"{domain}_{_key}"
                             ): _value
                             for _key, _value in _criteria.items()
                         }
@@ -1209,16 +1195,14 @@ class MultiDomainARTTS(ARTTS):
                         domain_list
                     ), "There is a number mismatch of the domains between your data_cfg and train_cfg."
                     assert sum(
-                        [domain in self.loss_weights.keys()
-                         for domain in domain_list]
+                        [domain in self.loss_weights.keys() for domain in domain_list]
                     ) == len(
                         domain_list
                     ), "There is a name mismatch of the domains between your data_cfg and train_cfg."
                     losses.update(
                         loss=sum(
                             [
-                                losses[f"{domain}_loss"] *
-                                self.loss_weights[domain]
+                                losses[f"{domain}_loss"] * self.loss_weights[domain]
                                 for domain in domain_list
                             ]
                         )
@@ -1227,8 +1211,7 @@ class MultiDomainARTTS(ARTTS):
                 # average losses of all the domains if loss_weights is not given
                 else:
                     losses.update(
-                        loss=sum([losses[f"{domain}_loss"]
-                                 for domain in domain_list])
+                        loss=sum([losses[f"{domain}_loss"] for domain in domain_list])
                         / len(domain_list)
                     )
                 metrics.update(loss=losses["loss"].clone().detach())

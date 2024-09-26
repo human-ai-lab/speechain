@@ -22,8 +22,7 @@ def preemphasize_wav(wav: np.ndarray, coeff: float) -> np.ndarray:
 def feat_derivation(feat: np.ndarray, delta_order: int, delta_N: int) -> np.ndarray:
     comb_feat = [feat]
     if delta_order >= 1:
-        delta_feat = librosa.feature.delta(
-            feat, width=2 * delta_N + 1, order=1)
+        delta_feat = librosa.feature.delta(feat, width=2 * delta_N + 1, order=1)
         comb_feat.append(delta_feat)
 
         if delta_order >= 2:
@@ -56,10 +55,8 @@ def convert_wav_to_stft(
 
     """
     # if hop_length and win_length are given in the unit of seconds, turn them into the corresponding time steps
-    hop_length = int(hop_length * sr) if isinstance(hop_length,
-                                                    float) else hop_length
-    win_length = int(win_length * sr) if isinstance(win_length,
-                                                    float) else win_length
+    hop_length = int(hop_length * sr) if isinstance(hop_length, float) else hop_length
+    win_length = int(win_length * sr) if isinstance(win_length, float) else win_length
 
     # if n_fft is not given, it will be initialized to the window length
     if n_fft is None:
@@ -138,10 +135,8 @@ def convert_wav_to_logmel(
 
     """
     # if hop_length and win_length are given in the unit of seconds, turn them into the corresponding time steps
-    hop_length = int(hop_length * sr) if isinstance(hop_length,
-                                                    float) else hop_length
-    win_length = int(win_length * sr) if isinstance(win_length,
-                                                    float) else win_length
+    hop_length = int(hop_length * sr) if isinstance(hop_length, float) else hop_length
+    win_length = int(win_length * sr) if isinstance(win_length, float) else win_length
 
     # if n_fft is not given, it will be initialized to the window length
     if n_fft is None:
@@ -222,10 +217,8 @@ def convert_wav_to_mfcc(
 
     """
     # if hop_length and win_length are given in the unit of seconds, turn them into the corresponding time steps
-    hop_length = int(hop_length * sr) if isinstance(hop_length,
-                                                    float) else hop_length
-    win_length = int(win_length * sr) if isinstance(win_length,
-                                                    float) else win_length
+    hop_length = int(hop_length * sr) if isinstance(hop_length, float) else hop_length
+    win_length = int(win_length * sr) if isinstance(win_length, float) else win_length
 
     # if n_fft is not given, it will be initialized to the window length
     if n_fft is None:
@@ -261,8 +254,7 @@ def convert_wav_to_mfcc(
     # --- 2. Log-Mel Power Spectrogram -> MFCC --- #
     # remove the first mel cepstral coefficient
     # mfcc = librosa.feature.mfcc(S=mel_spec.transpose(1, 0), sr=sr, n_mfcc=n_mfcc)[1:, :]
-    mfcc = librosa.feature.mfcc(
-        S=mel_spec.transpose(1, 0), sr=sr, n_mfcc=n_mfcc)
+    mfcc = librosa.feature.mfcc(S=mel_spec.transpose(1, 0), sr=sr, n_mfcc=n_mfcc)
     if num_ceps is not None:
         mfcc = mfcc[:num_ceps, :]
 

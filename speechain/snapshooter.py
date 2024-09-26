@@ -56,16 +56,14 @@ class CurvePlotter(Plotter):
             grid_conf:
         """
         # default arguments of the plot_conf
-        self.plot_conf = dict(linestyle="-", linewidth=1,
-                              marker="o", markersize=5)
+        self.plot_conf = dict(linestyle="-", linewidth=1, marker="o", markersize=5)
         # overwrite the plot_conf by the input arguments
         if plot_conf is not None:
             for key, value in plot_conf.items():
                 self.plot_conf[key] = value
 
         # default arguments of the plot_conf
-        self.grid_conf = dict(linestyle="--", linewidth=1,
-                              color="black", alpha=0.3)
+        self.grid_conf = dict(linestyle="--", linewidth=1, color="black", alpha=0.3)
         # overwrite the plot_conf by the input arguments
         if grid_conf is not None:
             for key, value in grid_conf.items():
@@ -120,8 +118,7 @@ class CurvePlotter(Plotter):
                 keys = list(material.keys())
                 # for the summary figure, only show up to 5 points at x-axis
                 x_axis = (
-                    np.arange(1, len(material[keys[0]]) +
-                              1, dtype=np.int) * x_stride
+                    np.arange(1, len(material[keys[0]]) + 1, dtype=np.int) * x_stride
                 )
                 interval = math.ceil(len(x_axis) / 5)
                 ax.set_xticks(
@@ -151,13 +148,11 @@ class CurvePlotter(Plotter):
             # only one file
             if isinstance(material, List):
                 # initialize the horizontal axis
-                x_axis = np.arange(1, len(material) + 1,
-                                   dtype=np.int) * x_stride
+                x_axis = np.arange(1, len(material) + 1, dtype=np.int) * x_stride
                 save_data = np.concatenate(
                     (x_axis.reshape(-1, 1), np.array(material).reshape(-1, 1)), axis=-1
                 )
-                np.savetxt(
-                    f"{os.path.join(save_path, file_name)}.txt", save_data)
+                np.savetxt(f"{os.path.join(save_path, file_name)}.txt", save_data)
             # multiple files in the path
             elif isinstance(material, Dict):
                 if len(material) > 0:
@@ -270,8 +265,7 @@ class HistPlotter(Plotter):
                 self.plot_conf[key] = value
 
         # default arguments of the plot_conf
-        self.grid_conf = dict(linestyle="--", linewidth=1,
-                              color="black", alpha=0.3)
+        self.grid_conf = dict(linestyle="--", linewidth=1, color="black", alpha=0.3)
         # overwrite the plot_conf by the input arguments
         if grid_conf is not None:
             for key, value in grid_conf.items():
@@ -435,8 +429,7 @@ class SnapShooter:
         # initialize the list of sub-folder names
         subfolder_names = [] if subfolder_names is None else subfolder_names
         subfolder_names = (
-            [subfolder_names] if isinstance(
-                subfolder_names, str) else subfolder_names
+            [subfolder_names] if isinstance(subfolder_names, str) else subfolder_names
         )
 
         # initialize the figure saving path
@@ -560,8 +553,7 @@ class SnapShooter:
         # elif col_num > row_num:
         #     fig_width *= (col_num / row_num)
 
-        fig = plt.figure(
-            figsize=[fig_width, fig_height], num=row_num * col_num)
+        fig = plt.figure(figsize=[fig_width, fig_height], num=row_num * col_num)
         material_keys = list(materials.keys())
 
         yield fig, material_keys, row_num, col_num
@@ -767,8 +759,7 @@ class SnapShooter:
             )
 
             if epoch is not None and data_save:
-                x_axis = np.arange(
-                    0, len(material), dtype=np.int) * x_stride + 1
+                x_axis = np.arange(0, len(material), dtype=np.int) * x_stride + 1
                 save_data = np.concatenate(
                     (x_axis.reshape(-1, 1), np.array(material).reshape(-1, 1)), axis=-1
                 )

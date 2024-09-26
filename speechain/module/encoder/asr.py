@@ -41,8 +41,7 @@ class ASREncoder(Module):
 
         # acoustic feature extraction frontend of the E2E ASR encoder
         if frontend is not None:
-            frontend_class = import_class(
-                "speechain.module." + frontend["type"])
+            frontend_class = import_class("speechain.module." + frontend["type"])
             frontend["conf"] = (
                 dict() if "conf" not in frontend.keys() else frontend["conf"]
             )
@@ -70,18 +69,14 @@ class ASREncoder(Module):
         # feature embedding layer of the E2E ASR encoder
         if prenet is not None:
             prenet_class = import_class("speechain.module." + prenet["type"])
-            prenet["conf"] = dict(
-            ) if "conf" not in prenet.keys() else prenet["conf"]
-            self.prenet = prenet_class(
-                input_size=_prev_output_size, **prenet["conf"])
+            prenet["conf"] = dict() if "conf" not in prenet.keys() else prenet["conf"]
+            self.prenet = prenet_class(input_size=_prev_output_size, **prenet["conf"])
             _prev_output_size = self.prenet.output_size
 
         # main body of the E2E ASR encoder
         encoder_class = import_class("speechain.module." + encoder["type"])
-        encoder["conf"] = dict(
-        ) if "conf" not in encoder.keys() else encoder["conf"]
-        self.encoder = encoder_class(
-            input_size=_prev_output_size, **encoder["conf"])
+        encoder["conf"] = dict() if "conf" not in encoder.keys() else encoder["conf"]
+        self.encoder = encoder_class(input_size=_prev_output_size, **encoder["conf"])
         self.output_size = self.encoder.output_size
 
     def forward(

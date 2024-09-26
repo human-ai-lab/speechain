@@ -104,8 +104,7 @@ class Speech2LinearSpec(Module):
         self.preemphasis = preemphasis
         if preemphasis is not None:
             _preemph_filter = torch.nn.Conv1d(1, 1, kernel_size=2, bias=False)
-            _filter_weight = torch.Tensor(
-                [-self.preemphasis, 1]).reshape(1, 1, 2)
+            _filter_weight = torch.Tensor([-self.preemphasis, 1]).reshape(1, 1, 2)
             _preemph_filter.weight = torch.nn.Parameter(
                 _filter_weight, requires_grad=False
             )
@@ -113,8 +112,7 @@ class Speech2LinearSpec(Module):
             # move the weight from _parameters to _buffers so that these parameters won't influence the training
             _para_keys = list(_preemph_filter._parameters.keys())
             for name in _para_keys:
-                _preemph_filter._buffers[name] = _preemph_filter._parameters.pop(
-                    name)
+                _preemph_filter._buffers[name] = _preemph_filter._parameters.pop(name)
             self.preemph_filter = _preemph_filter
 
         # normalization type before STFT
@@ -172,7 +170,7 @@ class Speech2LinearSpec(Module):
             # remove redundant preemphasis calculations (there is one meaningless point at the end of some utterances)
             for i in range(speech_len.size(0)):
                 if speech_len[i] < speech.size(1):
-                    speech[i][speech_len[i]:] = 0.0
+                    speech[i][speech_len[i] :] = 0.0
 
         # --- 2. Waveform Pre-Normalization --- #
         # normalization for audio signals before STFT
@@ -184,8 +182,7 @@ class Speech2LinearSpec(Module):
                     speech.min(dim=1, keepdim=True)[0],
                     speech.max(dim=1, keepdim=True)[0],
                 )
-                speech = (speech - speech_min) / \
-                    (speech_max - speech_min) * 2 - 1
+                speech = (speech - speech_min) / (speech_max - speech_min) * 2 - 1
             else:
                 raise ValueError
 
@@ -193,14 +190,12 @@ class Speech2LinearSpec(Module):
         # initialize the window function lazily at the first training step
         # borrowed from https://github.com/espnet/espnet/blob/80e042099655822d6543c256910ae655a1a056fd/espnet2/layers/stft.py#L83
         if isinstance(self.stft_config["window"], str):
-            window_func = getattr(
-                torch, f"{self.stft_config['window']}_window")
+            window_func = getattr(torch, f"{self.stft_config['window']}_window")
             self.stft_config["window"] = window_func(
                 self.stft_config["win_length"], dtype=speech.dtype, device=speech.device
             )
         # extract linear spectrogram from signal by stft
-        stft_feat = torch.stft(speech.squeeze(-1), **
-                               self.stft_config).transpose(1, 2)
+        stft_feat = torch.stft(speech.squeeze(-1), **self.stft_config).transpose(1, 2)
 
         # calculate the number of frames after STFT
         if self.stft_config["center"]:
@@ -230,12 +225,12 @@ class Speech2LinearSpec(Module):
         # mask all the silence parts of the linear spectrogram to zeros
         for i in range(feat_len.size(0)):
             if feat_len[i] < linear_spec.size(1):
-                linear_spec[i][feat_len[i]:] = 0.0
+                linear_spec[i][feat_len[i] :] = 0.0
         # mask all the silence parts of the frame-wise energy to zeros
         if energy is not None:
             for i in range(energy_len.size(0)):
                 if energy_len[i] < energy.size(1):
-                    energy[i][energy_len[i]:] = 0.0
+                    energy[i][energy_len[i] :] = 0.0
 
         # convert the energy spectrogram to the magnitude spectrogram if specified
         if self.mag_spec:
@@ -323,8 +318,7 @@ class Speech2LinearSpec(Module):
                 # get the sliding window for the inverse pre-emphasis
                 inv_preemph_win = (
                     torch.pow(
-                        torch.full((inv_preemph_winlen,),
-                                   fill_value=self.preemphasis),
+                        torch.full((inv_preemph_winlen,), fill_value=self.preemphasis),
                         torch.arange(
                             start=inv_preemph_winlen - 1,
                             end=-1,
@@ -352,7 +346,7 @@ class Speech2LinearSpec(Module):
 
         # make sure that the redundant parts are set to silence
         for i in range(len(wav_len)):
-            wav[i][wav_len[i]:] = 0
+            wav[i][wav_len[i] :] = 0
 
         return wav, wav_len
 

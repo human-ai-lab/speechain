@@ -2,7 +2,6 @@ import argparse
 import math
 import os
 import matplotlib.pyplot as plt
-from collections import Counter
 
 from speechain.utilbox.data_loading_util import load_idx2data_file
 from speechain.utilbox.import_util import parse_path_args
@@ -101,10 +100,8 @@ def main(
         )
     idx2wav_len = load_idx2data_file(idx2wav_len_path, data_type=int)
 
-    hop_len = int(hop_len * sample_rate) if isinstance(hop_len,
-                                                       float) else hop_len
-    idx2feat_len = {idx: int(wav_len / hop_len)
-                    for idx, wav_len in idx2wav_len.items()}
+    hop_len = int(hop_len * sample_rate) if isinstance(hop_len, float) else hop_len
+    idx2feat_len = {idx: int(wav_len / hop_len) for idx, wav_len in idx2wav_len.items()}
 
     if token_type == "mfa":
         idx2text_len = load_idx2data_file(
@@ -192,8 +189,7 @@ def main(
         ax=ax,
         material=f2t_ratio,
         fig_name="Distribution of Frame-to-token ratio",
-        xlabel=xlabel +
-        f" (min={min_f2t:.2f}, mean={mean_f2t:.2f}, max={max_f2t:.2f})",
+        xlabel=xlabel + f" (min={min_f2t:.2f}, mean={mean_f2t:.2f}, max={max_f2t:.2f})",
         ylabel="Frequency",
     )
 

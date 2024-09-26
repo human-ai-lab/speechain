@@ -46,8 +46,7 @@ def extract_spk_feat(
         """
         Process the current batch of waveforms and extract speaker features.
         """
-        idx_list, wav_list = [i[0]
-                              for i in curr_batch], [i[1] for i in curr_batch]
+        idx_list, wav_list = [i[0] for i in curr_batch], [i[1] for i in curr_batch]
         wav_len = torch.LongTensor([w.size(0) for w in wav_list]).to(device)
         max_wav_len = wav_len.max().item()
 
@@ -61,8 +60,7 @@ def extract_spk_feat(
         )
         if save_path is None:
             idx2spk_feat.update(
-                dict(zip(idx_list, [to_cpu(s_f, tgt="numpy")
-                     for s_f in spk_feat]))
+                dict(zip(idx_list, [to_cpu(s_f, tgt="numpy") for s_f in spk_feat]))
             )
         else:
             idx2spk_feat.update(
@@ -71,8 +69,7 @@ def extract_spk_feat(
                     save_path=save_path,
                     group_ids=spk_id,
                     file_name_list=idx_list,
-                    file_content_list=[to_cpu(s_f, tgt="numpy")
-                                       for s_f in spk_feat],
+                    file_content_list=[to_cpu(s_f, tgt="numpy") for s_f in spk_feat],
                 )
             )
 
@@ -139,8 +136,7 @@ def extract_spk_feat(
         for wav_idx in wav_dict.keys():
             if isinstance(idx2spk_feat[wav_idx], str):
                 try:
-                    spk_feat_list.append(
-                        read_data_by_path(idx2spk_feat[wav_idx]))
+                    spk_feat_list.append(read_data_by_path(idx2spk_feat[wav_idx]))
                 except ValueError:
                     # record the waveform index whose speaker embedding dumping failed
                     failed_idx_list.append(wav_idx)

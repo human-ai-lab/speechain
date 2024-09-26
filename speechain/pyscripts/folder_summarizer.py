@@ -35,8 +35,7 @@ def main(src_folder: str, sum_file_name: str = None, tgt_path: str = None):
     if sum_file_name is None:
         sum_file_name = f"idx2{src_folder.split('/')[-1]}"
 
-    src_folder, tgt_path = parse_path_args(
-        src_folder), parse_path_args(tgt_path)
+    src_folder, tgt_path = parse_path_args(src_folder), parse_path_args(tgt_path)
 
     file_path_summary, empty_file_summary = {}, {}
     for file_path in tqdm(search_file_in_subfolder(src_folder)):

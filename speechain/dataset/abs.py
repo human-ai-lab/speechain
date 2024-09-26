@@ -258,8 +258,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         else:
             # Load metadata information
             meta_info = load_idx2data_file(meta_info)
-            meta_info = np.array([[key, value]
-                                 for key, value in meta_info.items()])
+            meta_info = np.array([[key, value] for key, value in meta_info.items()])
             # Initialize sorted indices and metadata values
             try:
                 meta_sorted_data = meta_info[:, 0][
@@ -301,7 +300,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
                                 : int((meta_sorted_data.shape[0] - selection_num) / 2)
                             ],
                             meta_sorted_data[
-                                -int((meta_sorted_data.shape[0] - selection_num) / 2):
+                                -int((meta_sorted_data.shape[0] - selection_num) / 2) :
                             ],
                         ),
                         axis=0,

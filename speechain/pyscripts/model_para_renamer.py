@@ -1,6 +1,5 @@
 import argparse
 import os
-import re
 import torch
 
 from tqdm import tqdm
@@ -9,7 +8,7 @@ from multiprocessing import Pool
 from typing import List, Dict
 from collections import OrderedDict
 
-from speechain.utilbox.import_util import parse_path_args, get_idle_gpu
+from speechain.utilbox.import_util import parse_path_args
 from speechain.utilbox.data_loading_util import search_file_in_subfolder
 from speechain.utilbox.type_util import str2list, str2dict
 
@@ -87,8 +86,7 @@ def main(
         model_file_path = parse_path_args(model_file_path)
         if os.path.isdir(model_file_path):
             model_file_path = search_file_in_subfolder(
-                model_file_path, lambda x: x.endswith(
-                    ".pth") and x != "checkpoint.pth"
+                model_file_path, lambda x: x.endswith(".pth") and x != "checkpoint.pth"
             )
         else:
             model_file_path = [model_file_path]
