@@ -195,7 +195,7 @@ train_cfg:
         time_mask_num: 5
 
       enc_prenet:
-        type: prenet.conv2d.Conv2dPrenet
+        type: transformer.encoder.TransformerEncoder
         conf:
           conv_dims:
             - !ref <d_model>

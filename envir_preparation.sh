@@ -10,7 +10,7 @@ read -ra speechain_envir <<< "${speechain_envir}"
 envir_path="${speechain_envir[$((${#speechain_envir[*]}-1))]}"
 
 # 3. Get the python compiler path in the environment root
-pycompiler_path="$(ls "${envir_path}"/bin/python?.?)"
+pycompiler_path="$(ls "${envir_path}"/bin/python3.8)"
 # add the python compiler path to the environmental variables
 if ! grep -q "export SPEECHAIN_PYTHON" ~/.bashrc; then
   echo "export SPEECHAIN_PYTHON=${pycompiler_path}" >> ~/.bashrc

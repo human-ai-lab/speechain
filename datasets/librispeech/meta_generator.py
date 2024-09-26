@@ -164,10 +164,11 @@ class LibriSpeechMetaGenerator(SpeechTextMetaGenerator):
             # make a specific row for each sentence and attach the sentence index at the beginning
             proc_lm_text, index = [], 0
             for _ori_text in tqdm(ori_lm_text):
-                _proc_text = en_text_process(_ori_text, txt_format)
-                if _proc_text != '':
-                    proc_lm_text.append(f'{index} {_proc_text}\n')
-                    index += 1
+                if _ori_text.strip():  # Add this check
+                    _proc_text = en_text_process(_ori_text, txt_format)
+                    if _proc_text != '':
+                        proc_lm_text.append(f'{index} {_proc_text}\n')
+                        index += 1
 
             with open(proc_text_path, mode='w+') as f:
                 f.writelines(proc_lm_text)
