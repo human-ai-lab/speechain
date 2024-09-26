@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import torch
 
 from speechain.criterion.abs import Criterion
@@ -16,10 +17,9 @@ class Accuracy(Criterion):
 
     """
 
-    def __call__(self,
-                 logits: torch.Tensor,
-                 text: torch.Tensor,
-                 text_len: torch.Tensor):
+    def __call__(
+        self, logits: torch.Tensor, text: torch.Tensor, text_len: torch.Tensor
+    ):
         """
 
         Args:
@@ -37,10 +37,11 @@ class Accuracy(Criterion):
         # For the text attached by a <sos/eos> at the beginning
         if logits.size(1) == text.size(1) - 1:
             # text_len must match the sequence dimension of text
-            assert text_len.max() == text.size(1), \
-                f"There is a mismatch of the sentence length between text and text_len. " \
-                f"Expect text_len.max() is either equal to or 1 smaller than text.size(1), " \
+            assert text_len.max() == text.size(1), (
+                f"There is a mismatch of the sentence length between text and text_len. "
+                f"Expect text_len.max() is either equal to or 1 smaller than text.size(1), "
                 f"but got text_len.max()={text_len.max()} and text.size(1)={text.size(1)}."
+            )
             # remove the <sos/eos> at the beginning
             text = text[:, 1:].squeeze(dim=-1)
             # don't use text_len -= 1 here because it will also change the text_len outside this function
@@ -58,7 +59,9 @@ class Accuracy(Criterion):
         if logits.dim() == text.dim() + 1:
             logits = logits.argmax(dim=-1)
         elif logits.dim() != text.dim():
-            raise RuntimeError(f"logits.shape={logits.shape} but text.shape={text.shape}!")
+            raise RuntimeError(
+                f"logits.shape={logits.shape} but text.shape={text.shape}!"
+            )
         correct_num = logits.eq(text).masked_select(text_mask).sum()
         total_num = text_len.sum()
         return correct_num / total_num

@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 from typing import List
 
 import editdistance
@@ -16,7 +17,11 @@ def text_preprocess(text, tokenizer: Tokenizer):
     # tensor input need to be recovered to string
     if isinstance(text, torch.Tensor):
         # remove the padding and sos/eos tokens
-        proc_text = text[torch.logical_and(text != tokenizer.ignore_idx, text != tokenizer.sos_eos_idx)]
+        proc_text = text[
+            torch.logical_and(
+                text != tokenizer.ignore_idx, text != tokenizer.sos_eos_idx
+            )
+        ]
         # turn text tensors into strings for removing the blanks
         string = tokenizer.tensor2text(proc_text)
     # string input, no processing is done here
@@ -29,9 +34,7 @@ def text_preprocess(text, tokenizer: Tokenizer):
 
 
 class ErrorRate(Criterion):
-    """
-
-    """
+    """ """
 
     def criterion_init(self, tokenizer: Tokenizer = None, do_aver: bool = False):
         """
@@ -44,8 +47,13 @@ class ErrorRate(Criterion):
         self.tokenizer = tokenizer
         self.do_aver = do_aver
 
-    def __call__(self, hypo_text: torch.Tensor or List[str] or str, real_text: torch.Tensor or List[str] or str,
-                 tokenizer: Tokenizer = None, do_aver: bool = False):
+    def __call__(
+        self,
+        hypo_text: torch.Tensor or List[str] or str,
+        real_text: torch.Tensor or List[str] or str,
+        tokenizer: Tokenizer = None,
+        do_aver: bool = False,
+    ):
         """
 
         Args:

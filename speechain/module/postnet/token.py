@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import torch
 
 from speechain.module.abs import Module
@@ -10,7 +11,7 @@ from speechain.module.abs import Module
 
 class TokenPostnet(Module):
     """
-        The decoder postnet that projects the model output vectors into token predictions.
+    The decoder postnet that projects the model output vectors into token predictions.
 
     """
 

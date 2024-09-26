@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import torch
 
 from typing import Dict
@@ -40,7 +41,9 @@ class Module(torch.nn.Module, ABC):
 
     """
 
-    def __init__(self, input_size: int = None, distributed: bool = False, **module_conf):
+    def __init__(
+        self, input_size: int = None, distributed: bool = False, **module_conf
+    ):
         """
         This initialization function is shared by all _Module_ subclasses.
 
@@ -167,5 +170,8 @@ class Module(torch.nn.Module, ABC):
             return None
         # for the non-leaf module, return a Dict containing names and recordable parameters of its member modules
         else:
-            return {name: module.get_recordable_para()
-                    for name, module in self._modules.items() if isinstance(module, Module)}
+            return {
+                name: module.get_recordable_para()
+                for name, module in self._modules.items()
+                if isinstance(module, Module)
+            }

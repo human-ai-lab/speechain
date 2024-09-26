@@ -3,27 +3,28 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import torch
 import numpy as np
 
 
 def to_native(x, tgt: str):
-    if hasattr(x, 'detach'):
+    if hasattr(x, "detach"):
         x = x.detach()
-    if hasattr(x, 'cpu'):
+    if hasattr(x, "cpu"):
         x = x.cpu()
 
     if isinstance(x, torch.Tensor):
         if len(x.shape) == 0:
             x = [x.item()]
-            if tgt == 'numpy':
+            if tgt == "numpy":
                 x = np.array(x)
         else:
-            if tgt == 'list':
-                assert hasattr(x, 'tolist')
+            if tgt == "list":
+                assert hasattr(x, "tolist")
                 x = x.tolist()
-            elif tgt == 'numpy':
-                assert hasattr(x, 'numpy')
+            elif tgt == "numpy":
+                assert hasattr(x, "numpy")
                 x = x.numpy()
     return x
 
@@ -54,11 +55,11 @@ def to_cuda(inputs, rank=0):
     elif isinstance(inputs, dict):
         inputs = {k: to_cuda(v, rank) for k, v in inputs.items()}
     elif isinstance(inputs, torch.Tensor) and not inputs.is_cuda:
-        inputs = inputs.to(f'cuda:{rank}')
+        inputs = inputs.to(f"cuda:{rank}")
     return inputs
 
 
-def to_cpu(inputs, tgt: str = 'list', batch_idx: int = None):
+def to_cpu(inputs, tgt: str = "list", batch_idx: int = None):
     if isinstance(inputs, tuple):
         inputs = tuple([to_cpu(x, tgt, batch_idx) for x in inputs])
     elif isinstance(inputs, list):
@@ -84,4 +85,3 @@ def from_batch(inputs, batch_idx=None):
         if batch_idx is not None and len(inputs.shape) > 0:
             inputs = inputs[batch_idx]
     return inputs
-

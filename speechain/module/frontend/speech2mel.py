@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import torch
 from speechain.module.abs import Module
 from speechain.module.frontend.speech2linear import Speech2LinearSpec
@@ -19,29 +20,31 @@ class Speech2MelSpec(Module):
 
     """
 
-    def module_init(self,
-                    n_mels: int,
-                    hop_length: int or float,
-                    win_length: int or float,
-                    n_fft: int = None,
-                    sr: int = 16000,
-                    preemphasis: float = None,
-                    pre_stft_norm: str = None,
-                    window: str = "hann",
-                    center: bool = True,
-                    normalized: bool = False,
-                    onesided: bool = True,
-                    mag_spec: bool = False,
-                    return_energy: bool = False,
-                    fmin: float = 0.0,
-                    fmax: float = None,
-                    clamp: float = 1e-10,
-                    logging: bool = True,
-                    log_base: float = 10.0,
-                    mel_scale: str = 'slaney',
-                    mel_norm: bool = True,
-                    delta_order: int = None,
-                    delta_N: int = 2):
+    def module_init(
+        self,
+        n_mels: int,
+        hop_length: int or float,
+        win_length: int or float,
+        n_fft: int = None,
+        sr: int = 16000,
+        preemphasis: float = None,
+        pre_stft_norm: str = None,
+        window: str = "hann",
+        center: bool = True,
+        normalized: bool = False,
+        onesided: bool = True,
+        mag_spec: bool = False,
+        return_energy: bool = False,
+        fmin: float = 0.0,
+        fmax: float = None,
+        clamp: float = 1e-10,
+        logging: bool = True,
+        log_base: float = 10.0,
+        mel_scale: str = "slaney",
+        mel_norm: bool = True,
+        delta_order: int = None,
+        delta_N: int = 2,
+    ):
         """
 
         Args:
@@ -100,8 +103,12 @@ class Speech2MelSpec(Module):
 
         """
         # if hop_length and win_length are given in the unit of seconds, turn them into the corresponding time steps
-        hop_length = int(hop_length * sr) if isinstance(hop_length, float) else hop_length
-        win_length = int(win_length * sr) if isinstance(win_length, float) else win_length
+        hop_length = (
+            int(hop_length * sr) if isinstance(hop_length, float) else hop_length
+        )
+        win_length = (
+            int(win_length * sr) if isinstance(win_length, float) else win_length
+        )
 
         # if n_fft is not given, it will be initialized to the window length
         if n_fft is None:
@@ -112,31 +119,35 @@ class Speech2MelSpec(Module):
 
         # Speech -> Linear Spectrogram (linear spectrograms are not logged for getting the mel spectrograms)
         self.return_energy = return_energy
-        self.speech2linear = Speech2LinearSpec(n_fft=n_fft,
-                                               sr=sr,
-                                               hop_length=hop_length,
-                                               win_length=win_length,
-                                               preemphasis=preemphasis,
-                                               pre_stft_norm=pre_stft_norm,
-                                               window=window,
-                                               center=center,
-                                               normalized=normalized,
-                                               onesided=onesided,
-                                               mag_spec=mag_spec,
-                                               return_energy=return_energy,
-                                               logging=False)
+        self.speech2linear = Speech2LinearSpec(
+            n_fft=n_fft,
+            sr=sr,
+            hop_length=hop_length,
+            win_length=win_length,
+            preemphasis=preemphasis,
+            pre_stft_norm=pre_stft_norm,
+            window=window,
+            center=center,
+            normalized=normalized,
+            onesided=onesided,
+            mag_spec=mag_spec,
+            return_energy=return_energy,
+            logging=False,
+        )
         # Linear Spectrogram -> (Log-)Mel Spectrogram
-        self.linear2mel = LinearSpec2MelSpec(sr=sr,
-                                             n_fft=n_fft,
-                                             n_mels=n_mels,
-                                             fmin=fmin,
-                                             fmax=fmax,
-                                             clamp=clamp,
-                                             logging=logging,
-                                             log_base=log_base,
-                                             mel_scale=mel_scale,
-                                             mel_norm=mel_norm,
-                                             mag_spec=mag_spec)
+        self.linear2mel = LinearSpec2MelSpec(
+            sr=sr,
+            n_fft=n_fft,
+            n_mels=n_mels,
+            fmin=fmin,
+            fmax=fmax,
+            clamp=clamp,
+            logging=logging,
+            log_base=log_base,
+            mel_scale=mel_scale,
+            mel_norm=mel_norm,
+            mag_spec=mag_spec,
+        )
         # (Optional) (Log-)Mel Spectrogram -> (Log-)Mel Spectrogram + Deltas
         self.delta_order = delta_order
         if delta_order is not None:
@@ -201,11 +212,14 @@ class Speech2MelSpec(Module):
         return self.speech2linear.sr
 
     def __repr__(self):
-        string = f"{self.__class__.__name__}(\n" + \
-                 str(self.speech2linear) + '\n' + \
-                 str(self.linear2mel)
+        string = (
+            f"{self.__class__.__name__}(\n"
+            + str(self.speech2linear)
+            + "\n"
+            + str(self.linear2mel)
+        )
 
         if self.delta_order is not None:
-            string += '\n' + str(self.delta)
+            string += "\n" + str(self.delta)
 
-        return string + '\n)'
+        return string + "\n)"

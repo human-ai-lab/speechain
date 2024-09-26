@@ -4,6 +4,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import torch
 
 from speechain.module.abs import Module
@@ -25,16 +26,18 @@ class TransformerDecoderLayer(Module):
 
     """
 
-    def module_init(self,
-                    d_model: int = 512,
-                    num_heads: int = 8,
-                    scale_dp_by_head: bool = False,
-                    att_dropout: float = 0.1,
-                    fdfwd_dim: int = 0,
-                    fdfwd_activation: str = 'ReLU',
-                    fdfwd_dropout: float = 0.1,
-                    res_dropout: float = 0.1,
-                    layernorm_first: bool = True):
+    def module_init(
+        self,
+        d_model: int = 512,
+        num_heads: int = 8,
+        scale_dp_by_head: bool = False,
+        att_dropout: float = 0.1,
+        fdfwd_dim: int = 0,
+        fdfwd_activation: str = "ReLU",
+        fdfwd_dropout: float = 0.1,
+        res_dropout: float = 0.1,
+        layernorm_first: bool = True,
+    ):
         """
         Represents a single Transformer decoder layer.
         It attends to the source representation and the previous decoder states.
@@ -63,15 +66,25 @@ class TransformerDecoderLayer(Module):
                     output = LayerNorm(input + Sublayer(input))
         """
         # initialize the self attention layer
-        self.self_att = MultiHeadedAttention(num_heads=num_heads, d_model=d_model, dropout=att_dropout,
-                                             scale_dp_by_head=scale_dp_by_head)
+        self.self_att = MultiHeadedAttention(
+            num_heads=num_heads,
+            d_model=d_model,
+            dropout=att_dropout,
+            scale_dp_by_head=scale_dp_by_head,
+        )
 
         # initialize the encoder-decoder attention layer
-        self.encdec_att = MultiHeadedAttention(num_heads=num_heads, d_model=d_model, dropout=att_dropout)
+        self.encdec_att = MultiHeadedAttention(
+            num_heads=num_heads, d_model=d_model, dropout=att_dropout
+        )
 
         # initialize feedforward layer
-        self.feed_forward = PositionwiseFeedForward(d_model=d_model, fdfwd_dim=fdfwd_dim,
-                                                    fdfwd_activation=fdfwd_activation, dropout=fdfwd_dropout)
+        self.feed_forward = PositionwiseFeedForward(
+            d_model=d_model,
+            fdfwd_dim=fdfwd_dim,
+            fdfwd_activation=fdfwd_activation,
+            dropout=fdfwd_dropout,
+        )
 
         # initialize layernorm layers
         self.layernorm_first = layernorm_first
@@ -82,11 +95,13 @@ class TransformerDecoderLayer(Module):
         # initialize residual dropout layer
         self.dropout = nn.Dropout(res_dropout)
 
-    def forward(self,
-                tgt: torch.Tensor,
-                src: torch.Tensor,
-                tgt_mask: torch.Tensor,
-                src_mask: torch.Tensor):
+    def forward(
+        self,
+        tgt: torch.Tensor,
+        src: torch.Tensor,
+        tgt_mask: torch.Tensor,
+        src_mask: torch.Tensor,
+    ):
         """
         Forward pass of a single Transformer decoder layer.
 
@@ -110,57 +125,81 @@ class TransformerDecoderLayer(Module):
         tgt_norm = self.self_att_ln(tgt) if self.layernorm_first else tgt
 
         # go through the self attention layer and perform the residual connection
-        self_att_hidden, self_attmat = self.self_att(tgt_norm, tgt_norm, tgt_norm, mask=tgt_mask)
+        self_att_hidden, self_attmat = self.self_att(
+            tgt_norm, tgt_norm, tgt_norm, mask=tgt_mask
+        )
         self_att_output = self.dropout(self_att_hidden) + tgt
 
         # go through the LayerNorm layer after the self attention layer or not
-        self_att_output = self.self_att_ln(self_att_output) if not self.layernorm_first else self_att_output
+        self_att_output = (
+            self.self_att_ln(self_att_output)
+            if not self.layernorm_first
+            else self_att_output
+        )
 
         # --- 2. Enc-Dec Attention Layer part --- #
         # go through the LayerNorm layer before the enc-dec attention layer or not
-        self_att_output_norm = self.encdec_att_ln(self_att_output) if self.layernorm_first else self_att_output
+        self_att_output_norm = (
+            self.encdec_att_ln(self_att_output)
+            if self.layernorm_first
+            else self_att_output
+        )
 
         # go through the enc-dec attention layer and perform the residual connection
-        encdec_att_hidden, encdec_attmat = self.encdec_att(src, src, self_att_output_norm, mask=src_mask)
+        encdec_att_hidden, encdec_attmat = self.encdec_att(
+            src, src, self_att_output_norm, mask=src_mask
+        )
         encdec_att_output = self.dropout(encdec_att_hidden) + self_att_output
 
         # go through the LayerNorm layer after the enc-dec attention layer or not
-        encdec_att_output = self.encdec_att_ln(encdec_att_output) if not self.layernorm_first else encdec_att_output
+        encdec_att_output = (
+            self.encdec_att_ln(encdec_att_output)
+            if not self.layernorm_first
+            else encdec_att_output
+        )
 
         # --- 3. Positional FeedForward Layer part --- #
         # go through the LayerNorm layer before the feedforward layer or not
-        encdec_att_output_norm = self.fdfwd_ln(encdec_att_output) if self.layernorm_first else encdec_att_output
+        encdec_att_output_norm = (
+            self.fdfwd_ln(encdec_att_output)
+            if self.layernorm_first
+            else encdec_att_output
+        )
 
         # go through the feedforward layer and perform the residual connection
         fdfwd_hidden = self.feed_forward(encdec_att_output_norm)
         fdfwd_output = self.dropout(fdfwd_hidden) + encdec_att_output
 
         # go through the LayerNorm layer after the feedforward layer or not
-        fdfwd_output = self.fdfwd_ln(fdfwd_output) if not self.layernorm_first else fdfwd_output
+        fdfwd_output = (
+            self.fdfwd_ln(fdfwd_output) if not self.layernorm_first else fdfwd_output
+        )
 
         return fdfwd_output, self_attmat, encdec_attmat
 
 
 class TransformerDecoder(Module):
 
-    def module_init(self,
-                    posenc_type: str = 'mix',
-                    posenc_maxlen: int = 5000,
-                    posenc_dropout: float = 0.1,
-                    posenc_scale: bool = False,
-                    posenc_init_alpha: float = 1.0,
-                    emb_layernorm: bool = False,
-                    emb_scale: bool = True,
-                    d_model: int = 512,
-                    num_heads: int = 4,
-                    num_layers: int = 8,
-                    scale_dp_by_head: bool = False,
-                    fdfwd_dim: int = 2048,
-                    fdfwd_activation: str = 'ReLU',
-                    fdfwd_dropout: float = 0.1,
-                    att_dropout: float = 0.1,
-                    res_dropout: float = 0.1,
-                    layernorm_first: bool = True):
+    def module_init(
+        self,
+        posenc_type: str = "mix",
+        posenc_maxlen: int = 5000,
+        posenc_dropout: float = 0.1,
+        posenc_scale: bool = False,
+        posenc_init_alpha: float = 1.0,
+        emb_layernorm: bool = False,
+        emb_scale: bool = True,
+        d_model: int = 512,
+        num_heads: int = 4,
+        num_layers: int = 8,
+        scale_dp_by_head: bool = False,
+        fdfwd_dim: int = 2048,
+        fdfwd_activation: str = "ReLU",
+        fdfwd_dropout: float = 0.1,
+        att_dropout: float = 0.1,
+        res_dropout: float = 0.1,
+        layernorm_first: bool = True,
+    ):
         """
 
         Args:
@@ -221,26 +260,33 @@ class TransformerDecoder(Module):
         self.layernorm_first = layernorm_first
 
         # initialize the positional encoding layer
-        self.posenc = PositionalEncoding(posenc_type=posenc_type,
-                                         d_model=d_model,
-                                         emb_scale=emb_scale,
-                                         emb_layernorm=emb_layernorm,
-                                         posenc_scale=posenc_scale,
-                                         init_alpha=posenc_init_alpha,
-                                         max_len=posenc_maxlen,
-                                         dropout=posenc_dropout)
+        self.posenc = PositionalEncoding(
+            posenc_type=posenc_type,
+            d_model=d_model,
+            emb_scale=emb_scale,
+            emb_layernorm=emb_layernorm,
+            posenc_scale=posenc_scale,
+            init_alpha=posenc_init_alpha,
+            max_len=posenc_maxlen,
+            dropout=posenc_dropout,
+        )
 
         # create num_layers decoder layers and put them in a list
-        self.trfm_layers = torch.nn.ModuleList([
-            TransformerDecoderLayer(d_model=d_model,
-                                    num_heads=num_heads,
-                                    scale_dp_by_head=scale_dp_by_head,
-                                    att_dropout=att_dropout,
-                                    fdfwd_dim=fdfwd_dim,
-                                    fdfwd_activation=fdfwd_activation,
-                                    fdfwd_dropout=fdfwd_dropout,
-                                    res_dropout=res_dropout)
-            for _ in range(num_layers)])
+        self.trfm_layers = torch.nn.ModuleList(
+            [
+                TransformerDecoderLayer(
+                    d_model=d_model,
+                    num_heads=num_heads,
+                    scale_dp_by_head=scale_dp_by_head,
+                    att_dropout=att_dropout,
+                    fdfwd_dim=fdfwd_dim,
+                    fdfwd_activation=fdfwd_activation,
+                    fdfwd_dropout=fdfwd_dropout,
+                    res_dropout=res_dropout,
+                )
+                for _ in range(num_layers)
+            ]
+        )
 
         # initialize layernorm layer if necessary
         if self.layernorm_first:
@@ -260,15 +306,19 @@ class TransformerDecoder(Module):
         Returns:
 
         """
-        return ~torch.triu(torch.ones(batch_size, maxlen, maxlen, dtype=torch.bool), diagonal=1)
+        return ~torch.triu(
+            torch.ones(batch_size, maxlen, maxlen, dtype=torch.bool), diagonal=1
+        )
 
-    def forward(self,
-                tgt: torch.Tensor,
-                src: torch.Tensor,
-                tgt_mask: torch.Tensor,
-                src_mask: torch.Tensor,
-                return_att: bool = False,
-                return_hidden: bool = False):
+    def forward(
+        self,
+        tgt: torch.Tensor,
+        src: torch.Tensor,
+        tgt_mask: torch.Tensor,
+        src_mask: torch.Tensor,
+        return_att: bool = False,
+        return_hidden: bool = False,
+    ):
         """
         Transformer decoder forward pass.
 
@@ -298,14 +348,17 @@ class TransformerDecoder(Module):
 
         # generate the diagonal mask for self-attention layers
         batch_size, _, tgt_maxlen = tgt_mask.size()
-        tgt_mask = torch.logical_and(tgt_mask.repeat(1, tgt_maxlen, 1),
-                                     self.subsequent_mask(batch_size, tgt_maxlen).to(tgt_mask.device))
+        tgt_mask = torch.logical_and(
+            tgt_mask.repeat(1, tgt_maxlen, 1),
+            self.subsequent_mask(batch_size, tgt_maxlen).to(tgt_mask.device),
+        )
 
         # pass the transformer layers
         self_attmat, encdec_attmat, hidden = [], [], []
         for layer in self.trfm_layers:
-            tgt, _self_attmat, _encdec_attmat = layer(tgt=tgt, tgt_mask=tgt_mask,
-                                                      src=src, src_mask=src_mask)
+            tgt, _self_attmat, _encdec_attmat = layer(
+                tgt=tgt, tgt_mask=tgt_mask, src=src, src_mask=src_mask
+            )
             self_attmat.append(_self_attmat)
             encdec_attmat.append(_encdec_attmat)
             hidden.append(tgt.clone())

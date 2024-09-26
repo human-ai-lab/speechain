@@ -17,21 +17,24 @@ class SpecAugment(Module):
 
     """
 
-    def module_init(self,
-                    time_warp: bool = True,
-                    time_warp_window: int = 5,
-                    time_warp_mode: str = 'bicubic',
-                    freq_mask: bool = True,
-                    freq_mask_width: Union[int, List[int]] = 30,
-                    freq_mask_num: int = 2,
-                    time_mask: bool = True,
-                    time_mask_width: Union[int, float, List[int or float]] = 0.05,
-                    time_mask_num: int = 2,
-                    time_mask_ratio: float = 1.0,
-                    feat_norm: bool = True):
+    def module_init(
+        self,
+        time_warp: bool = True,
+        time_warp_window: int = 5,
+        time_warp_mode: str = "bicubic",
+        freq_mask: bool = True,
+        freq_mask_width: Union[int, List[int]] = 30,
+        freq_mask_num: int = 2,
+        time_mask: bool = True,
+        time_mask_width: Union[int, float, List[int or float]] = 0.05,
+        time_mask_num: int = 2,
+        time_mask_ratio: float = 1.0,
+        feat_norm: bool = True,
+    ):
 
-        assert time_warp or freq_mask or time_mask, \
-            "You must specify at least one type of augmentation in SpecAugment!"
+        assert (
+            time_warp or freq_mask or time_mask
+        ), "You must specify at least one type of augmentation in SpecAugment!"
         self.feat_dim = None
         if self.input_size is not None:
             self.feat_dim = self.input_size
@@ -49,9 +52,10 @@ class SpecAugment(Module):
         elif not isinstance(freq_mask_width, List):
             raise ValueError
         if self.feat_dim is not None:
-            assert freq_mask_width[1] < self.feat_dim, \
-                "The number of maximum frequency masking bins cannot be larger than the feature dimension! " \
+            assert freq_mask_width[1] < self.feat_dim, (
+                "The number of maximum frequency masking bins cannot be larger than the feature dimension! "
                 f"freq_mask_width[1]={freq_mask_width[1]} and self.feat_dim={self.feat_dim}."
+            )
         self.freq_mask_width = freq_mask_width
         self.freq_mask_num = freq_mask_num
 
@@ -93,21 +97,33 @@ class SpecAugment(Module):
             # otherwise, the input is too short to be warped (do nothing to the feature)
             if time_minlen > 2 * self.time_warp_window + 1:
                 # center ∈ {time_warp_window + 1, ..., time_minlen - time_warp_window - 1}
-                warp_center = torch.randint(low=self.time_warp_window + 1, high=time_minlen - self.time_warp_window,
-                                            size=(1,))[0].item()
+                warp_center = torch.randint(
+                    low=self.time_warp_window + 1,
+                    high=time_minlen - self.time_warp_window,
+                    size=(1,),
+                )[0].item()
                 # position ∈ {1, ..., time_minlen - 1} (consider the range of the center)
-                warp_pos = \
-                torch.randint(low=warp_center - self.time_warp_window, high=warp_center + self.time_warp_window,
-                              size=(1,))[0].item()
+                warp_pos = torch.randint(
+                    low=warp_center - self.time_warp_window,
+                    high=warp_center + self.time_warp_window,
+                    size=(1,),
+                )[0].item()
                 # interpolate the left and right parts of the selected center within time_minlen to protect feat_len
                 # align_corners=True to keep in line with the original paper
-                left_warp = torch.nn.functional.interpolate(feat[:, :, :warp_center], size=(warp_pos, feat_dim),
-                                                            mode=self.time_warp_mode, align_corners=True)
-                right_warp = torch.nn.functional.interpolate(feat[:, :, warp_center: time_minlen],
-                                                             size=(time_minlen - warp_pos, feat_dim),
-                                                             mode=self.time_warp_mode, align_corners=True)
+                left_warp = torch.nn.functional.interpolate(
+                    feat[:, :, :warp_center],
+                    size=(warp_pos, feat_dim),
+                    mode=self.time_warp_mode,
+                    align_corners=True,
+                )
+                right_warp = torch.nn.functional.interpolate(
+                    feat[:, :, warp_center:time_minlen],
+                    size=(time_minlen - warp_pos, feat_dim),
+                    mode=self.time_warp_mode,
+                    align_corners=True,
+                )
                 feat[:, :, :warp_pos] = left_warp
-                feat[:, :, warp_pos: time_minlen] = right_warp
+                feat[:, :, warp_pos:time_minlen] = right_warp
 
             # remove the redundant channel dimension
             feat = feat.view(batch_size, time_maxlen, feat_dim)
@@ -119,18 +135,29 @@ class SpecAugment(Module):
         if self.freq_mask:
             # lazily check the frequency masking width during training if self.feat_dim is not initialized
             if self.feat_dim is None:
-                assert self.feat_dim == feat_dim and self.freq_mask_width[1] < feat_dim, \
-                    "The number of maximum frequency masking bins cannot be larger than the feature dimension! " \
+                assert (
+                    self.feat_dim == feat_dim and self.freq_mask_width[1] < feat_dim
+                ), (
+                    "The number of maximum frequency masking bins cannot be larger than the feature dimension! "
                     f"self.freq_mask_width[1]={self.freq_mask_width[1]} and feat_dim={feat_dim}."
+                )
 
             # randomly select the masking length for each masking operation in each utterance
             # (batch_size, freq_mask_num, 1), mask_len ∈ {self.freq_mask_width[0], ..., self.freq_mask_width[1]}
-            mask_len = torch.randint(self.freq_mask_width[0], self.freq_mask_width[1] + 1,
-                                     size=(batch_size, self.freq_mask_num), device=feat.device).unsqueeze(2)
+            mask_len = torch.randint(
+                self.freq_mask_width[0],
+                self.freq_mask_width[1] + 1,
+                size=(batch_size, self.freq_mask_num),
+                device=feat.device,
+            ).unsqueeze(2)
             # randomly select the masking position for each masking operation in each utterance
             # (batch_size, freq_mask_num, 1), mask_pos ∈ {0, ..., feat_dim - mask_len.max - 1}
-            mask_pos = torch.randint(0, max(1, feat_dim - mask_len.max().item()),
-                                     size=(batch_size, self.freq_mask_num), device=feat.device).unsqueeze(2)
+            mask_pos = torch.randint(
+                0,
+                max(1, feat_dim - mask_len.max().item()),
+                size=(batch_size, self.freq_mask_num),
+                device=feat.device,
+            ).unsqueeze(2)
             # (1, 1, feat_dim)
             freq_axis = torch.arange(feat_dim, device=feat.device)[None, None, :]
             # (batch_size, freq_mask_num, feat_dim) -> (batch_size, 1, feat_dim)
@@ -150,12 +177,20 @@ class SpecAugment(Module):
 
             # randomly select the time masking length for each masking operation in each utterance
             # (batch_size, 1, time_mask_num), mask_len ∈ {time_mask_width[0], ..., time_mask_width[1]}
-            mask_len = torch.randint(time_mask_lower, time_mask_upper + 1,
-                                     size=(batch_size, self.time_mask_num), device=feat.device).unsqueeze(1)
+            mask_len = torch.randint(
+                time_mask_lower,
+                time_mask_upper + 1,
+                size=(batch_size, self.time_mask_num),
+                device=feat.device,
+            ).unsqueeze(1)
             # randomly select the time masking position for each masking operation in each utterance
             # (batch_size, 1, time_mask_num), mask_pos ∈ {0, ..., time_minlen - mask_len.max - 1}
-            mask_pos = torch.randint(0, max(1, time_minlen - mask_len.max().item()),
-                                     size=(batch_size, self.time_mask_num), device=feat.device).unsqueeze(1)
+            mask_pos = torch.randint(
+                0,
+                max(1, time_minlen - mask_len.max().item()),
+                size=(batch_size, self.time_mask_num),
+                device=feat.device,
+            ).unsqueeze(1)
             # (1, time_maxlen, 1)
             time_axis = torch.arange(time_maxlen, device=feat.device)[None, :, None]
             # (batch_size, time_maxlen, time_mask_num) -> (batch_size, time_maxlen, 1)
@@ -175,15 +210,21 @@ class SpecAugment(Module):
     def extra_repr(self) -> str:
         output = ""
         if self.time_warp:
-            output += f"time_warp_window={self.time_warp_window}, " \
-                      f"time_warp_mode={self.time_warp_mode}, "
+            output += (
+                f"time_warp_window={self.time_warp_window}, "
+                f"time_warp_mode={self.time_warp_mode}, "
+            )
 
         if self.freq_mask:
-            output += f"\nfreq_mask_width={self.freq_mask_width}, " \
-                      f"freq_mask_num={self.freq_mask_num}, "
+            output += (
+                f"\nfreq_mask_width={self.freq_mask_width}, "
+                f"freq_mask_num={self.freq_mask_num}, "
+            )
 
         if self.time_mask:
-            output += f"\ntime_mask_width={self.time_mask_width}, " \
-                      f"time_mask_num={self.time_mask_num}"
+            output += (
+                f"\ntime_mask_width={self.time_mask_width}, "
+                f"time_mask_num={self.time_mask_num}"
+            )
 
         return output

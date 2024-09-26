@@ -4,6 +4,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import math
 import torch
 import torch.nn as nn
@@ -25,7 +26,13 @@ class MultiHeadedAttention(Module):
     https://github.com/OpenNMT/OpenNMT-py
     """
 
-    def module_init(self, num_heads: int, d_model: int, dropout: float = 0.1, scale_dp_by_head: bool = False):
+    def module_init(
+        self,
+        num_heads: int,
+        d_model: int,
+        dropout: float = 0.1,
+        scale_dp_by_head: bool = False,
+    ):
         """
         Create a multi-headed attention layer.
 
@@ -51,7 +58,11 @@ class MultiHeadedAttention(Module):
         self.dropout = nn.Dropout(dropout)
         self.output_layer = nn.Linear(d_model, d_model)
 
-        self.scale = 1 / math.sqrt(self.head_size) if scale_dp_by_head else 1 / math.sqrt(self.d_model)
+        self.scale = (
+            1 / math.sqrt(self.head_size)
+            if scale_dp_by_head
+            else 1 / math.sqrt(self.d_model)
+        )
 
     def kvq_forward(self, k: torch.Tensor, v: torch.Tensor, q: torch.Tensor):
 
@@ -69,12 +80,14 @@ class MultiHeadedAttention(Module):
 
         return k, v, q
 
-    def attention_forward(self, v: torch.Tensor, scores: torch.Tensor, mask: torch.Tensor):
+    def attention_forward(
+        self, v: torch.Tensor, scores: torch.Tensor, mask: torch.Tensor
+    ):
 
         # apply the mask (if we have one)
         # we add a dimension for the heads to it below: [B, 1, 1, M]
         if mask is not None:
-            scores = scores.masked_fill(~mask.unsqueeze(1), float('-inf'))
+            scores = scores.masked_fill(~mask.unsqueeze(1), float("-inf"))
 
         # apply attention dropout and compute context vectors.
         attention = self.softmax(scores)
@@ -84,15 +97,23 @@ class MultiHeadedAttention(Module):
         # get context vector (select values with attention) and reshape
         # back to [B, M, D]
         context = torch.matmul(attention, v)
-        context = context.transpose(1, 2).contiguous().view(
-            v.size(0), -1, self.num_heads * self.head_size
+        context = (
+            context.transpose(1, 2)
+            .contiguous()
+            .view(v.size(0), -1, self.num_heads * self.head_size)
         )
 
         output = self.output_layer(context)
 
         return output, score_soft
 
-    def forward(self, k: torch.Tensor, v: torch.Tensor, q: torch.Tensor, mask: torch.Tensor = None):
+    def forward(
+        self,
+        k: torch.Tensor,
+        v: torch.Tensor,
+        q: torch.Tensor,
+        mask: torch.Tensor = None,
+    ):
         """
         Computes multi-headed attention.
 

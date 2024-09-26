@@ -23,13 +23,15 @@ class LM(Model):
 
     """
 
-    def module_init(self,
-                    token_type: str,
-                    token_path: str,
-                    emb: Dict,
-                    encoder: Dict,
-                    return_att_head_num: int = 2,
-                    return_att_layer_num: int = 2):
+    def module_init(
+        self,
+        token_type: str,
+        token_path: str,
+        emb: Dict,
+        encoder: Dict,
+        return_att_head_num: int = 2,
+        return_att_layer_num: int = 2,
+    ):
         """
 
         Args:
@@ -43,19 +45,25 @@ class LM(Model):
         """
         # --- 1. Module-independent Initialization --- #
         # initialize the tokenizer
-        if token_type.lower() == 'char':
+        if token_type.lower() == "char":
             self.tokenizer = CharTokenizer(token_path, copy_path=self.result_path)
-        elif token_type.lower() == 'sentencepiece':
-            self.tokenizer = SentencePieceTokenizer(token_path, copy_path=self.result_path)
+        elif token_type.lower() == "sentencepiece":
+            self.tokenizer = SentencePieceTokenizer(
+                token_path, copy_path=self.result_path
+            )
         else:
-            raise ValueError(f"Unknown token_type {token_type}. "
-                             f"Currently, {self.__class__.__name__} supports one of ['char', 'sentencepiece'].")
+            raise ValueError(
+                f"Unknown token_type {token_type}. "
+                f"Currently, {self.__class__.__name__} supports one of ['char', 'sentencepiece']."
+            )
 
         self.return_att_head_num = return_att_head_num
         self.return_att_layer_num = return_att_layer_num
 
         # --- 2. Module Initialization --- #
-        self.lm = LanguageModel(vocab_size=self.tokenizer.vocab_size, emb=emb, encoder=encoder)
+        self.lm = LanguageModel(
+            vocab_size=self.tokenizer.vocab_size, emb=emb, encoder=encoder
+        )
 
     def criterion_init(self, **criterion_conf):
         """
@@ -73,19 +81,21 @@ class LM(Model):
     @staticmethod
     def bad_cases_selection_init_fn() -> List[List[str or int]] or None:
         return [
-            ['text_ppl', 'max', 30],
-            ['text_ppl', 'min', 30],
-            ['text_confid', 'max', 30],
-            ['text_confid', 'min', 30]
+            ["text_ppl", "max", 30],
+            ["text_ppl", "min", 30],
+            ["text_confid", "max", 30],
+            ["text_confid", "min", 30],
         ]
 
-    def module_forward(self,
-                       text: torch.Tensor,
-                       text_len: torch.Tensor,
-                       epoch: int = None,
-                       domain: str = None,
-                       return_att: bool = False,
-                       **kwargs) -> Dict:
+    def module_forward(
+        self,
+        text: torch.Tensor,
+        text_len: torch.Tensor,
+        epoch: int = None,
+        domain: str = None,
+        return_att: bool = False,
+        **kwargs,
+    ) -> Dict:
         """
 
         Args:
@@ -103,8 +113,9 @@ class LM(Model):
                 Temporary register used to store the redundant arguments.
 
         """
-        assert text_len.size(0) == text.size(0), \
-            "The amounts of sentences and their lengths are not equal to each other."
+        assert text_len.size(0) == text.size(
+            0
+        ), "The amounts of sentences and their lengths are not equal to each other."
 
         # remove the <sos/eos> at the end of each sentence
         for i in range(text_len.size(0)):
@@ -115,32 +126,34 @@ class LM(Model):
         logits, _, enc_attmat = self.lm(text, text_len)
 
         # initialize the asr output to be the decoder predictions
-        outputs = dict(
-            logits=logits
-        )
+        outputs = dict(logits=logits)
 
         def shrink_attention(input_att_list):
             # pick up the target attention layers
-            if self.return_att_layer_num != -1 and len(input_att_list) > self.return_att_layer_num:
-                input_att_list = input_att_list[-self.return_att_layer_num:]
+            if (
+                self.return_att_layer_num != -1
+                and len(input_att_list) > self.return_att_layer_num
+            ):
+                input_att_list = input_att_list[-self.return_att_layer_num :]
             # pick up the target attention heads
-            if self.return_att_head_num != -1 and input_att_list[0].size(1) > self.return_att_head_num:
-                input_att_list = [att[:, :self.return_att_head_num] for att in input_att_list]
+            if (
+                self.return_att_head_num != -1
+                and input_att_list[0].size(1) > self.return_att_head_num
+            ):
+                input_att_list = [
+                    att[:, : self.return_att_head_num] for att in input_att_list
+                ]
             return input_att_list
 
         # return the attention results if specified
         if return_att:
             if enc_attmat is not None:
-                outputs.update(
-                    att=shrink_attention(enc_attmat)
-                )
+                outputs.update(att=shrink_attention(enc_attmat))
         return outputs
 
-    def criterion_forward(self,
-                          logits: torch.Tensor,
-                          text: torch.Tensor,
-                          text_len: torch.Tensor) -> \
-            (Dict[str, torch.Tensor], Dict[str, torch.Tensor]) or Dict[str, torch.Tensor]:
+    def criterion_forward(
+        self, logits: torch.Tensor, text: torch.Tensor, text_len: torch.Tensor
+    ) -> (Dict[str, torch.Tensor], Dict[str, torch.Tensor]) or Dict[str, torch.Tensor]:
         """
 
         Args:
@@ -160,9 +173,13 @@ class LM(Model):
 
         # perplexity calculation
         log_prob = torch.log_softmax(logits, dim=-1)
-        text_prob = log_prob.gather(-1, text[:, 1:].view(text.size(0), -1, 1)).squeeze(dim=-1)
+        text_prob = log_prob.gather(-1, text[:, 1:].view(text.size(0), -1, 1)).squeeze(
+            dim=-1
+        )
         text_prob = text_prob.masked_fill(~text_mask, 0.0)
-        text_ppl = torch.exp(torch.sum(text_prob, dim=-1) * (- 1 / (text_len - 1))).mean()
+        text_ppl = torch.exp(
+            torch.sum(text_prob, dim=-1) * (-1 / (text_len - 1))
+        ).mean()
 
         metrics = dict(accuracy=accuracy.detach(), text_ppl=text_ppl.clone().detach())
 
@@ -176,38 +193,51 @@ class LM(Model):
         else:
             return metrics
 
-    def visualize(self,
-                  epoch: int,
-                  sample_index: str,
-                  snapshot_interval: int = 1,
-                  epoch_records: Dict = None,
-                  domain: str = None,
-                  text: torch.Tensor = None,
-                  text_len: torch.Tensor = None):
+    def visualize(
+        self,
+        epoch: int,
+        sample_index: str,
+        snapshot_interval: int = 1,
+        epoch_records: Dict = None,
+        domain: str = None,
+        text: torch.Tensor = None,
+        text_len: torch.Tensor = None,
+    ):
 
         # visualization inference is default to be done by teacher-forcing
         if len(self.visual_infer_conf) == 0:
             self.visual_infer_conf = dict()
 
         # obtain the inference results
-        infer_results = self.inference(infer_conf=self.visual_infer_conf, return_att=True,
-                                       text=text, text_len=text_len)
+        infer_results = self.inference(
+            infer_conf=self.visual_infer_conf,
+            return_att=True,
+            text=text,
+            text_len=text_len,
+        )
 
         # --- snapshot the objective metrics --- #
         vis_logs = []
         # numerical metrics recording
         materials = dict()
-        for metric in ['text_confid', 'text_ppl']:
+        for metric in ["text_confid", "text_ppl"]:
             # store each target metric into materials
             if metric not in epoch_records[sample_index].keys():
                 epoch_records[sample_index][metric] = []
-            epoch_records[sample_index][metric].append(infer_results[metric]['content'][0])
+            epoch_records[sample_index][metric].append(
+                infer_results[metric]["content"][0]
+            )
             materials[metric] = epoch_records[sample_index][metric]
         # save the visualization log
         vis_logs.append(
             dict(
-                plot_type='curve', materials=copy.deepcopy(materials), epoch=epoch,
-                xlabel='epoch', x_stride=snapshot_interval, sep_save=False, subfolder_names=sample_index
+                plot_type="curve",
+                materials=copy.deepcopy(materials),
+                epoch=epoch,
+                xlabel="epoch",
+                x_stride=snapshot_interval,
+                sep_save=False,
+                subfolder_names=sample_index,
             )
         )
 
@@ -217,23 +247,34 @@ class LM(Model):
             # snapshot input text
             vis_logs.append(
                 dict(
-                    materials=dict(real_text=[copy.deepcopy(self.tokenizer.tensor2text(text[0][1: -1]))]),
-                    plot_type='text', subfolder_names=sample_index
+                    materials=dict(
+                        real_text=[
+                            copy.deepcopy(self.tokenizer.tensor2text(text[0][1:-1]))
+                        ]
+                    ),
+                    plot_type="text",
+                    subfolder_names=sample_index,
                 )
             )
 
         # hypothesis attention matrix
-        infer_results['att'] = self.attention_reshape(infer_results['att'])
-        self.matrix_snapshot(vis_logs=vis_logs, hypo_attention=copy.deepcopy(infer_results['att']),
-                             subfolder_names=sample_index, epoch=epoch)
+        infer_results["att"] = self.attention_reshape(infer_results["att"])
+        self.matrix_snapshot(
+            vis_logs=vis_logs,
+            hypo_attention=copy.deepcopy(infer_results["att"]),
+            subfolder_names=sample_index,
+            epoch=epoch,
+        )
         return vis_logs
 
-    def inference(self,
-                  infer_conf: Dict,
-                  text: torch.Tensor = None,
-                  text_len: torch.Tensor = None,
-                  domain: str = None,
-                  return_att: bool = False,) -> Dict[str, Dict[str, str or List]]:
+    def inference(
+        self,
+        infer_conf: Dict,
+        text: torch.Tensor = None,
+        text_len: torch.Tensor = None,
+        domain: str = None,
+        return_att: bool = False,
+    ) -> Dict[str, Dict[str, str or List]]:
         """
 
         Args:
@@ -258,15 +299,17 @@ class LM(Model):
         # add the attention matrix into the output Dict, only used for model visualization during training
         # because it will consume too much time for saving the attention matrices of all testing samples during testing
         if return_att:
-            outputs.update(
-                att=infer_results['att']
-            )
+            outputs.update(att=infer_results["att"])
 
         # --- Perplexity Calculation --- #
         # the last token (EOS) should be included for perplexity
-        log_prob = torch.log_softmax(infer_results['logits'], dim=-1)
-        hypo_text_prob = log_prob.gather(-1, text[:, 1:].view(text.size(0), -1, 1)).squeeze(dim=-1)
-        hypo_text_ppl = torch.exp(torch.sum(hypo_text_prob, dim=-1) * (- 1 / (text_len - 1)))
+        log_prob = torch.log_softmax(infer_results["logits"], dim=-1)
+        hypo_text_prob = log_prob.gather(
+            -1, text[:, 1:].view(text.size(0), -1, 1)
+        ).squeeze(dim=-1)
+        hypo_text_ppl = torch.exp(
+            torch.sum(hypo_text_prob, dim=-1) * (-1 / (text_len - 1))
+        )
 
         # --- Confidence Calculation --- #
         # the last token is meaningless because the text is padded with eos at the end
@@ -274,34 +317,49 @@ class LM(Model):
         hypo_text_prob, hypo_text = torch.max(log_prob, dim=-1)
         # the original text contains both sos at the beginning and eos at the end
         # sum up the log-probability of all time steps to get the confidence
-        length_penalty = infer_conf['length_penalty'] if 'length_penalty' in infer_conf.keys() else 1.0
-        hypo_text_confid = torch.sum(hypo_text_prob, dim=-1) / ((text_len - 2) ** length_penalty)
+        length_penalty = (
+            infer_conf["length_penalty"]
+            if "length_penalty" in infer_conf.keys()
+            else 1.0
+        )
+        hypo_text_confid = torch.sum(hypo_text_prob, dim=-1) / (
+            (text_len - 2) ** length_penalty
+        )
 
         # turn the data all the unsupervised metrics into the cpu version (List)
-        hypo_text_confid, hypo_text_ppl = to_cpu(hypo_text_confid), to_cpu(hypo_text_ppl)
+        hypo_text_confid, hypo_text_ppl = to_cpu(hypo_text_confid), to_cpu(
+            hypo_text_ppl
+        )
 
         # recover the text tensors back to text strings (removing the padding and sos/eos tokens)
-        hypo_text = [self.tokenizer.tensor2text(hypo[(hypo != self.tokenizer.ignore_idx) &
-                                                     (hypo != self.tokenizer.sos_eos_idx)]) for hypo in hypo_text]
+        hypo_text = [
+            self.tokenizer.tensor2text(
+                hypo[
+                    (hypo != self.tokenizer.ignore_idx)
+                    & (hypo != self.tokenizer.sos_eos_idx)
+                ]
+            )
+            for hypo in hypo_text
+        ]
 
         # in the decoding-only mode, only the hypothesis-related results will be returned
         outputs.update(
-            text=dict(format='txt', content=hypo_text),
-            text_confid=dict(format='txt', content=hypo_text_confid),
-            text_ppl=dict(format='txt', content=hypo_text_ppl)
+            text=dict(format="txt", content=hypo_text),
+            text_confid=dict(format="txt", content=hypo_text_confid),
+            text_ppl=dict(format="txt", content=hypo_text_ppl),
         )
 
         # evaluation reports for all the testing instances
         instance_report_dict = {}
         # loop each utterance
         for i in range(len(text)):
-            if 'Text Confidence' not in instance_report_dict.keys():
-                instance_report_dict['Text Confidence'] = []
-            instance_report_dict['Text Confidence'].append(f"{hypo_text_confid[i]:.6f}")
+            if "Text Confidence" not in instance_report_dict.keys():
+                instance_report_dict["Text Confidence"] = []
+            instance_report_dict["Text Confidence"].append(f"{hypo_text_confid[i]:.6f}")
 
-            if 'Text Perplexity' not in instance_report_dict.keys():
-                instance_report_dict['Text Perplexity'] = []
-            instance_report_dict['Text Perplexity'].append(f"{hypo_text_ppl[i]:.4f}")
+            if "Text Perplexity" not in instance_report_dict.keys():
+                instance_report_dict["Text Perplexity"] = []
+            instance_report_dict["Text Perplexity"].append(f"{hypo_text_ppl[i]:.4f}")
         # register the instance reports for generating instance_reports.md
         self.register_instance_reports(md_list_dict=instance_report_dict)
 

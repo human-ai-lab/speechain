@@ -4,6 +4,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import math
 from typing import Dict
 
@@ -19,15 +20,17 @@ class PositionalEncoding(Module):
 
     """
 
-    def module_init(self,
-                    posenc_type: str = 'mix',
-                    d_model: int = 512,
-                    emb_scale: bool = False,
-                    emb_layernorm: bool = False,
-                    posenc_scale: bool = False,
-                    init_alpha: float = 1.0,
-                    max_len: int = 5000,
-                    dropout: float = 0.0):
+    def module_init(
+        self,
+        posenc_type: str = "mix",
+        d_model: int = 512,
+        emb_scale: bool = False,
+        emb_layernorm: bool = False,
+        posenc_scale: bool = False,
+        init_alpha: float = 1.0,
+        max_len: int = 5000,
+        dropout: float = 0.0,
+    ):
         """
         Positional Encoding with maximum length max_len.
 
@@ -77,10 +80,13 @@ class PositionalEncoding(Module):
                 The dropout rate for the Dropout layer after adding the positional encoding to the input
         """
 
-        assert posenc_type in ['mix', 'sep'], \
-            f"The type of PositionalEncoding layer must be either 'mix' or 'sep', but got type={posenc_type}!"
-        assert d_model % 2 == 0, \
-            f"Cannot apply sin/cos positional encoding to the vectors with odd dimensions (got d_model={d_model:d})."
+        assert posenc_type in [
+            "mix",
+            "sep",
+        ], f"The type of PositionalEncoding layer must be either 'mix' or 'sep', but got type={posenc_type}!"
+        assert (
+            d_model % 2 == 0
+        ), f"Cannot apply sin/cos positional encoding to the vectors with odd dimensions (got d_model={d_model:d})."
 
         self.posenc_type = posenc_type
         self.d_model = d_model
@@ -88,7 +94,9 @@ class PositionalEncoding(Module):
         if emb_layernorm:
             self.emb_layernorm = torch.nn.LayerNorm(d_model)
 
-        self.init_alpha = init_alpha if isinstance(init_alpha, float) else float(init_alpha)
+        self.init_alpha = (
+            init_alpha if isinstance(init_alpha, float) else float(init_alpha)
+        )
         if posenc_scale:
             self.alpha = torch.nn.Parameter(torch.tensor(self.init_alpha))
 
@@ -102,7 +110,7 @@ class PositionalEncoding(Module):
         """
         Make sure that the scalar value is not influenced by different model initialization methods.
         """
-        if hasattr(self, 'alpha'):
+        if hasattr(self, "alpha"):
             self.alpha.data = torch.tensor(self.init_alpha)
 
     def update_posenc(self, max_len: int):
@@ -116,25 +124,27 @@ class PositionalEncoding(Module):
         # positional encoding calculation
         position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
         div_term = torch.exp(
-            torch.arange(0, self.d_model, 2, dtype=torch.float) * (math.log(10000.0) / self.d_model)
+            torch.arange(0, self.d_model, 2, dtype=torch.float)
+            * (math.log(10000.0) / self.d_model)
         )
         posenc = torch.zeros(max_len, self.d_model)
 
         # 'mix' positional encoding: sine functions and cosine functions mix up with each other
-        if self.posenc_type == 'mix':
+        if self.posenc_type == "mix":
             posenc[:, 0::2] = torch.sin(position / div_term)
             posenc[:, 1::2] = torch.cos(position / div_term)
         # 'sep' positional encoding: sine functions and cosine functions occupy the positional encoding separately
-        elif self.posenc_type == 'sep':
+        elif self.posenc_type == "sep":
             div_term_ext = torch.exp(
-                torch.arange(self.d_model, self.d_model * 2, 2, dtype=torch.float) * (math.log(10000.0) / self.d_model)
+                torch.arange(self.d_model, self.d_model * 2, 2, dtype=torch.float)
+                * (math.log(10000.0) / self.d_model)
             )
-            posenc[:, :int(self.d_model / 2)] = torch.sin(position / div_term)
-            posenc[:, int(self.d_model / 2):] = torch.cos(position / div_term_ext)
+            posenc[:, : int(self.d_model / 2)] = torch.sin(position / div_term)
+            posenc[:, int(self.d_model / 2) :] = torch.cos(position / div_term_ext)
 
         # posenc = posenc.unsqueeze(0) does not put posenc into the buffer
         # here register_buffer() allows posenc to be automatically put onto GPUs as a buffer member
-        self.register_buffer('posenc', posenc.unsqueeze(0))
+        self.register_buffer("posenc", posenc.unsqueeze(0))
 
     def forward(self, emb_feat: torch.Tensor):
         """
@@ -157,7 +167,7 @@ class PositionalEncoding(Module):
             self.update_posenc(emb_feat.size(1), self.d_model)
 
         # 1. (optional) normalize the embedded feature by LayerNorm
-        if hasattr(self, 'emb_layernorm'):
+        if hasattr(self, "emb_layernorm"):
             emb_feat = self.emb_layernorm(emb_feat)
 
         # 2. (optional) scale the embedded feature up by sqrt(d_model)
@@ -165,8 +175,8 @@ class PositionalEncoding(Module):
             emb_feat *= math.sqrt(self.d_model)
 
         # 3. (optional) scale the positional encoding vectors
-        posenc = self.posenc[:, :emb_feat.size(1)]
-        if hasattr(self, 'alpha'):
+        posenc = self.posenc[:, : emb_feat.size(1)]
+        if hasattr(self, "alpha"):
             # avoid posenc *= self.alpha to protect the original positional encoding
             posenc = posenc * self.alpha
 
@@ -174,11 +184,10 @@ class PositionalEncoding(Module):
         return self.dropout(emb_feat + posenc)
 
     def get_recordable_para(self) -> Dict or None:
-        if hasattr(self, 'alpha'):
+        if hasattr(self, "alpha"):
             return dict(alpha=self.alpha)
         else:
             return None
 
     def extra_repr(self) -> str:
-        return f"emb_scale={self.emb_scale}\n" \
-               f"posenc_scale={hasattr(self, 'alpha')}"
+        return f"emb_scale={self.emb_scale}\n" f"posenc_scale={hasattr(self, 'alpha')}"

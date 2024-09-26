@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 from speechain.optim_sche.abs import OptimScheduler
 
 
@@ -16,9 +17,7 @@ class Noamlr(OptimScheduler):
 
     """
 
-    def sche_init(self,
-                  d_model: int = None,
-                  warmup_steps: int = 4000):
+    def sche_init(self, d_model: int = None, warmup_steps: int = 4000):
         """
         The learning rate calculation is different depending on whether d_model is given or not.
 
@@ -43,7 +42,9 @@ class Noamlr(OptimScheduler):
         """
         # para recording
         self.d_model = d_model
-        self.init_lr = d_model ** -0.5 if d_model is not None else self.get_lr() * warmup_steps ** 0.5
+        self.init_lr = (
+            d_model**-0.5 if d_model is not None else self.get_lr() * warmup_steps**0.5
+        )
         self.warmup_steps = warmup_steps
 
     def update_lr(self, real_step: int, epoch_num: int) -> float:
@@ -56,8 +57,9 @@ class Noamlr(OptimScheduler):
 
         """
         # the learning rate of the current step for the optimizer
-        return self.init_lr * min(real_step ** -0.5, real_step * (self.warmup_steps ** -1.5))
+        return self.init_lr * min(
+            real_step**-0.5, real_step * (self.warmup_steps**-1.5)
+        )
 
     def extra_repr_fn(self) -> str:
-        return f"d_model={self.d_model}, " \
-               f"warmup_steps={self.warmup_steps}"
+        return f"d_model={self.d_model}, " f"warmup_steps={self.warmup_steps}"

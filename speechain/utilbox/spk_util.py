@@ -13,33 +13,38 @@ from speechain.utilbox.import_util import parse_path_args
 from speechain.utilbox.tensor_util import to_cpu
 
 
-def extract_spk_feat(spk2wav_dict: Dict[str, Dict[str, str]], gpu_id: int, spk_emb_model: str,
-                     save_path: str = None, batch_size: int = 10) -> Tuple[Dict, Dict]:
+def extract_spk_feat(
+    spk2wav_dict: Dict[str, Dict[str, str]],
+    gpu_id: int,
+    spk_emb_model: str,
+    save_path: str = None,
+    batch_size: int = 10,
+) -> Tuple[Dict, Dict]:
     """
-        Extract speaker features using a specified speaker embedding model and save them.
+    Extract speaker features using a specified speaker embedding model and save them.
 
-        Args:
-            spk2wav_dict (Dict):
-                A dictionary mapping unique IDs to waveform file paths.
-            gpu_id (int):
-                The GPU device ID to use. Set to -1 for CPU.
-            spk_emb_model (str):
-                The speaker embedding model to use (either 'ecapa' or 'xvector').
-            save_path (str, optional):
-                The path to save the extracted speaker features. If not given, the extracted features will be stored
-                in memory. Defaults to None.
-            batch_size (int, optional):
-                The batch size for processing. Defaults to 10.
+    Args:
+        spk2wav_dict (Dict):
+            A dictionary mapping unique IDs to waveform file paths.
+        gpu_id (int):
+            The GPU device ID to use. Set to -1 for CPU.
+        spk_emb_model (str):
+            The speaker embedding model to use (either 'ecapa' or 'xvector').
+        save_path (str, optional):
+            The path to save the extracted speaker features. If not given, the extracted features will be stored
+            in memory. Defaults to None.
+        batch_size (int, optional):
+            The batch size for processing. Defaults to 10.
 
-        Returns:
-            Tuple[Dict, Dict]:
-                - A dictionary mapping unique IDs to the corresponding extracted speaker features.
-                - A dictionary mapping speaker IDs to the corresponding average speaker features.
+    Returns:
+        Tuple[Dict, Dict]:
+            - A dictionary mapping unique IDs to the corresponding extracted speaker features.
+            - A dictionary mapping speaker IDs to the corresponding average speaker features.
     """
 
     def proc_curr_batch():
         """
-            Process the current batch of waveforms and extract speaker features.
+        Process the current batch of waveforms and extract speaker features.
         """
         idx_list, wav_list = [i[0] for i in curr_batch], [i[1] for i in curr_batch]
         wav_len = torch.LongTensor([w.size(0) for w in wav_list]).to(device)
@@ -48,43 +53,49 @@ def extract_spk_feat(spk2wav_dict: Dict[str, Dict[str, str]], gpu_id: int, spk_e
         # Pad feature vectors into a matrix
         wav_matrix = torch.zeros((wav_len.size(0), max_wav_len), device=device)
         for i in range(len(wav_list)):
-            wav_matrix[i][:wav_len[i]] = wav_list[i]
+            wav_matrix[i][: wav_len[i]] = wav_list[i]
 
-        spk_feat = speechbrain_model.encode_batch(wavs=wav_matrix, wav_lens=wav_len / max_wav_len)
+        spk_feat = speechbrain_model.encode_batch(
+            wavs=wav_matrix, wav_lens=wav_len / max_wav_len
+        )
         if save_path is None:
-            idx2spk_feat.update(dict(
-                zip(idx_list, [to_cpu(s_f, tgt='numpy') for s_f in spk_feat]))
+            idx2spk_feat.update(
+                dict(zip(idx_list, [to_cpu(s_f, tgt="numpy") for s_f in spk_feat]))
             )
         else:
-            idx2spk_feat.update(save_data_by_format(
-                file_format='npy', save_path=save_path, group_ids=spk_id, file_name_list=idx_list,
-                file_content_list=[to_cpu(s_f, tgt='numpy') for s_f in spk_feat])
+            idx2spk_feat.update(
+                save_data_by_format(
+                    file_format="npy",
+                    save_path=save_path,
+                    group_ids=spk_id,
+                    file_name_list=idx_list,
+                    file_content_list=[to_cpu(s_f, tgt="numpy") for s_f in spk_feat],
+                )
             )
 
         # refresh the current batch
         return []
 
-
     # initialize the speaker embedding model and downloading path for speechbrain API
     download_dir = parse_path_args("datasets/spk_emb_models")
-    if spk_emb_model == 'ecapa':
+    if spk_emb_model == "ecapa":
         speechbrain_args = dict(
             source="speechbrain/spkrec-ecapa-voxceleb",
-            savedir=os.path.join(download_dir, 'spkrec-ecapa-voxceleb')
+            savedir=os.path.join(download_dir, "spkrec-ecapa-voxceleb"),
         )
-    elif spk_emb_model == 'xvector':
+    elif spk_emb_model == "xvector":
         speechbrain_args = dict(
             source="speechbrain/spkrec-xvect-voxceleb",
-            savedir=os.path.join(download_dir, 'spkrec-xvect-voxceleb')
+            savedir=os.path.join(download_dir, "spkrec-xvect-voxceleb"),
         )
     else:
-        raise ValueError(f"Unknown speaker embedding model ({spk_emb_model})! "
-                         f"Currently, spk_emb_model should be one of ['ecapa', 'xvector'].")
+        raise ValueError(
+            f"Unknown speaker embedding model ({spk_emb_model})! "
+            f"Currently, spk_emb_model should be one of ['ecapa', 'xvector']."
+        )
 
-    device = f"cuda:{gpu_id}" if gpu_id >= 0 else 'cpu'
-    speechbrain_args.update(
-        run_opts=dict(device=device)
-    )
+    device = f"cuda:{gpu_id}" if gpu_id >= 0 else "cpu"
+    speechbrain_args.update(run_opts=dict(device=device))
     speechbrain_model = EncoderClassifier.from_hparams(**speechbrain_args)
 
     idx2spk_feat, spk2aver_spk_feat, resamplers = {}, {}, {}
@@ -95,11 +106,15 @@ def extract_spk_feat(spk2wav_dict: Dict[str, Dict[str, str]], gpu_id: int, spk_e
         # loop each waveform file for each speaker
         for wav_idx, wav_path in wav_dict.items():
             # Collect the data into the current batch
-            wav, sample_rate = read_data_by_path(wav_path, return_tensor=True, return_sample_rate=True)
+            wav, sample_rate = read_data_by_path(
+                wav_path, return_tensor=True, return_sample_rate=True
+            )
             wav = wav.squeeze(-1).to(device)
             if sample_rate > 16000:
                 if sample_rate not in resamplers.keys():
-                    resamplers[sample_rate] = torchaudio.transforms.Resample(orig_freq=sample_rate, new_freq=16000).to(device)
+                    resamplers[sample_rate] = torchaudio.transforms.Resample(
+                        orig_freq=sample_rate, new_freq=16000
+                    ).to(device)
                 wav = resamplers[sample_rate](wav)
 
             elif sample_rate < 16000:
@@ -132,7 +147,9 @@ def extract_spk_feat(spk2wav_dict: Dict[str, Dict[str, str]], gpu_id: int, spk_e
         while len(failed_idx_list) != 0:
             # loop each failed waveform
             for wav_idx in failed_idx_list:
-                wav, sample_rate = read_data_by_path(wav_dict[wav_idx], return_tensor=True, return_sample_rate=True)
+                wav, sample_rate = read_data_by_path(
+                    wav_dict[wav_idx], return_tensor=True, return_sample_rate=True
+                )
                 wav = wav.squeeze(-1).to(device)
                 if sample_rate > 16000:
                     wav = resamplers[sample_rate](wav)
@@ -157,8 +174,11 @@ def extract_spk_feat(spk2wav_dict: Dict[str, Dict[str, str]], gpu_id: int, spk_e
         else:
             spk2aver_spk_feat.update(
                 save_data_by_format(
-                    file_format='npy', save_path=save_path, group_ids=spk_id, file_name_list=spk_id,
-                    file_content_list=aver_spk_feat
+                    file_format="npy",
+                    save_path=save_path,
+                    group_ids=spk_id,
+                    file_name_list=spk_id,
+                    file_content_list=aver_spk_feat,
                 )
             )
     return idx2spk_feat, spk2aver_spk_feat

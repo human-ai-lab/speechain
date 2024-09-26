@@ -8,13 +8,13 @@ from speechain.module.prenet.conv1d import Conv1dEv
 
 class LayerNorm(torch.nn.LayerNorm):
     """
-        Layer normalization module.
-        Borrowed from
-            https://github.com/espnet/espnet/blob/master/espnet/nets/pytorch_backend/transformer/layer_norm.py
+    Layer normalization module.
+    Borrowed from
+        https://github.com/espnet/espnet/blob/master/espnet/nets/pytorch_backend/transformer/layer_norm.py
 
-        Args:
-            nout (int): Output dim size.
-            dim (int): Dimension to be normalized.
+    Args:
+        nout (int): Output dim size.
+        dim (int): Dimension to be normalized.
     """
 
     def __init__(self, nout, dim=-1):
@@ -40,30 +40,33 @@ class LayerNorm(torch.nn.LayerNorm):
 
 class Conv1dVarPredictor(Module):
     """
-        The Conv1d variance predictor for FastSpeech2.
-        This module is made up of:
-            1. (mandatory) The Conv1d part contains two or more Conv1d blocks which are composed of the components below
-                1. (mandatory) a Conv1d layer
-                2. (mandatory) a ReLU function
-                3. (mandatory) a LayerNorm layer
-                4. (mandatory) a Dropout layer.
-            2. (mandatory) The Linear part contains one Linear block which is composed of the component below
-                1. (mandatory) a Linear layer
+    The Conv1d variance predictor for FastSpeech2.
+    This module is made up of:
+        1. (mandatory) The Conv1d part contains two or more Conv1d blocks which are composed of the components below
+            1. (mandatory) a Conv1d layer
+            2. (mandatory) a ReLU function
+            3. (mandatory) a LayerNorm layer
+            4. (mandatory) a Dropout layer.
+        2. (mandatory) The Linear part contains one Linear block which is composed of the component below
+            1. (mandatory) a Linear layer
 
-        Reference:
-            Fastspeech 2: Fast and high-quality end-to-end text to speech
-            https://arxiv.org/pdf/2006.04558
+    Reference:
+        Fastspeech 2: Fast and high-quality end-to-end text to speech
+        https://arxiv.org/pdf/2006.04558
     """
-    def module_init(self,
-                    feat_dim: int = None,
-                    conv_dims: int or List[int] = [256, 256],
-                    conv_kernel: int = 3,
-                    conv_stride: int = 1,
-                    use_gate: bool = False,
-                    conv_dropout: float or List[float] = 0.5,
-                    use_conv_emb: bool = True,
-                    conv_emb_kernel: int = 1,
-                    conv_emb_dropout: float = 0.0):
+
+    def module_init(
+        self,
+        feat_dim: int = None,
+        conv_dims: int or List[int] = [256, 256],
+        conv_kernel: int = 3,
+        conv_stride: int = 1,
+        use_gate: bool = False,
+        conv_dropout: float or List[float] = 0.5,
+        use_conv_emb: bool = True,
+        conv_emb_kernel: int = 1,
+        conv_emb_dropout: float = 0.0,
+    ):
         """
 
         Args:
@@ -92,15 +95,19 @@ class Conv1dVarPredictor(Module):
         """
         # --- 0. Argument Checking --- #
         # Convolution arguments checking
-        assert isinstance(conv_dims, (List, int)), \
-            "The dimensions of convolutional layers must be given as a list of integers or an integer!"
-        assert isinstance(conv_kernel, int), \
-            "The sizes of convolutional kernels must be given as an integer!"
-        assert isinstance(conv_stride, int), \
-            "The lengths of convolutional strides must be given as an integer!"
+        assert isinstance(
+            conv_dims, (List, int)
+        ), "The dimensions of convolutional layers must be given as a list of integers or an integer!"
+        assert isinstance(
+            conv_kernel, int
+        ), "The sizes of convolutional kernels must be given as an integer!"
+        assert isinstance(
+            conv_stride, int
+        ), "The lengths of convolutional strides must be given as an integer!"
         if conv_dropout is not None:
-            assert isinstance(conv_dropout, (List, float)), \
-                "The dropout rates of convolutional layers must be given as a list of integers or an integer!"
+            assert isinstance(
+                conv_dropout, (List, float)
+            ), "The dropout rates of convolutional layers must be given as a list of integers or an integer!"
 
         # input_size initialization
         if self.input_size is not None:
@@ -128,11 +135,13 @@ class Conv1dVarPredictor(Module):
                 self.conv_dims[i] = self.conv_dims[i - 1]
             # Conv1d layer
             _tmp_conv.append(
-                Conv1dEv(in_channels=_prev_dim,
-                         out_channels=self.conv_dims[i],
-                         kernel_size=self.conv_kernel,
-                         stride=self.conv_stride,
-                         padding_mode='same')
+                Conv1dEv(
+                    in_channels=_prev_dim,
+                    out_channels=self.conv_dims[i],
+                    kernel_size=self.conv_kernel,
+                    stride=self.conv_stride,
+                    padding_mode="same",
+                )
             )
             # ReLU function
             _tmp_conv.append(torch.nn.ReLU())
@@ -140,9 +149,15 @@ class Conv1dVarPredictor(Module):
             _tmp_conv.append(LayerNorm(self.conv_dims[i], dim=1))
             # Dropout layer
             if conv_dropout is not None:
-                _tmp_conv.append(torch.nn.Dropout(
-                    p=self.conv_dropout if not isinstance(self.conv_dropout, List) else self.conv_dropout[i]
-                ))
+                _tmp_conv.append(
+                    torch.nn.Dropout(
+                        p=(
+                            self.conv_dropout
+                            if not isinstance(self.conv_dropout, List)
+                            else self.conv_dropout[i]
+                        )
+                    )
+                )
             _prev_dim = conv_dims[i]
         self.conv = torch.nn.Sequential(*_tmp_conv)
 
@@ -154,10 +169,12 @@ class Conv1dVarPredictor(Module):
         # --- 3. Scalar Embedding Part Initialization --- #
         if use_conv_emb:
             _tmp_conv_emb = [
-                Conv1dEv(in_channels=1,
-                         out_channels=self.input_size,
-                         kernel_size=conv_emb_kernel,
-                         padding_mode='same')
+                Conv1dEv(
+                    in_channels=1,
+                    out_channels=self.input_size,
+                    kernel_size=conv_emb_kernel,
+                    padding_mode="same",
+                )
             ]
             if conv_emb_dropout > 0:
                 _tmp_conv_emb.append(torch.nn.Dropout(p=conv_emb_dropout))
@@ -190,7 +207,7 @@ class Conv1dVarPredictor(Module):
         feat_pred = self.linear(feat).squeeze(-1)
 
         # return feat_len for the compatibility with other prenets
-        if not hasattr(self, 'gate_linear'):
+        if not hasattr(self, "gate_linear"):
             return feat_pred, feat_len
         else:
             feat_gate = self.gate_linear(feat).squeeze(-1)
@@ -204,8 +221,9 @@ class Conv1dVarPredictor(Module):
                 The predicted scalar vectors calculated in the forward().
 
         """
-        assert hasattr(self, 'conv_emb'), \
-            "Please set the argument 'use_conv_emb' to True if you want to embed the predicted scalar!"
+        assert hasattr(
+            self, "conv_emb"
+        ), "Please set the argument 'use_conv_emb' to True if you want to embed the predicted scalar!"
         if len(pred_scalar.shape) == 2:
             pred_scalar = pred_scalar.unsqueeze(-1)
         else:

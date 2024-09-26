@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import os
 import torch
 import copy
@@ -48,7 +49,7 @@ class Model(torch.nn.Module, ABC):
         kaiming_uniform=torch.nn.init.kaiming_uniform_,
         uniform=torch.nn.init.uniform_,
         normal=torch.nn.init.normal_,
-        zeros=torch.nn.init.zeros_
+        zeros=torch.nn.init.zeros_,
     )
 
     # some modules have their own parameter initialization methods
@@ -57,17 +58,19 @@ class Model(torch.nn.Module, ABC):
         torch.nn.LayerNorm,
         torch.nn.BatchNorm1d,
         torch.nn.BatchNorm2d,
-        PositionalEncoding
+        PositionalEncoding,
     ]
 
-    def __init__(self,
-                 device: torch.device,
-                 module_conf: Dict,
-                 result_path: str,
-                 model_conf: Dict = None,
-                 criterion_conf: Dict = None,
-                 non_blocking: bool = False,
-                 distributed: bool = False):
+    def __init__(
+        self,
+        device: torch.device,
+        module_conf: Dict,
+        result_path: str,
+        model_conf: Dict = None,
+        criterion_conf: Dict = None,
+        non_blocking: bool = False,
+        distributed: bool = False,
+    ):
         """
         In this initialization function, there are two parts of initialization: model-specific customized initialization
         and model-independent general initialization.
@@ -129,8 +132,8 @@ class Model(torch.nn.Module, ABC):
         # criterion_conf is default to be an empty dictionary
         criterion_conf = dict() if criterion_conf is None else criterion_conf
         # customize_conf is default to be an empty dictionary
-        if 'customize_conf' not in model_conf.keys():
-            model_conf['customize_conf'] = dict()
+        if "customize_conf" not in model_conf.keys():
+            model_conf["customize_conf"] = dict()
 
         # general argument registration
         self.non_blocking = non_blocking
@@ -142,49 +145,72 @@ class Model(torch.nn.Module, ABC):
         if "visual_infer_conf" in model_conf.keys():
             # configuration is given as a .yaml file
             if isinstance(model_conf["visual_infer_conf"], str):
-                self.visual_infer_conf = load_yaml(open(parse_path_args(model_conf["visual_infer_conf"])))
+                self.visual_infer_conf = load_yaml(
+                    open(parse_path_args(model_conf["visual_infer_conf"]))
+                )
             # configuration is explicitly given
             elif isinstance(model_conf["visual_infer_conf"], Dict):
                 self.visual_infer_conf = model_conf["visual_infer_conf"]
             else:
-                raise RuntimeError("model_conf['visual_infer_conf'] must be given as either a string or a Dict.")
+                raise RuntimeError(
+                    "model_conf['visual_infer_conf'] must be given as either a string or a Dict."
+                )
         else:
             self.visual_infer_conf = dict()
 
         # --- 1. Model Construction --- #
-        self.module_init(**module_conf, **model_conf['customize_conf'])
+        self.module_init(**module_conf, **model_conf["customize_conf"])
         self.criterion_init(**criterion_conf)
         # initialize the bad case selection methods by the hook function
         self.bad_cases_selection = self.bad_cases_selection_init_fn()
 
         # --- 2.1. Pretrained Model Loading --- #
-        pretrained_model = model_conf['pretrained_model'] if 'pretrained_model' in model_conf.keys() else None
+        pretrained_model = (
+            model_conf["pretrained_model"]
+            if "pretrained_model" in model_conf.keys()
+            else None
+        )
         if pretrained_model is not None:
-            pretrained_model = pretrained_model if isinstance(pretrained_model, list) else [pretrained_model]
+            pretrained_model = (
+                pretrained_model
+                if isinstance(pretrained_model, list)
+                else [pretrained_model]
+            )
 
             for ptm in pretrained_model:
                 # argument checking
                 if isinstance(ptm, str):
                     ptm = dict(path=parse_path_args(ptm))
                 elif isinstance(ptm, Dict):
-                    assert 'path' in ptm.keys(), \
-                        "If model['model_conf']['pretrained_model'] is given as a Dict, " \
+                    assert "path" in ptm.keys(), (
+                        "If model['model_conf']['pretrained_model'] is given as a Dict, "
                         "please give a key named 'path' to specify where your pretrained model is placed."
-                    if os.path.exists(ptm['path']):
-                        raise RuntimeError(f"The specified path of your pretrained model {ptm['path']} doesn't exist! "
-                                           f"Please check the input path.")
+                    )
+                    if os.path.exists(ptm["path"]):
+                        raise RuntimeError(
+                            f"The specified path of your pretrained model {ptm['path']} doesn't exist! "
+                            f"Please check the input path."
+                        )
                 else:
-                    raise TypeError(f"The elements in model['model_conf']['pretrained_model'] must be either a string "
-                                    f"or a Dict, but got {ptm}")
+                    raise TypeError(
+                        f"The elements in model['model_conf']['pretrained_model'] must be either a string "
+                        f"or a Dict, but got {ptm}"
+                    )
 
-                _pt_model = torch.load(parse_path_args(ptm['path']), map_location=self.device)
-                mapping = ptm['mapping'] if 'mapping' in ptm.keys() else None
+                _pt_model = torch.load(
+                    parse_path_args(ptm["path"]), map_location=self.device
+                )
+                mapping = ptm["mapping"] if "mapping" in ptm.keys() else None
                 if mapping is None:
-                    self.load_state_dict(_pt_model, strict=True if 'strict' not in ptm.keys() else ptm['strict'])
+                    self.load_state_dict(
+                        _pt_model,
+                        strict=True if "strict" not in ptm.keys() else ptm["strict"],
+                    )
                 else:
-                    assert isinstance(mapping, dict) and len(mapping) >= 1, \
-                        f"mapping must be given as a dict and cannot be empty! " \
+                    assert isinstance(mapping, dict) and len(mapping) >= 1, (
+                        f"mapping must be given as a dict and cannot be empty! "
                         f"Got type(mapping)={type(mapping)} and len(mapping)={len(mapping)}"
+                    )
 
                     _src_modules = OrderedDict()
                     # loop each name-parameter pair in the model
@@ -192,20 +218,24 @@ class Model(torch.nn.Module, ABC):
                         # loop each source-target mapping pair
                         for src, tgt in mapping.items():
                             # attach '.' to the end is for making the name unique
-                            src, tgt = src + '.', tgt + '.'
+                            src, tgt = src + ".", tgt + "."
                             # change the parameter name in the middle
                             if src in name:
                                 name = name.replace(src, tgt)
                         # record the parameter no matter whether its name is modified or not
                         _src_modules[name] = para
-                    self.load_state_dict(_src_modules, strict=True if 'strict' not in ptm.keys() else ptm['strict'])
+                    self.load_state_dict(
+                        _src_modules,
+                        strict=True if "strict" not in ptm.keys() else ptm["strict"],
+                    )
 
         # --- 2.2. Model Parameter Initialization --- #
         else:
             # the default initialization method is xavier (i.e. xavier_normal)
-            init = model_conf["init"] if "init" in model_conf.keys() else 'xavier'
-            assert init in self.init_class_dict.keys(), \
-                f"Only the initialization methods {self.init_class_dict.keys()} are supported, but got init={init}."
+            init = model_conf["init"] if "init" in model_conf.keys() else "xavier"
+            assert (
+                init in self.init_class_dict.keys()
+            ), f"Only the initialization methods {self.init_class_dict.keys()} are supported, but got init={init}."
 
             for name, para in self.named_parameters():
                 # initialize all the bias vectors to zero
@@ -221,23 +251,33 @@ class Model(torch.nn.Module, ABC):
                     module.reset_parameters()
 
         # --- 3. Model Parameter Freezing --- #
-        frozen_modules = model_conf['frozen_modules'] if 'frozen_modules' in model_conf.keys() else None
+        frozen_modules = (
+            model_conf["frozen_modules"]
+            if "frozen_modules" in model_conf.keys()
+            else None
+        )
         if frozen_modules is not None:
-            if frozen_modules != 'all':
-                frozen_modules = frozen_modules if isinstance(frozen_modules, list) else [frozen_modules]
+            if frozen_modules != "all":
+                frozen_modules = (
+                    frozen_modules
+                    if isinstance(frozen_modules, list)
+                    else [frozen_modules]
+                )
 
             for name, para in self.named_parameters():
                 frozen_flag = False
-                if frozen_modules != 'all':
+                if frozen_modules != "all":
                     for module in frozen_modules:
-                        frozen_flag = name.startswith(module + '.')
+                        frozen_flag = name.startswith(module + ".")
                 else:
                     frozen_flag = True
 
                 if frozen_flag:
                     para.requires_grad = False
                 else:
-                    raise RuntimeError(f"frozen_modules: Parameters of {name} are not found in the model!")
+                    raise RuntimeError(
+                        f"frozen_modules: Parameters of {name} are not found in the model!"
+                    )
 
     @abstractmethod
     def module_init(self, **kwargs):
@@ -285,7 +325,9 @@ class Model(torch.nn.Module, ABC):
         """
         return None
 
-    def batch_to_cuda(self, data: Dict[str, torch.Tensor] or torch.Tensor) -> Dict[str, torch.Tensor] or torch.Tensor:
+    def batch_to_cuda(
+        self, data: Dict[str, torch.Tensor] or torch.Tensor
+    ) -> Dict[str, torch.Tensor] or torch.Tensor:
         """
         The recursive function that transfers the batch data to the specified device in the current process.
 
@@ -355,13 +397,16 @@ class Model(torch.nn.Module, ABC):
         with forward_context():
             try:
                 # Feed the input batch into the model and get the outputs, copy.deepcopy() here is for the data safety
-                model_outputs = self.module_forward(epoch=epoch, **copy.deepcopy(batch_data))
+                model_outputs = self.module_forward(
+                    epoch=epoch, **copy.deepcopy(batch_data)
+                )
             except Exception as e:
                 if not self.distributed:
                     raise e
                 else:
                     skip_flag_list = torch.LongTensor(
-                        [False for _ in range(torch.distributed.get_world_size())]).cuda(self.device)
+                        [False for _ in range(torch.distributed.get_world_size())]
+                    ).cuda(self.device)
                     skip_flag = torch.LongTensor([True]).cuda(self.device)
                     # as long as one node meets an error, all nodes will skip the current step at the same time
                     torch.distributed.all_gather_into_tensor(skip_flag_list, skip_flag)
@@ -370,13 +415,16 @@ class Model(torch.nn.Module, ABC):
             else:
                 if self.distributed:
                     skip_flag_list = torch.LongTensor(
-                        [False for _ in range(torch.distributed.get_world_size())]).cuda(self.device)
+                        [False for _ in range(torch.distributed.get_world_size())]
+                    ).cuda(self.device)
                     skip_flag = torch.LongTensor([False]).cuda(self.device)
                     # as long as one node meets an error, all nodes will skip the current step at the same time
                     torch.distributed.all_gather_into_tensor(skip_flag_list, skip_flag)
                     if skip_flag_list.sum() >= 1:
-                        raise RuntimeError("Other ranks meet errors during model forwarding, "
-                                           "so this rank will also skip the current step!")
+                        raise RuntimeError(
+                            "Other ranks meet errors during model forwarding, "
+                            "so this rank will also skip the current step!"
+                        )
 
         # copy.deepcopy() cannot receive the non-leaf nodes in the computation graph (model_outputs). Since
         # model_outputs cannot be detached from the graph (gradients necessary), copy.deepcopy() is not used below.
@@ -395,16 +443,27 @@ class Model(torch.nn.Module, ABC):
         # --- 3.1. Model Training Branch --- #
         if self.training:
             # In the training stage, both the trainable losses and non-trainable metrics will be returned
-            losses, metrics = self.criterion_forward(**combine_input_output(batch_data, model_outputs))
+            losses, metrics = self.criterion_forward(
+                **combine_input_output(batch_data, model_outputs)
+            )
             metrics.update(self.get_recordable_para())
 
             # post-checking for training losses, they must be trainable tensors
-            assert sum([isinstance(loss, torch.Tensor) and loss.requires_grad for loss in losses.values()]) \
-                   == len(losses), "Training losses must be trainable tensors!"
+            assert sum(
+                [
+                    isinstance(loss, torch.Tensor) and loss.requires_grad
+                    for loss in losses.values()
+                ]
+            ) == len(losses), "Training losses must be trainable tensors!"
             # post-checking for validation metrics, they must be either non-trainable tensors or other datatypes
-            assert sum([not isinstance(metric, torch.Tensor) or not metric.requires_grad
-                        for metric in metrics.values()]) == len(metrics), \
-                "Validation metrics must be either non-trainable tensors or other datatypes!"
+            assert sum(
+                [
+                    not isinstance(metric, torch.Tensor) or not metric.requires_grad
+                    for metric in metrics.values()
+                ]
+            ) == len(
+                metrics
+            ), "Validation metrics must be either non-trainable tensors or other datatypes!"
 
             # the non-trainable metrics will be averaged across all the processes in the distributed mode
             if self.distributed:
@@ -415,13 +474,20 @@ class Model(torch.nn.Module, ABC):
         else:
             # In the validation stage, only the non-trainable metrics will be returned
             with torch.inference_mode():
-                metrics = self.criterion_forward(**combine_input_output(batch_data, model_outputs))
+                metrics = self.criterion_forward(
+                    **combine_input_output(batch_data, model_outputs)
+                )
             metrics.update(self.get_recordable_para())
 
             # post-checking for validation metrics, they must be either non-trainable tensors or other datatypes
-            assert sum([not isinstance(metric, torch.Tensor) or not metric.requires_grad
-                        for metric in metrics.values()]) == len(metrics), \
-                "Validation metrics must be either non-trainable tensors or other datatypes!"
+            assert sum(
+                [
+                    not isinstance(metric, torch.Tensor) or not metric.requires_grad
+                    for metric in metrics.values()
+                ]
+            ) == len(
+                metrics
+            ), "Validation metrics must be either non-trainable tensors or other datatypes!"
 
             # the non-trainable metrics will be averaged across all the processes in the distributed mode
             if self.distributed:
@@ -451,21 +517,24 @@ class Model(torch.nn.Module, ABC):
 
             """
             # --- Process the Text String and its Length --- #
-            if 'text' in data_dict.keys():
-                if isinstance(data_dict['text'], List):
-                    data_dict['text'], data_dict['text_len'] = text2tensor_and_len(
-                        text_list=data_dict['text'], text2tensor_func=self.tokenizer.text2tensor,
-                        ignore_idx=self.tokenizer.ignore_idx
+            if "text" in data_dict.keys():
+                if isinstance(data_dict["text"], List):
+                    data_dict["text"], data_dict["text_len"] = text2tensor_and_len(
+                        text_list=data_dict["text"],
+                        text2tensor_func=self.tokenizer.text2tensor,
+                        ignore_idx=self.tokenizer.ignore_idx,
                     )
                 else:
-                    assert isinstance(data_dict['text'], torch.Tensor)
+                    assert isinstance(data_dict["text"], torch.Tensor)
 
             # --- Process the Speaker ID String --- #
-            if 'spk_ids' in data_dict.keys():
-                if isinstance(data_dict['spk_ids'], List):
-                    if hasattr(self, 'spk2idx'):
-                        data_dict['spk_ids'] = spk2tensor(spk_list=data_dict['spk_ids'], spk2idx_dict=self.spk2idx)
-                elif not isinstance(data_dict['spk_ids'], torch.Tensor):
+            if "spk_ids" in data_dict.keys():
+                if isinstance(data_dict["spk_ids"], List):
+                    if hasattr(self, "spk2idx"):
+                        data_dict["spk_ids"] = spk2tensor(
+                            spk_list=data_dict["spk_ids"], spk2idx_dict=self.spk2idx
+                        )
+                elif not isinstance(data_dict["spk_ids"], torch.Tensor):
                     raise TypeError
 
             return data_dict
@@ -479,7 +548,9 @@ class Model(torch.nn.Module, ABC):
         else:
             raise RuntimeError("Wrong composition of batch_data!")
 
-    def aver_metrics_across_procs(self, metrics: Dict[str, torch.Tensor], batch_data: Dict) -> Dict[str, torch.Tensor]:
+    def aver_metrics_across_procs(
+        self, metrics: Dict[str, torch.Tensor], batch_data: Dict
+    ) -> Dict[str, torch.Tensor]:
         """
         This function averages the evaluation metrics across all GPU processes in the DDP mode for model distribution.
 
@@ -505,7 +576,9 @@ class Model(torch.nn.Module, ABC):
             return _batch_size
 
         # check the batch size
-        multi_flag = sum([isinstance(value, Dict) for value in batch_data.values()]) == len(batch_data)
+        multi_flag = sum(
+            [isinstance(value, Dict) for value in batch_data.values()]
+        ) == len(batch_data)
         # we take the summation of all data-labels pairs in a single batch made by multiple dataloaders
         if multi_flag:
             batch_size = sum([get_batch_size(value) for value in batch_data.values()])
@@ -519,13 +592,17 @@ class Model(torch.nn.Module, ABC):
             if metrics[key].dim() == 0:
                 metrics[key] = metrics[key][None]
             elif metrics[key].dim() != 1:
-                raise RuntimeError(f"Each metric value must be one-dimensional scalar, "
-                                   f"but got metrics[{key}]={metrics[key]}!")
+                raise RuntimeError(
+                    f"Each metric value must be one-dimensional scalar, "
+                    f"but got metrics[{key}]={metrics[key]}!"
+                )
 
             # batch_size acts as the weight for each metric value in the current process
             metrics[key] *= batch_size.type(metrics[key].dtype)
             # sum up the weighted metric values at rank no.0
-            torch.distributed.reduce(metrics[key], dst=0, op=torch.distributed.ReduceOp.SUM)
+            torch.distributed.reduce(
+                metrics[key], dst=0, op=torch.distributed.ReduceOp.SUM
+            )
 
         # sum up the batch size across at rank no.0 to get the overall batch size
         torch.distributed.reduce(batch_size, dst=0, op=torch.distributed.ReduceOp.SUM)
@@ -559,8 +636,9 @@ class Model(torch.nn.Module, ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def criterion_forward(self, **kwargs) -> \
-            (Dict[str, torch.Tensor], Dict[str, torch.Tensor]) or Dict[str, torch.Tensor]:
+    def criterion_forward(
+        self, **kwargs
+    ) -> (Dict[str, torch.Tensor], Dict[str, torch.Tensor]) or Dict[str, torch.Tensor]:
         """
         This interface function is activated after `self.model_forward()`. It receives the model prediction results
         from `self.model_forward()` and input batch data from `self.batch_preprocess_fn()`.
@@ -586,29 +664,40 @@ class Model(torch.nn.Module, ABC):
         Returns:
 
         """
+
         def recur_get_module_recordable_para(curr_node, prefix_list: List[str] = None):
             if prefix_list is None:
                 prefix_list = []
             if isinstance(curr_node, Dict):
                 _output = dict()
                 for _key, _value in curr_node.items():
-                    _output.update(recur_get_module_recordable_para(_value, prefix_list + [_key]))
+                    _output.update(
+                        recur_get_module_recordable_para(_value, prefix_list + [_key])
+                    )
                 return _output
             else:
                 if curr_node is None:
                     return {}
                 elif isinstance(curr_node, torch.Tensor):
-                    return {'_'.join(prefix_list): curr_node.clone().detach()}
+                    return {"_".join(prefix_list): curr_node.clone().detach()}
                 else:
                     raise RuntimeError
 
         output = dict()
         for key, value in self._modules.items():
             if isinstance(value, Module):
-                output.update(recur_get_module_recordable_para(value.get_recordable_para(), [key]))
+                output.update(
+                    recur_get_module_recordable_para(value.get_recordable_para(), [key])
+                )
         return output
 
-    def matrix_snapshot(self, vis_logs: List, hypo_attention: Dict, subfolder_names: List[str] or str, epoch: int):
+    def matrix_snapshot(
+        self,
+        vis_logs: List,
+        hypo_attention: Dict,
+        subfolder_names: List[str] or str,
+        epoch: int,
+    ):
         """
 
         Used by the abstract function visualize() to make the snapshot materials for attention matrices.
@@ -621,15 +710,23 @@ class Model(torch.nn.Module, ABC):
         # process the input data by different data types
         if isinstance(hypo_attention[keys[0]], Dict):
             for key, value in hypo_attention.items():
-                self.matrix_snapshot(vis_logs=vis_logs, hypo_attention=value,
-                                     subfolder_names=subfolder_names + [key], epoch=epoch)
+                self.matrix_snapshot(
+                    vis_logs=vis_logs,
+                    hypo_attention=value,
+                    subfolder_names=subfolder_names + [key],
+                    epoch=epoch,
+                )
 
         # snapshot the information in the materials
         elif isinstance(hypo_attention[keys[0]], np.ndarray):
             vis_logs.append(
                 dict(
-                    plot_type='matrix', materials=hypo_attention, epoch=epoch,
-                    sep_save=False, data_save=True, subfolder_names=subfolder_names
+                    plot_type="matrix",
+                    materials=hypo_attention,
+                    epoch=epoch,
+                    sep_save=False,
+                    data_save=True,
+                    subfolder_names=subfolder_names,
                 )
             )
 
@@ -644,21 +741,30 @@ class Model(torch.nn.Module, ABC):
 
         # process the input data by different data types
         if isinstance(hypo_attention, Dict):
-            return {key: self.attention_reshape(value, prefix_list + [key]) for key, value in hypo_attention.items()}
+            return {
+                key: self.attention_reshape(value, prefix_list + [key])
+                for key, value in hypo_attention.items()
+            }
         elif isinstance(hypo_attention, List):
-            return {str(index - len(hypo_attention)): self.attention_reshape(
-                hypo_attention[index], prefix_list + [str(index - len(hypo_attention))])
-                for index in range(len(hypo_attention) - 1, -1, -1)}
+            return {
+                str(index - len(hypo_attention)): self.attention_reshape(
+                    hypo_attention[index],
+                    prefix_list + [str(index - len(hypo_attention))],
+                )
+                for index in range(len(hypo_attention) - 1, -1, -1)
+            }
         elif isinstance(hypo_attention, torch.Tensor):
             hypo_attention = hypo_attention.squeeze()
             if hypo_attention.is_cuda:
                 hypo_attention = hypo_attention.detach().cpu()
 
             if hypo_attention.dim() == 2:
-                return {'.'.join(prefix_list + [str(0)]): hypo_attention.numpy()}
+                return {".".join(prefix_list + [str(0)]): hypo_attention.numpy()}
             elif hypo_attention.dim() == 3:
-                return {'.'.join(prefix_list + [str(index)]): element.numpy()
-                        for index, element in enumerate(hypo_attention)}
+                return {
+                    ".".join(prefix_list + [str(index)]): element.numpy()
+                    for index, element in enumerate(hypo_attention)
+                }
             else:
                 raise RuntimeError
 
@@ -703,23 +809,32 @@ class Model(torch.nn.Module, ABC):
 
         # get the inference results
         evaluate_results = self.inference(infer_conf=infer_conf, **test_batch)
-        if hasattr(self, 'instance_report_cache') and self.instance_report_cache is not None:
-            evaluate_results['instance_reports.md'] = self.instance_report_cache
+        if (
+            hasattr(self, "instance_report_cache")
+            and self.instance_report_cache is not None
+        ):
+            evaluate_results["instance_reports.md"] = self.instance_report_cache
             self.instance_report_cache = None
 
         # post-check the format of evaluate_results
         if isinstance(evaluate_results, Dict):
             for key, value in evaluate_results.items():
-                if 'format' not in value.keys() or 'content' not in value.keys():
-                    raise RuntimeError("Each element of the returned value of self.inference() must contain the keys "
-                                       "named both 'format' and 'content'!")
+                if "format" not in value.keys() or "content" not in value.keys():
+                    raise RuntimeError(
+                        "Each element of the returned value of self.inference() must contain the keys "
+                        "named both 'format' and 'content'!"
+                    )
         else:
-            raise RuntimeError(f"The returned value of self.inference() must be a Dict, "
-                               f"but got {type(evaluate_results)}!")
+            raise RuntimeError(
+                f"The returned value of self.inference() must be a Dict, "
+                f"but got {type(evaluate_results)}!"
+            )
         return evaluate_results
 
     @abstractmethod
-    def inference(self, infer_conf: Dict, **kwargs) -> Dict[str, Dict[str, str or List]]:
+    def inference(
+        self, infer_conf: Dict, **kwargs
+    ) -> Dict[str, Dict[str, str or List]]:
         """
         This function receives the test data and test configuration. The inference results will be packaged into a
         Dict[str, Dict] which is passed to TestMonitor for disk storage. The returned Dict should be in the form of
@@ -783,7 +898,9 @@ class Model(torch.nn.Module, ABC):
         """
         raise NotImplementedError
 
-    def register_instance_reports(self, md_list_dict: Dict[str, List], extra_string_list: List[str] = None):
+    def register_instance_reports(
+        self, md_list_dict: Dict[str, List], extra_string_list: List[str] = None
+    ):
         """
 
         Args:
@@ -812,12 +929,14 @@ class Model(torch.nn.Module, ABC):
         # --- 2. Generate .md Instance Report for the current step --- #
         instance_reports = []
         for i in range(ele_len):
-            ele_dict = {key: value[i] if isinstance(value[i], str) else str(value[i])
-                        for key, value in md_list_dict.items()}
-            _curr_report = '\n\n' + get_list_strings(ele_dict) + '\n'
+            ele_dict = {
+                key: value[i] if isinstance(value[i], str) else str(value[i])
+                for key, value in md_list_dict.items()
+            }
+            _curr_report = "\n\n" + get_list_strings(ele_dict) + "\n"
 
             if extra_string_list is not None:
-                _curr_report += extra_string_list[i] + '\n'
+                _curr_report += extra_string_list[i] + "\n"
             instance_reports.append(_curr_report)
 
-        self.instance_report_cache = dict(format='txt', content=instance_reports)
+        self.instance_report_cache = dict(format="txt", content=instance_reports)

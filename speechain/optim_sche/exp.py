@@ -1,11 +1,13 @@
 import math
 from speechain.optim_sche.abs import OptimScheduler
 
+
 class ExponentDecayLr(OptimScheduler):
     """
-        ExponentDecayLr is a class that inherits from OptimScheduler and implements an exponential decay learning rate
-        scheduler. It updates the learning rate based on the epoch number using the provided decay factor.
+    ExponentDecayLr is a class that inherits from OptimScheduler and implements an exponential decay learning rate
+    scheduler. It updates the learning rate based on the epoch number using the provided decay factor.
     """
+
     def sche_init(self, decay_factor: float = 0.999):
         """
         Initializes the exponential decay learning rate scheduler with the given decay factor.

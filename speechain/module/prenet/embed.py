@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import torch
 import math
 
@@ -11,13 +12,12 @@ from speechain.module.abs import Module
 
 class EmbedPrenet(Module):
     """
-        Create new embeddings for the vocabulary. Use scaling for the Transformer.
+    Create new embeddings for the vocabulary. Use scaling for the Transformer.
     """
-    def module_init(self,
-                    embedding_dim,
-                    vocab_size,
-                    scale: bool = False,
-                    padding_idx: int = 0):
+
+    def module_init(
+        self, embedding_dim, vocab_size, scale: bool = False, padding_idx: int = 0
+    ):
         """
 
         Args:
@@ -42,9 +42,11 @@ class EmbedPrenet(Module):
         self.padding_idx = padding_idx
 
         # initialize Embedding layer
-        self.embed = torch.nn.Embedding(num_embeddings=vocab_size,
-                                        embedding_dim=embedding_dim,
-                                        padding_idx=padding_idx)
+        self.embed = torch.nn.Embedding(
+            num_embeddings=vocab_size,
+            embedding_dim=embedding_dim,
+            padding_idx=padding_idx,
+        )
 
     def forward(self, text: torch.Tensor):
         """

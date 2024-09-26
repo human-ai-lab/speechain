@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.09
 """
+
 from typing import List
 import torch
 
@@ -12,28 +13,30 @@ from speechain.module.prenet.conv1d import Conv1dEv
 
 class Conv1dPostnet(Module):
     """
-        The Conv1d postnet for TTS. Usually used after the Transformer TTS decoder.
-        This prenet is made up of only Conv1d blocks each of which contains:
-         1. a Conv1d layer
-         2. a BatchNorm1d layer
-         3. an activation function
-         4. a Dropout layer.
+    The Conv1d postnet for TTS. Usually used after the Transformer TTS decoder.
+    This prenet is made up of only Conv1d blocks each of which contains:
+     1. a Conv1d layer
+     2. a BatchNorm1d layer
+     3. an activation function
+     4. a Dropout layer.
 
-        Reference:
-            Neural Speech Synthesis with Transformer Network
-            https://ojs.aaai.org/index.php/AAAI/article/view/4642/4520
+    Reference:
+        Neural Speech Synthesis with Transformer Network
+        https://ojs.aaai.org/index.php/AAAI/article/view/4642/4520
     """
 
-    def module_init(self,
-                    feat_dim: int = None,
-                    conv_dims: int or List[int] = [512, 512, 512, 512, 0],
-                    conv_kernel: int = 5,
-                    conv_stride: int = 1,
-                    conv_padding_mode: str = 'same',
-                    conv_batchnorm: bool = True,
-                    conv_activation: str = 'Tanh',
-                    conv_dropout: float or List[float] = None,
-                    zero_centered: bool = False):
+    def module_init(
+        self,
+        feat_dim: int = None,
+        conv_dims: int or List[int] = [512, 512, 512, 512, 0],
+        conv_kernel: int = 5,
+        conv_stride: int = 1,
+        conv_padding_mode: str = "same",
+        conv_batchnorm: bool = True,
+        conv_activation: str = "Tanh",
+        conv_dropout: float or List[float] = None,
+        zero_centered: bool = False,
+    ):
         """
 
         Args:
@@ -67,15 +70,19 @@ class Conv1dPostnet(Module):
 
         """
         # Convolution arguments checking
-        assert isinstance(conv_dims, (List, int)), \
-            "The dimensions of convolutional layers must be given as a list of integers or an integer!"
-        assert isinstance(conv_kernel, int), \
-            "The sizes of convolutional kernels must be given as an integer!"
-        assert isinstance(conv_stride, int), \
-            "The lengths of convolutional strides must be given as an integer!"
+        assert isinstance(
+            conv_dims, (List, int)
+        ), "The dimensions of convolutional layers must be given as a list of integers or an integer!"
+        assert isinstance(
+            conv_kernel, int
+        ), "The sizes of convolutional kernels must be given as an integer!"
+        assert isinstance(
+            conv_stride, int
+        ), "The lengths of convolutional strides must be given as an integer!"
         if conv_dropout is not None:
-            assert isinstance(conv_dropout, (List, float)), \
-                "The dropout rates of convolutional layers must be given as a list of integers or an integer!"
+            assert isinstance(
+                conv_dropout, (List, float)
+            ), "The dropout rates of convolutional layers must be given as a list of integers or an integer!"
 
         # input_size initialization
         if self.input_size is not None:
@@ -103,12 +110,14 @@ class Conv1dPostnet(Module):
             _tmp_conv.append(
                 # don't include bias in the convolutional layer if it is followed by a batchnorm layer
                 # reference: https://stackoverflow.com/questions/46256747/can-not-use-both-bias-and-batch-normalization-in-convolution-layers
-                Conv1dEv(in_channels=_prev_dim,
-                         out_channels=self.conv_dims[i],
-                         kernel_size=self.conv_kernel,
-                         stride=self.conv_stride,
-                         padding_mode=self.conv_padding_mode,
-                         bias=not conv_batchnorm)
+                Conv1dEv(
+                    in_channels=_prev_dim,
+                    out_channels=self.conv_dims[i],
+                    kernel_size=self.conv_kernel,
+                    stride=self.conv_stride,
+                    padding_mode=self.conv_padding_mode,
+                    bias=not conv_batchnorm,
+                )
             )
             # BatchNorm is better to be placed before activation
             # reference: https://stackoverflow.com/questions/39691902/ordering-of-batch-normalization-and-dropout
@@ -116,12 +125,20 @@ class Conv1dPostnet(Module):
                 _tmp_conv.append(torch.nn.BatchNorm1d(self.conv_dims[i]))
             if conv_activation is not None:
                 # no 'ReLU'-series activation is added for the last layer if zero_centered is specified
-                if i != len(self.conv_dims) - 1 or not (zero_centered and 'ReLU' in conv_activation):
+                if i != len(self.conv_dims) - 1 or not (
+                    zero_centered and "ReLU" in conv_activation
+                ):
                     _tmp_conv.append(getattr(torch.nn, conv_activation)())
             if conv_dropout is not None:
-                _tmp_conv.append(torch.nn.Dropout(
-                    p=self.conv_dropout if not isinstance(self.conv_dropout, List) else self.conv_dropout[i]
-                ))
+                _tmp_conv.append(
+                    torch.nn.Dropout(
+                        p=(
+                            self.conv_dropout
+                            if not isinstance(self.conv_dropout, List)
+                            else self.conv_dropout[i]
+                        )
+                    )
+                )
             _prev_dim = conv_dims[i]
         self.conv = torch.nn.Sequential(*_tmp_conv)
         self.output_size = _prev_dim

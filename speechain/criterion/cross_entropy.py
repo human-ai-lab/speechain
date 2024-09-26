@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import math
 import torch
 import numpy as np
@@ -23,14 +24,16 @@ class CrossEntropy(Criterion):
 
     """
 
-    def criterion_init(self,
-                       length_normalized: bool = False,
-                       label_smoothing: float = 0.0,
-                       temperature: float = 1.0,
-                       confid_threshold: float = 0.0,
-                       confid_level: str = 'sentence',
-                       token_vocab: str = None,
-                       new_weights: Dict = None):
+    def criterion_init(
+        self,
+        length_normalized: bool = False,
+        label_smoothing: float = 0.0,
+        temperature: float = 1.0,
+        confid_threshold: float = 0.0,
+        confid_level: str = "sentence",
+        token_vocab: str = None,
+        new_weights: Dict = None,
+    ):
         """
 
         Args:
@@ -55,14 +58,19 @@ class CrossEntropy(Criterion):
                     ...'
         """
 
-        assert 0 <= label_smoothing < 1.0, \
-            f"The value of label_smoothing should be a float number in [0, 1), but got {label_smoothing}!"
-        assert temperature >= 0.0, \
-            f"The value of temperature should be a non-negative float number, but got {temperature}"
-        assert 0 <= confid_threshold < 1.0, \
-            f"The value of confid_threshold should be a float number in [0, 1), but got {label_smoothing}!"
-        assert confid_level in ['sentence', 'token'], \
-            f"confid_level must be one of ['sentence', 'token'], but got {confid_level}"
+        assert (
+            0 <= label_smoothing < 1.0
+        ), f"The value of label_smoothing should be a float number in [0, 1), but got {label_smoothing}!"
+        assert (
+            temperature >= 0.0
+        ), f"The value of temperature should be a non-negative float number, but got {temperature}"
+        assert (
+            0 <= confid_threshold < 1.0
+        ), f"The value of confid_threshold should be a float number in [0, 1), but got {label_smoothing}!"
+        assert confid_level in [
+            "sentence",
+            "token",
+        ], f"confid_level must be one of ['sentence', 'token'], but got {confid_level}"
 
         # para recording
         self.length_normalized = length_normalized
@@ -74,8 +82,9 @@ class CrossEntropy(Criterion):
 
         # update the token weights if new_weights is given
         if new_weights is not None:
-            assert token_vocab is not None, \
-                "Please specify a token dictionary by 'token_vocab' if you want to customize the token weights."
+            assert (
+                token_vocab is not None
+            ), "Please specify a token dictionary by 'token_vocab' if you want to customize the token weights."
 
             token_dict = np.loadtxt(token_vocab, dtype=str, delimiter="\n")
             token_dict = dict(zip(token_dict, np.arange(0, token_dict.shape[0])))
@@ -84,10 +93,9 @@ class CrossEntropy(Criterion):
             for token, weight in new_weights.items():
                 self.token_weights[token_dict[token]] = weight
 
-    def __call__(self,
-                 logits: torch.Tensor,
-                 text: torch.Tensor,
-                 text_len: torch.Tensor):
+    def __call__(
+        self, logits: torch.Tensor, text: torch.Tensor, text_len: torch.Tensor
+    ):
         """
 
         Args:
@@ -105,10 +113,11 @@ class CrossEntropy(Criterion):
         # For the text attached by a <sos/eos> at the beginning
         if logits.size(1) == text.size(1) - 1:
             # text_len must match the sequence dimension of text
-            assert text_len.max() == text.size(1), \
-                f"There is a mismatch of the sentence length between text and text_len. " \
-                f"Expect text_len.max() is either equal to or 1 smaller than text.size(1), " \
+            assert text_len.max() == text.size(1), (
+                f"There is a mismatch of the sentence length between text and text_len. "
+                f"Expect text_len.max() is either equal to or 1 smaller than text.size(1), "
                 f"but got text_len.max()={text_len.max()} and text.size(1)={text.size(1)}."
+            )
             # remove the <sos/eos> at the beginning
             text = text[:, 1:].squeeze(dim=-1)
             # don't use text_len -= 1 here because it will also change the text_len outside this function
@@ -120,10 +129,14 @@ class CrossEntropy(Criterion):
         # reshape predictions and do log-softmax
         batch, seq_maxlen, vocab_size = logits.size()
         log_prob = torch.log_softmax(
-            logits.contiguous().view(batch * seq_maxlen, vocab_size) / self.temperature, dim=-1)
+            logits.contiguous().view(batch * seq_maxlen, vocab_size) / self.temperature,
+            dim=-1,
+        )
 
         # reshape targets and calculate the loss
-        log_prob_target = log_prob.gather(1, text.contiguous().view(-1, 1)).squeeze(dim=-1)
+        log_prob_target = log_prob.gather(1, text.contiguous().view(-1, 1)).squeeze(
+            dim=-1
+        )
         if self.label_smoothing > 0:
             smooth_pos = 1 - self.label_smoothing
             smooth_neg = self.label_smoothing / vocab_size
@@ -146,28 +159,41 @@ class CrossEntropy(Criterion):
             loss_mask = loss_mask.cuda(loss.device)
         if self.confid_threshold > 0:
             # padding the token predictions whose token-level confidences are lower than the threshold
-            if self.confid_level == 'token':
+            if self.confid_level == "token":
                 # confid_mask: (batch * seq_maxlen,)
                 confid_mask = log_prob_target <= math.log(self.confid_threshold)
                 loss_mask = torch.logical_or(loss_mask, confid_mask)
                 # update text_len by confid_mask for normalization (mask the extra part of each sentence)
                 # (batch * seq_maxlen,) -> (batch, seq_maxlen) -> (batch,)
-                text_len = (~confid_mask.reshape(batch, seq_maxlen)).masked_fill(~text_mask, False).sum(dim=-1)
+                text_len = (
+                    (~confid_mask.reshape(batch, seq_maxlen))
+                    .masked_fill(~text_mask, False)
+                    .sum(dim=-1)
+                )
                 # whether a sentence is valid (i.e. contains unmasked token prediction): (batch,)
                 valid_sent = text_len > 0
             # padding the whole sentence predictions whose sentence-level confidences are lower than the threshold
-            elif self.confid_level == 'sentence':
+            elif self.confid_level == "sentence":
                 # sent_confid: (batch * seq_maxlen,) -> (batch, seq_maxlen) -> (batch, 1)
-                sent_confid = log_prob_target.reshape(batch, seq_maxlen)\
-                    .masked_fill(~text_mask, 0.0).sum(dim=-1, keepdim=True)
+                sent_confid = (
+                    log_prob_target.reshape(batch, seq_maxlen)
+                    .masked_fill(~text_mask, 0.0)
+                    .sum(dim=-1, keepdim=True)
+                )
                 # confid_mask: (batch, 1)
-                confid_mask = sent_confid <= (text_len * math.log(self.confid_threshold)).unsqueeze(-1)
+                confid_mask = sent_confid <= (
+                    text_len * math.log(self.confid_threshold)
+                ).unsqueeze(-1)
                 # confid_mask: (batch, 1) -> (batch, seq_maxlen) -> (batch * seq_maxlen,)
-                loss_mask = torch.logical_or(loss_mask, confid_mask.expand(-1, seq_maxlen).reshape(-1))
+                loss_mask = torch.logical_or(
+                    loss_mask, confid_mask.expand(-1, seq_maxlen).reshape(-1)
+                )
                 # whether a sentence is valid (i.e. unmasked sentence): (batch, 1) -> (batch,)
                 valid_sent = ~confid_mask.squeeze(-1)
             else:
-                raise RuntimeError(f"confid_level must be one of ['sentence', 'token'], but got {self.confid_level}")
+                raise RuntimeError(
+                    f"confid_level must be one of ['sentence', 'token'], but got {self.confid_level}"
+                )
         else:
             valid_sent = None
 
@@ -178,4 +204,8 @@ class CrossEntropy(Criterion):
             loss /= text_len + 1e-10
 
         # valid_sent is used to calculate the number of valid sentence included in the loss
-        return -loss.mean() if self.confid_threshold == 0 else -loss.sum() / (torch.sum(valid_sent) + 1e-10)
+        return (
+            -loss.mean()
+            if self.confid_threshold == 0
+            else -loss.sum() / (torch.sum(valid_sent) + 1e-10)
+        )

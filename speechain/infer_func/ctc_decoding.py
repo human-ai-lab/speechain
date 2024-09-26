@@ -2,6 +2,7 @@ import torch
 
 from speechain.utilbox.train_util import make_mask_from_len
 
+
 class CTCPrefixScorer:
     """This class implements the CTC prefix scorer of Algorithm 2 in
     reference: https://www.merl.com/publications/docs/TR2017-190.pdf.
@@ -45,25 +46,25 @@ class CTCPrefixScorer:
         self.last_frame_index = enc_lens - 1
 
         # mask frames > enc_lens
-        mask = ~make_mask_from_len(enc_lens, return_3d=False).unsqueeze(-1).expand(-1, -1, self.vocab_size)
+        mask = (
+            ~make_mask_from_len(enc_lens, return_3d=False)
+            .unsqueeze(-1)
+            .expand(-1, -1, self.vocab_size)
+        )
         x.masked_fill_(mask, self.minus_inf)
-        x[:, :, self.blank_index] = x[:, :, self.blank_index].masked_fill_(mask[:, :, self.blank_index], 0)
+        x[:, :, self.blank_index] = x[:, :, self.blank_index].masked_fill_(
+            mask[:, :, self.blank_index], 0
+        )
 
         # dim=0: xnb, nonblank posteriors, dim=1: xb, blank posteriors
         xnb = x.transpose(0, 1)
-        xb = (
-            xnb[:, :, self.blank_index]
-            .unsqueeze(2)
-            .expand(-1, -1, self.vocab_size)
-        )
+        xb = xnb[:, :, self.blank_index].unsqueeze(2).expand(-1, -1, self.vocab_size)
 
         # (2, L, batch_size * beam_size, vocab_size)
         self.x = torch.stack([xnb, xb])
 
         # The first index of each sentence.
-        self.beam_offset = (
-            torch.arange(batch_size, device=self.device) * self.beam_size
-        )
+        self.beam_offset = torch.arange(batch_size, device=self.device) * self.beam_size
         # The first index of each candidates.
         self.cand_offset = (
             torch.arange(batch_size, device=self.device) * self.vocab_size
@@ -92,9 +93,7 @@ class CTCPrefixScorer:
 
             # r_prev[:, 0] = r^n(g), r_prev[:, 1] = r^b(g)
             # Accumulate blank posteriors at each step
-            r_prev[:, 1] = torch.cumsum(
-                self.x[0, :, :, self.blank_index], dim=0
-            )
+            r_prev[:, 1] = torch.cumsum(self.x[0, :, :, self.blank_index], dim=0)
             psi_prev = 0.0
         else:
             r_prev, psi_prev = state
@@ -144,9 +143,7 @@ class CTCPrefixScorer:
         # phi is prob at t-1 step, shift one frame and add it to the current prob p(c)
         phix = torch.cat((phi[0].unsqueeze(0), phi[:-1]), dim=0) + self.x[0]
         # (Alg.2-13): psi = psi + phi * p(c)
-        psi = torch.logsumexp(
-            torch.cat((phix[start:end], psi_init), dim=0), dim=0
-        )
+        psi = torch.logsumexp(torch.cat((phix[start:end], psi_init), dim=0), dim=0)
 
         # (Alg.2-3): if c = <eos>, psi = log(r_T^n(g) + r_T^b(g)), where T is the length of max frames
         for i in range(self.batch_size * self.beam_size):
@@ -189,9 +186,7 @@ class CTCPrefixScorer:
 
         # synchronize ctc states
         r = torch.index_select(
-            r.view(
-                -1, 2, self.batch_size * self.beam_size * self.vocab_size
-            ),
+            r.view(-1, 2, self.batch_size * self.beam_size * self.vocab_size),
             dim=-1,
             index=best_index,
         )

@@ -7,6 +7,7 @@
     Affiliation: NAIST
     Date: 2022.09
 """
+
 from typing import List
 import torch
 import torch.nn.functional as F
@@ -18,43 +19,53 @@ from speechain.module.prenet.linear import LinearPrenet
 
 class Conv1dEv(torch.nn.Module):
     """
-        A 1D convolutional layer with support for different padding modes.
+    A 1D convolutional layer with support for different padding modes.
 
-        Attributes:
-            cutoff (bool):
-                Indicates whether the output should be cut off for the 'same' padding mode.
-            causal_padding (int):
-                Additional padding required for the 'causal' padding mode.
-            dilation (int):
-                The dilation rate of the convolutional layer.
-            conv_lyr (torch.nn.Conv1d):
-                The 1D convolutional layer.
+    Attributes:
+        cutoff (bool):
+            Indicates whether the output should be cut off for the 'same' padding mode.
+        causal_padding (int):
+            Additional padding required for the 'causal' padding mode.
+        dilation (int):
+            The dilation rate of the convolutional layer.
+        conv_lyr (torch.nn.Conv1d):
+            The 1D convolutional layer.
 
     """
-    def __init__(self, in_channels: int, out_channels: int, kernel_size: int,
-                 stride: int = 1, dilation: int = 1, padding_mode: str = 'same',
-                 bias: bool = True, use_weight_norm: bool = False, groups: int = 1):
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        kernel_size: int,
+        stride: int = 1,
+        dilation: int = 1,
+        padding_mode: str = "same",
+        bias: bool = True,
+        use_weight_norm: bool = False,
+        groups: int = 1,
+    ):
         """
-            Initializes the Conv1dEv module with the specified parameters.
+        Initializes the Conv1dEv module with the specified parameters.
 
-            Args:
-                in_channels (int):
-                    Number of channels in the input feature.
-                out_channels (int):
-                    Number of channels produced by the convolution.
-                kernel_size (int):
-                    Size of the convolutional kernel.
-                stride (int, optional):
-                    Stride of the convolution. Defaults to 1.
-                dilation (int, optional):
-                    The dilation rate of the kernel. Defaults to 1.
-                padding_mode (str, optional):
-                    Padding mode. Supported values are 'valid', 'full', 'same' and 'causal'. Defaults to 'same'.
-                bias (bool, optional):
-                    If True, adds a learnable bias to the output. Defaults to True.
+        Args:
+            in_channels (int):
+                Number of channels in the input feature.
+            out_channels (int):
+                Number of channels produced by the convolution.
+            kernel_size (int):
+                Size of the convolutional kernel.
+            stride (int, optional):
+                Stride of the convolution. Defaults to 1.
+            dilation (int, optional):
+                The dilation rate of the kernel. Defaults to 1.
+            padding_mode (str, optional):
+                Padding mode. Supported values are 'valid', 'full', 'same' and 'causal'. Defaults to 'same'.
+            bias (bool, optional):
+                If True, adds a learnable bias to the output. Defaults to True.
 
-            Raises:
-                ValueError: If an unsupported padding mode is specified.
+        Raises:
+            ValueError: If an unsupported padding mode is specified.
         """
         super().__init__()
 
@@ -63,13 +74,13 @@ class Conv1dEv(torch.nn.Module):
         self.dilation = dilation
 
         # no padding is used
-        if padding_mode == 'valid':
+        if padding_mode == "valid":
             padding = 0
         # full padding
-        elif padding_mode == 'full':
+        elif padding_mode == "full":
             padding = dilation * (kernel_size - 1)
         # same padding, the output is the same in dimension with input
-        elif padding_mode == 'same':
+        elif padding_mode == "same":
             assert stride == 1, "Stride should be 1 for 'same' padding mode"
             if kernel_size % 2 == 0:
                 padding = dilation * kernel_size // 2
@@ -77,15 +88,23 @@ class Conv1dEv(torch.nn.Module):
             else:
                 padding = dilation * (kernel_size - 1) // 2
         # causal padding
-        elif padding_mode == 'causal':
+        elif padding_mode == "causal":
             padding = 0
             self.causal_padding = dilation * (kernel_size - 1)
         else:
-            raise ValueError("Unsupported padding mode. Supported modes are 'valid', 'full', 'same' and 'causal'.")
+            raise ValueError(
+                "Unsupported padding mode. Supported modes are 'valid', 'full', 'same' and 'causal'."
+            )
 
         self.conv_lyr = torch.nn.Conv1d(
-            in_channels=in_channels, out_channels=out_channels,
-            kernel_size=kernel_size, stride=stride, dilation=dilation, padding=padding, bias=bias, groups=groups
+            in_channels=in_channels,
+            out_channels=out_channels,
+            kernel_size=kernel_size,
+            stride=stride,
+            dilation=dilation,
+            padding=padding,
+            bias=bias,
+            groups=groups,
         )
         if use_weight_norm:
             self.conv_lyr = weight_norm(self.conv_lyr)
@@ -109,41 +128,43 @@ class Conv1dEv(torch.nn.Module):
         output = self.conv_lyr(feat)
         # cut off the redundant tails for the 'same' padding mode
         if self.cutoff:
-            output = output[:, :, :-self.dilation]
+            output = output[:, :, : -self.dilation]
         return output
 
 
 class Conv1dPrenet(Module):
     """
-        The Conv1d prenet. Usually used before the TTS encoder.
-        This prenet is made up of two parts:
-            1. (mandatory) The Conv1d part contains one or more Conv1d blocks which are composed of the components below
-                1. (mandatory) a Conv1d layer
-                2. (optional) a BatchNorm1d layer
-                3. (optional) an activation function
-                4. (optional) a Dropout layer.
-            2. (optional) The Linear part contains one or more Linear blocks which are composed of the components below
-                1. (mandatory) a Linear layer
-                2. (optional) an activation function
-                3. (optional) a Dropout layer.
+    The Conv1d prenet. Usually used before the TTS encoder.
+    This prenet is made up of two parts:
+        1. (mandatory) The Conv1d part contains one or more Conv1d blocks which are composed of the components below
+            1. (mandatory) a Conv1d layer
+            2. (optional) a BatchNorm1d layer
+            3. (optional) an activation function
+            4. (optional) a Dropout layer.
+        2. (optional) The Linear part contains one or more Linear blocks which are composed of the components below
+            1. (mandatory) a Linear layer
+            2. (optional) an activation function
+            3. (optional) a Dropout layer.
 
-        Reference:
-            Neural Speech Synthesis with Transformer Network
-            https://ojs.aaai.org/index.php/AAAI/article/view/4642/4520
+    Reference:
+        Neural Speech Synthesis with Transformer Network
+        https://ojs.aaai.org/index.php/AAAI/article/view/4642/4520
     """
 
-    def module_init(self,
-                    feat_dim: int = None,
-                    conv_dims: int or List[int] = [512, 512, 512],
-                    conv_kernel: int = 5,
-                    conv_stride: int = 1,
-                    conv_batchnorm: bool = True,
-                    conv_activation: str = 'ReLU',
-                    conv_dropout: float or List[float] = None,
-                    lnr_dims: int or List[int] = -1,
-                    lnr_activation: str = None,
-                    lnr_dropout: int or List[int] = None,
-                    zero_centered: bool = False):
+    def module_init(
+        self,
+        feat_dim: int = None,
+        conv_dims: int or List[int] = [512, 512, 512],
+        conv_kernel: int = 5,
+        conv_stride: int = 1,
+        conv_batchnorm: bool = True,
+        conv_activation: str = "ReLU",
+        conv_dropout: float or List[float] = None,
+        lnr_dims: int or List[int] = -1,
+        lnr_activation: str = None,
+        lnr_dropout: int or List[int] = None,
+        zero_centered: bool = False,
+    ):
         """
 
         Args:
@@ -183,23 +204,29 @@ class Conv1dPrenet(Module):
         """
         # --- 0. Argument Checking --- #
         # Convolution arguments checking
-        assert isinstance(conv_dims, (List, int)), \
-            "The dimensions of convolutional layers must be given as a list of integers or an integer!"
-        assert isinstance(conv_kernel, int), \
-            "The sizes of convolutional kernels must be given as an integer!"
-        assert isinstance(conv_stride, int), \
-            "The lengths of convolutional strides must be given as an integer!"
+        assert isinstance(
+            conv_dims, (List, int)
+        ), "The dimensions of convolutional layers must be given as a list of integers or an integer!"
+        assert isinstance(
+            conv_kernel, int
+        ), "The sizes of convolutional kernels must be given as an integer!"
+        assert isinstance(
+            conv_stride, int
+        ), "The lengths of convolutional strides must be given as an integer!"
         if conv_dropout is not None:
-            assert isinstance(conv_dropout, (List, float)), \
-                "The dropout rates of convolutional layers must be given as a list of integers or an integer!"
+            assert isinstance(
+                conv_dropout, (List, float)
+            ), "The dropout rates of convolutional layers must be given as a list of integers or an integer!"
 
         # Linear arguments checking
         if lnr_dropout is not None:
-            assert isinstance(lnr_dropout, (List, float)), \
-                "The dropout rates of linear layers must be given as a list of integers or an integer!"
+            assert isinstance(
+                lnr_dropout, (List, float)
+            ), "The dropout rates of linear layers must be given as a list of integers or an integer!"
         if lnr_dims is not None:
-            assert isinstance(lnr_dims, (List, int)), \
-                "The dimensions of linear layers must be given as a list of integers or an integer!"
+            assert isinstance(
+                lnr_dims, (List, int)
+            ), "The dimensions of linear layers must be given as a list of integers or an integer!"
 
         # input_size initialization
         if self.input_size is not None:
@@ -221,12 +248,14 @@ class Conv1dPrenet(Module):
             _tmp_conv.append(
                 # don't include bias in the convolutional layer if it is followed by a batchnorm layer
                 # reference: https://stackoverflow.com/questions/46256747/can-not-use-both-bias-and-batch-normalization-in-convolution-layers
-                Conv1dEv(in_channels=_prev_dim,
-                         out_channels=self.conv_dims[i],
-                         kernel_size=self.conv_kernel,
-                         stride=self.conv_stride,
-                         padding_mode='same',
-                         bias=not conv_batchnorm)
+                Conv1dEv(
+                    in_channels=_prev_dim,
+                    out_channels=self.conv_dims[i],
+                    kernel_size=self.conv_kernel,
+                    stride=self.conv_stride,
+                    padding_mode="same",
+                    bias=not conv_batchnorm,
+                )
             )
             # BatchNorm is better to be placed before activation
             # reference: https://stackoverflow.com/questions/39691902/ordering-of-batch-normalization-and-dropout
@@ -234,13 +263,20 @@ class Conv1dPrenet(Module):
                 _tmp_conv.append(torch.nn.BatchNorm1d(self.conv_dims[i]))
             if conv_activation is not None:
                 # no 'ReLU'-series activation is added for the last layer if zero_centered is specified
-                if not (i == len(self.conv_dims) - 1 and lnr_dims is None) or \
-                        not (zero_centered and 'ReLU' in conv_activation):
+                if not (i == len(self.conv_dims) - 1 and lnr_dims is None) or not (
+                    zero_centered and "ReLU" in conv_activation
+                ):
                     _tmp_conv.append(getattr(torch.nn, conv_activation)())
             if conv_dropout is not None:
-                _tmp_conv.append(torch.nn.Dropout(
-                    p=self.conv_dropout if not isinstance(self.conv_dropout, List) else self.conv_dropout[i]
-                ))
+                _tmp_conv.append(
+                    torch.nn.Dropout(
+                        p=(
+                            self.conv_dropout
+                            if not isinstance(self.conv_dropout, List)
+                            else self.conv_dropout[i]
+                        )
+                    )
+                )
             _prev_dim = conv_dims[i]
         self.conv = torch.nn.Sequential(*_tmp_conv)
         self.output_size = _prev_dim
@@ -253,11 +289,13 @@ class Conv1dPrenet(Module):
                 if lnr_dims[i] == -1:
                     lnr_dims[i] = _prev_dim
 
-            self.linear = LinearPrenet(feat_dim=self.output_size,
-                                       lnr_dims=lnr_dims,
-                                       lnr_activation=lnr_activation,
-                                       lnr_dropout=lnr_dropout,
-                                       zero_centered=zero_centered)
+            self.linear = LinearPrenet(
+                feat_dim=self.output_size,
+                lnr_dims=lnr_dims,
+                lnr_activation=lnr_activation,
+                lnr_dropout=lnr_dropout,
+                zero_centered=zero_centered,
+            )
             self.output_size = self.linear.output_size
 
     def forward(self, feat: torch.Tensor, feat_len: torch.Tensor):
@@ -282,7 +320,7 @@ class Conv1dPrenet(Module):
         feat = feat.transpose(1, 2)
 
         # forward the linear layers
-        if hasattr(self, 'linear'):
+        if hasattr(self, "linear"):
             # (batch, feat_maxlen, conv_dim) -> (batch, feat_maxlen, lnr_dim)
             feat, feat_len = self.linear(feat, feat_len)
 

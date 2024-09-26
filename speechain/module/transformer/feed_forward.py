@@ -4,6 +4,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 from typing import Dict, Any
 
 import torch
@@ -12,14 +13,22 @@ import torch.nn as nn
 from speechain.module.abs import Module
 from speechain.module.prenet.conv1d import Conv1dEv
 
+
 class PositionwiseFeedForward(Module):
     """
     Position-wise Feed-forward layer
     Projects the output vectors of multi-head attention layer to fdfwd_dim and then back to d_model.
     """
 
-    def module_init(self, d_model: int = 512, fdfwd_dim: int = 2048, fdfwd_type: str = 'linear',
-                    fdfwd_activation: str = 'ReLU', fdfwd_args: Dict[str, Any] = {}, dropout=0.1):
+    def module_init(
+        self,
+        d_model: int = 512,
+        fdfwd_dim: int = 2048,
+        fdfwd_type: str = "linear",
+        fdfwd_activation: str = "ReLU",
+        fdfwd_args: Dict[str, Any] = {},
+        dropout=0.1,
+    ):
         """
         Initializes position-wise feed-forward layer.
 
@@ -39,30 +48,34 @@ class PositionwiseFeedForward(Module):
                 The dropout rate for the Dropout layer after the first linear feedforward layer
         """
         if len(fdfwd_args) == 0:
-            if fdfwd_type == 'conv':
+            if fdfwd_type == "conv":
                 fdfwd_args = dict(kernel_size=3)
 
         # In-layer at the beginning
-        if fdfwd_type == 'linear':
+        if fdfwd_type == "linear":
             self.in_layer = nn.Linear(d_model, fdfwd_dim, **fdfwd_args)
-        elif fdfwd_type == 'conv':
+        elif fdfwd_type == "conv":
             self.in_layer = Conv1dEv(d_model, fdfwd_dim, **fdfwd_args)
         else:
-            raise NotImplementedError(f"Currently, fdfwd_type can only be one of 'linear' and 'conv'. "
-                                      f"But got {fdfwd_type}!")
+            raise NotImplementedError(
+                f"Currently, fdfwd_type can only be one of 'linear' and 'conv'. "
+                f"But got {fdfwd_type}!"
+            )
 
         # ReLU and DropOut layers in the middle
         self.activation = getattr(torch.nn, fdfwd_activation)()
         self.dropout = nn.Dropout(dropout)
 
         # Out-layer at the end
-        if fdfwd_type == 'linear':
+        if fdfwd_type == "linear":
             self.out_layer = nn.Linear(fdfwd_dim, d_model, **fdfwd_args)
-        elif fdfwd_type == 'conv':
+        elif fdfwd_type == "conv":
             self.out_layer = Conv1dEv(fdfwd_dim, d_model, **fdfwd_args)
         else:
-            raise NotImplementedError(f"Currently, fdfwd_type can only be one of 'linear' and 'conv'. "
-                                      f"But got {fdfwd_type}!")
+            raise NotImplementedError(
+                f"Currently, fdfwd_type can only be one of 'linear' and 'conv'. "
+                f"But got {fdfwd_type}!"
+            )
 
     def forward(self, x: torch.Tensor):
         """

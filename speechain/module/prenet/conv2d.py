@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 from typing import List
 import torch
 
@@ -12,36 +13,38 @@ from speechain.module.prenet.linear import LinearPrenet
 
 class Conv2dPrenet(Module):
     """
-        The Conv2d prenet. Usually used before the ASR encoder.
-        This prenet is made up of two parts:
-            1. (mandatory) The Conv2d part contains one or more Conv2d blocks which are composed of the components below
-                1. (mandatory) a Conv2d layer
-                2. (optional) a BatchNorm2d layer
-                3. (optional) an activation function
-                4. (optional) a Dropout layer
-            2. (optional) The Linear part contains one or more Linear blocks which are composed of the components below
-                1. (mandatory) a Linear layer
-                2. (optional) an activation function
-                3. (optional) a Dropout layer.
+    The Conv2d prenet. Usually used before the ASR encoder.
+    This prenet is made up of two parts:
+        1. (mandatory) The Conv2d part contains one or more Conv2d blocks which are composed of the components below
+            1. (mandatory) a Conv2d layer
+            2. (optional) a BatchNorm2d layer
+            3. (optional) an activation function
+            4. (optional) a Dropout layer
+        2. (optional) The Linear part contains one or more Linear blocks which are composed of the components below
+            1. (mandatory) a Linear layer
+            2. (optional) an activation function
+            3. (optional) a Dropout layer.
 
-        Reference:
-            Speech-transformer: a no-recurrence sequence-to-sequence model for speech recognition
-            https://ieeexplore.ieee.org/abstract/document/8462506/
+    Reference:
+        Speech-transformer: a no-recurrence sequence-to-sequence model for speech recognition
+        https://ieeexplore.ieee.org/abstract/document/8462506/
     """
 
-    def module_init(self,
-                    feat_dim: int = None,
-                    conv_dims: int or List[int] = [64, 64],
-                    conv_kernel: int or List[int] = 3,
-                    conv_stride: int or List[int] = 2,
-                    conv_padding: int or List[int] = 0,
-                    conv_batchnorm: bool = False,
-                    conv_activation: str = 'ReLU',
-                    conv_dropout: float or List[float] = None,
-                    lnr_dims: int or List[int] = 512,
-                    lnr_activation: str = None,
-                    lnr_dropout: float or List[float] = None,
-                    zero_centered: bool = False):
+    def module_init(
+        self,
+        feat_dim: int = None,
+        conv_dims: int or List[int] = [64, 64],
+        conv_kernel: int or List[int] = 3,
+        conv_stride: int or List[int] = 2,
+        conv_padding: int or List[int] = 0,
+        conv_batchnorm: bool = False,
+        conv_activation: str = "ReLU",
+        conv_dropout: float or List[float] = None,
+        lnr_dims: int or List[int] = 512,
+        lnr_activation: str = None,
+        lnr_dropout: float or List[float] = None,
+        zero_centered: bool = False,
+    ):
         """
 
         Args:
@@ -91,25 +94,32 @@ class Conv2dPrenet(Module):
         """
         # --- 0. Argument Checking --- #
         # Convolution arguments checking
-        assert isinstance(conv_dims, (List, int)), \
-            "The dimensions of convolutional layers must be given as a list of integers or an integer!"
-        assert isinstance(conv_kernel, (List, int)), \
-            "The sizes of convolutional kernels must be given as a list of integers or an integer!"
-        assert isinstance(conv_stride, (List, int)), \
-            "The lengths of convolutional strides must be given as a list of integers or an integer!"
-        assert isinstance(conv_padding, (List, int)), \
-            "The lengths of convolutional paddings must be given as a list of integers, an integer, or a string!"
+        assert isinstance(
+            conv_dims, (List, int)
+        ), "The dimensions of convolutional layers must be given as a list of integers or an integer!"
+        assert isinstance(
+            conv_kernel, (List, int)
+        ), "The sizes of convolutional kernels must be given as a list of integers or an integer!"
+        assert isinstance(
+            conv_stride, (List, int)
+        ), "The lengths of convolutional strides must be given as a list of integers or an integer!"
+        assert isinstance(
+            conv_padding, (List, int)
+        ), "The lengths of convolutional paddings must be given as a list of integers, an integer, or a string!"
         if conv_dropout is not None:
-            assert isinstance(conv_dropout, (List, float)), \
-                "The dropout rates of convolutional layers must be given as a list of integers or an integer!"
+            assert isinstance(
+                conv_dropout, (List, float)
+            ), "The dropout rates of convolutional layers must be given as a list of integers or an integer!"
 
         # Linear arguments checking
         if lnr_dropout is not None:
-            assert isinstance(lnr_dropout, (List, float)), \
-                "The dropout rates of linear layers must be given as a list of integers or an integer!"
+            assert isinstance(
+                lnr_dropout, (List, float)
+            ), "The dropout rates of linear layers must be given as a list of integers or an integer!"
         if lnr_dims is not None:
-            assert isinstance(lnr_dims, (List, int)), \
-                "The dimensions of linear layers must be given as a list of integers or an integer!"
+            assert isinstance(
+                lnr_dims, (List, int)
+            ), "The dimensions of linear layers must be given as a list of integers or an integer!"
 
         # input_size initialization
         if self.input_size is not None:
@@ -120,15 +130,35 @@ class Conv2dPrenet(Module):
         # --- 1. Convolutional Part Initialization --- #
         # register convolution arguments
         self.conv_dims = conv_dims if isinstance(conv_dims, List) else [conv_dims]
-        self.conv_kernel = tuple(conv_kernel) if isinstance(conv_kernel, List) else (conv_kernel, conv_kernel)
-        self.conv_stride = tuple(conv_stride) if isinstance(conv_stride, List) else (conv_stride, conv_stride)
-        self.conv_padding = tuple(conv_padding) if isinstance(conv_padding, List) else (conv_padding, conv_padding)
+        self.conv_kernel = (
+            tuple(conv_kernel)
+            if isinstance(conv_kernel, List)
+            else (conv_kernel, conv_kernel)
+        )
+        self.conv_stride = (
+            tuple(conv_stride)
+            if isinstance(conv_stride, List)
+            else (conv_stride, conv_stride)
+        )
+        self.conv_padding = (
+            tuple(conv_padding)
+            if isinstance(conv_padding, List)
+            else (conv_padding, conv_padding)
+        )
         self.conv_dropout = conv_dropout
 
         self.min_height, self.min_width = 1, 1
         for _ in self.conv_dims:
-            self.min_height = (self.min_height - 1) * self.conv_stride[0] + self.conv_kernel[0] - 2 * self.conv_padding[0]
-            self.min_width = (self.min_width - 1) * self.conv_stride[0] + self.conv_kernel[0] - 2 * self.conv_padding[0]
+            self.min_height = (
+                (self.min_height - 1) * self.conv_stride[0]
+                + self.conv_kernel[0]
+                - 2 * self.conv_padding[0]
+            )
+            self.min_width = (
+                (self.min_width - 1) * self.conv_stride[0]
+                + self.conv_kernel[0]
+                - 2 * self.conv_padding[0]
+            )
 
         # Conv2d blocks construction
         _prev_dim = 1
@@ -137,12 +167,14 @@ class Conv2dPrenet(Module):
             _tmp_conv.append(
                 # don't include bias in the convolutional layer if it is followed by a batchnorm layer
                 # reference: https://stackoverflow.com/questions/46256747/can-not-use-both-bias-and-batch-normalization-in-convolution-layers
-                torch.nn.Conv2d(in_channels=_prev_dim,
-                                out_channels=self.conv_dims[i],
-                                kernel_size=self.conv_kernel,
-                                stride=self.conv_stride,
-                                padding=self.conv_padding,
-                                bias=not conv_batchnorm)
+                torch.nn.Conv2d(
+                    in_channels=_prev_dim,
+                    out_channels=self.conv_dims[i],
+                    kernel_size=self.conv_kernel,
+                    stride=self.conv_stride,
+                    padding=self.conv_padding,
+                    bias=not conv_batchnorm,
+                )
             )
             # BatchNorm is better to be placed before activation
             # reference: https://stackoverflow.com/questions/39691902/ordering-of-batch-normalization-and-dropout
@@ -150,13 +182,20 @@ class Conv2dPrenet(Module):
                 _tmp_conv.append(torch.nn.BatchNorm2d(self.conv_dims[i]))
             if conv_activation is not None:
                 # no 'ReLU'-series activation is added for the last layer if zero_centered is specified
-                if not (i == len(self.conv_dims) - 1 and lnr_dims is None) or \
-                        not (zero_centered and 'ReLU' in conv_activation):
+                if not (i == len(self.conv_dims) - 1 and lnr_dims is None) or not (
+                    zero_centered and "ReLU" in conv_activation
+                ):
                     _tmp_conv.append(getattr(torch.nn, conv_activation)())
             if conv_dropout is not None:
-                _tmp_conv.append(torch.nn.Dropout(
-                    p=self.conv_dropout if not isinstance(self.conv_dropout, List) else self.conv_dropout[i]
-                ))
+                _tmp_conv.append(
+                    torch.nn.Dropout(
+                        p=(
+                            self.conv_dropout
+                            if not isinstance(self.conv_dropout, List)
+                            else self.conv_dropout[i]
+                        )
+                    )
+                )
             _prev_dim = self.conv_dims[i]
         self.conv = torch.nn.Sequential(*_tmp_conv)
 
@@ -168,11 +207,13 @@ class Conv2dPrenet(Module):
 
         # --- 2. Linear Part Initialization --- #
         if lnr_dims is not None:
-            self.linear = LinearPrenet(feat_dim=self.output_size,
-                                       lnr_dims=lnr_dims,
-                                       lnr_activation=lnr_activation,
-                                       lnr_dropout=lnr_dropout,
-                                       zero_centered=zero_centered)
+            self.linear = LinearPrenet(
+                feat_dim=self.output_size,
+                lnr_dims=lnr_dims,
+                lnr_activation=lnr_activation,
+                lnr_dropout=lnr_dropout,
+                zero_centered=zero_centered,
+            )
             self.output_size = self.linear.output_size
 
     def forward(self, feat: torch.Tensor, feat_len: torch.Tensor):
@@ -191,12 +232,16 @@ class Conv2dPrenet(Module):
         # check the height and width before forwarding
         if feat.size(1) < self.min_height:
             len_diff = self.min_height - feat.size(1)
-            feat = torch.nn.functional.pad(feat, (0, 0, int(len_diff / 2), len_diff - int(len_diff / 2)))
+            feat = torch.nn.functional.pad(
+                feat, (0, 0, int(len_diff / 2), len_diff - int(len_diff / 2))
+            )
             feat_len += len_diff
 
         if feat.size(2) < self.min_width:
             len_diff = self.min_width - feat.size(2)
-            feat = torch.nn.functional.pad(feat, (int(len_diff / 2), len_diff - int(len_diff / 2)))
+            feat = torch.nn.functional.pad(
+                feat, (int(len_diff / 2), len_diff - int(len_diff / 2))
+            )
 
         # forward the convolutional layers
         # (batch, feat_maxlen, feat_dim) -> (batch, 1, feat_maxlen, feat_dim)
@@ -210,16 +255,25 @@ class Conv2dPrenet(Module):
         # modify the feature length
         for _ in self.conv_dims:
             # torch version of 'feat_len = (feat_len - self.conv_kernel[0]) // self.conv_stride[0] + 1'
-            feat_len = torch.div(feat_len - self.conv_kernel[0], self.conv_stride[0], rounding_mode='floor') + 1
+            feat_len = (
+                torch.div(
+                    feat_len - self.conv_kernel[0],
+                    self.conv_stride[0],
+                    rounding_mode="floor",
+                )
+                + 1
+            )
 
         # check the input feat length
         if max(feat_len) != feat.size(1):
-            raise RuntimeError(f"There is a bug in the {self.__class__.__name__}."
-                               f"The calculation of the feature lengths has something wrong.")
+            raise RuntimeError(
+                f"There is a bug in the {self.__class__.__name__}."
+                f"The calculation of the feature lengths has something wrong."
+            )
 
         # forward the linear layers
         # (batch, feat_maxlen_after, feat_dim_after × conv_dim) -> (batch, feat_maxlen_after, lnr_dim)
-        if hasattr(self, 'linear'):
+        if hasattr(self, "linear"):
             feat, feat_len = self.linear(feat, feat_len)
 
         return feat, feat_len

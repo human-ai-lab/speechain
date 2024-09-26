@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 from abc import ABC, abstractmethod
 
 import os
@@ -46,33 +47,41 @@ class Tokenizer(ABC):
         """
         # The vocab in token_path has the higher priority than the backup one in copy_path for vocabulary initialization
         if token_path is not None:
-            token_vocab = os.path.join(parse_path_args(token_path), 'vocab')
+            token_vocab = os.path.join(parse_path_args(token_path), "vocab")
 
         # if token_path is not given or vocab does not exist, use the backup one in copy_path
         if token_path is None or not os.path.exists(token_vocab):
             assert copy_path is not None, "Please give copy_path for vocabulary backup!"
-            token_vocab = os.path.join(parse_path_args(copy_path), 'token_vocab')
+            token_vocab = os.path.join(parse_path_args(copy_path), "token_vocab")
 
         # register token-related variables
         self.idx2token = load_idx2data_file(token_vocab, do_separate=False)
         self.token2idx = dict(map(reversed, self.idx2token.items()))
         self.vocab_size = len(self.token2idx)
-        self.sos_eos_idx = self.token2idx['<sos/eos>']
-        self.ignore_idx = self.token2idx['<blank>']
-        self.unk_idx = self.token2idx['<unk>']
-        if '<space>' in self.token2idx.keys():
-            self.space_idx = self.token2idx['<space>']
+        self.sos_eos_idx = self.token2idx["<sos/eos>"]
+        self.ignore_idx = self.token2idx["<blank>"]
+        self.unk_idx = self.token2idx["<unk>"]
+        if "<space>" in self.token2idx.keys():
+            self.space_idx = self.token2idx["<space>"]
         else:
             self.space_idx = None
 
         # save the backup if copy_path is given
         if copy_path is not None:
-            np.savetxt(os.path.join(copy_path, 'token_vocab'), list(self.token2idx.keys()), fmt="%s")
+            np.savetxt(
+                os.path.join(copy_path, "token_vocab"),
+                list(self.token2idx.keys()),
+                fmt="%s",
+            )
 
         # call the hook function for customized initialization
-        self.tokenizer_init_fn(token_path=token_path, copy_path=copy_path, **tokenizer_conf)
+        self.tokenizer_init_fn(
+            token_path=token_path, copy_path=copy_path, **tokenizer_conf
+        )
 
-    def tokenizer_init_fn(self, token_path: str, copy_path: str = None, **tokenizer_conf):
+    def tokenizer_init_fn(
+        self, token_path: str, copy_path: str = None, **tokenizer_conf
+    ):
         """
         This hook interface function initializes the customized part of a _Tokenizer_ subclass if had.
         This interface is not mandatory to be overridden.
@@ -113,16 +122,22 @@ class Tokenizer(ABC):
                 continue
             # the space tokens will be replaced by a blank
             elif self.space_idx is not None and idx == self.space_idx:
-                token_list.append(' ')
+                token_list.append(" ")
             # the unknown tokens will be replaced by a star symbol '*'
             elif idx == self.unk_idx:
-                token_list.append('*')
+                token_list.append("*")
             else:
                 token_list.append(self.idx2token[idx])
         return "".join(token_list)
 
     @abstractmethod
-    def text2tensor(self, text: str, no_sos: bool = False, no_eos: bool = False, return_tensor: bool = True) -> torch.LongTensor or List:
+    def text2tensor(
+        self,
+        text: str,
+        no_sos: bool = False,
+        no_eos: bool = False,
+        return_tensor: bool = True,
+    ) -> torch.LongTensor or List:
         """
         This functions encodes a text string into a model-friendly tensor.
         This interface is mandatory to be overridden.

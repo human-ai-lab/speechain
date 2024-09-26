@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import warnings
 
 import numpy as np
@@ -16,7 +17,10 @@ from typing import Dict, List
 from abc import ABC
 
 from speechain.utilbox.import_util import import_class
-from speechain.utilbox.data_loading_util import load_idx2data_file, read_idx2data_file_to_dict
+from speechain.utilbox.data_loading_util import (
+    load_idx2data_file,
+    read_idx2data_file_to_dict,
+)
 
 
 def worker_init_fn(worker_id: int, base_seed: int, same_worker_seed: bool):
@@ -27,7 +31,7 @@ def worker_init_fn(worker_id: int, base_seed: int, same_worker_seed: bool):
     seed = base_seed if same_worker_seed else base_seed + worker_id
     random.seed(seed)
     np.random.seed(seed)
-    os.environ['PYTHONHASHSEED'] = str(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
 
 
 class Iterator(ABC):
@@ -46,21 +50,23 @@ class Iterator(ABC):
 
     """
 
-    def __init__(self,
-                 dataset_type: str,
-                 dataset_conf: Dict,
-                 batches_per_epoch: int = None,
-                 data_len: str or List[str] = None,
-                 group_info: Dict[str, str or List[str]] = None,
-                 is_descending: bool or None = True,
-                 shuffle: bool = True,
-                 seed: int = 0,
-                 ngpu: int = 1,
-                 num_workers: int = 1,
-                 same_worker_seed: bool = False,
-                 pin_memory: bool = True,
-                 distributed: bool = False,
-                 **iter_conf):
+    def __init__(
+        self,
+        dataset_type: str,
+        dataset_conf: Dict,
+        batches_per_epoch: int = None,
+        data_len: str or List[str] = None,
+        group_info: Dict[str, str or List[str]] = None,
+        is_descending: bool or None = True,
+        shuffle: bool = True,
+        seed: int = 0,
+        ngpu: int = 1,
+        num_workers: int = 1,
+        same_worker_seed: bool = False,
+        pin_memory: bool = True,
+        distributed: bool = False,
+        **iter_conf,
+    ):
         """
         The general initialization function of all the Iterator classes. Dataset initialization is automatically done
         here by the given dataset_type and dataset_conf.
@@ -110,13 +116,19 @@ class Iterator(ABC):
                 iterator configuration for customized batch generation
         """
         # initialize the built-in dataset of the iterator
-        dataset_class = import_class('speechain.dataset.' + dataset_type)
+        dataset_class = import_class("speechain.dataset." + dataset_type)
         self.dataset = dataset_class(**dataset_conf)
 
         # initialize the general part of the iterator
         if batches_per_epoch is not None:
-            assert batches_per_epoch > 0, f"batches_per_epoch must be a positive number, but got {batches_per_epoch}."
-        self.batches_per_epoch = int(batches_per_epoch) if batches_per_epoch is not None else batches_per_epoch
+            assert (
+                batches_per_epoch > 0
+            ), f"batches_per_epoch must be a positive number, but got {batches_per_epoch}."
+        self.batches_per_epoch = (
+            int(batches_per_epoch)
+            if batches_per_epoch is not None
+            else batches_per_epoch
+        )
         self.is_descending = is_descending
         self.shuffle = shuffle
         self.seed = seed
@@ -133,16 +145,23 @@ class Iterator(ABC):
         # initialize the data lengths if given
         if data_len is not None:
             # remain the original order of the data indices if is_descending not specified
-            self.data_len = load_idx2data_file(data_len, int) if not isinstance(data_len, Dict) else data_len
+            self.data_len = (
+                load_idx2data_file(data_len, int)
+                if not isinstance(data_len, Dict)
+                else data_len
+            )
 
             # check the data index in data_len and self.dataset
-            data_len_keys, dataset_keys = set(self.data_len.keys()), set(self.dataset.get_data_index())
+            data_len_keys, dataset_keys = set(self.data_len.keys()), set(
+                self.dataset.get_data_index()
+            )
             # delete the redundant key-value pairs in data_len
             redundant_keys = data_len_keys.difference(dataset_keys)
             if len(redundant_keys) > 0:
                 warnings.warn(
                     f"There are {len(redundant_keys)} redundant keys that exist in data_len but not in main_data! "
-                    f"If you are using data_selection in data_cfg, this may not be a problem.")
+                    f"If you are using data_selection in data_cfg, this may not be a problem."
+                )
                 for redundant_key in redundant_keys:
                     self.data_len.pop(redundant_key)
             # delete the redundant key-value pairs in self.dataset
@@ -150,7 +169,8 @@ class Iterator(ABC):
             if len(redundant_keys) > 0:
                 warnings.warn(
                     f"There are {len(redundant_keys)} redundant keys that exist in main_data but not in data_len! "
-                    f"If you are using data_selection in data_cfg, this may not be a problem.")
+                    f"If you are using data_selection in data_cfg, this may not be a problem."
+                )
                 for redundant_key in dataset_keys.difference(data_len_keys):
                     self.dataset.remove_data_by_index(redundant_key)
         else:
@@ -164,18 +184,29 @@ class Iterator(ABC):
         if self.data_len is not None and self.is_descending is not None:
             # shrink the data_len by sorted_data if necessary
             if len(self.data_len) > len(self.sorted_data):
-                self.data_len = {index: self.data_len[index] for index in self.sorted_data}
-            self.data_len = dict(sorted(self.data_len.items(), key=lambda x: x[1], reverse=self.is_descending))
+                self.data_len = {
+                    index: self.data_len[index] for index in self.sorted_data
+                }
+            self.data_len = dict(
+                sorted(
+                    self.data_len.items(),
+                    key=lambda x: x[1],
+                    reverse=self.is_descending,
+                )
+            )
 
             # record the keys of the data instances for batch generation
             self.sorted_data = list(self.data_len.keys())
 
         # --- 3. Initialize the Customized Part (batching strategy) of the Iterator --- #
         # initialize the customized part of the iterator and get the batches of data indices
-        self.batches = self.batches_generate_fn(self.sorted_data, self.data_len, **iter_conf)
-        assert len(self.batches) > 0, \
-            f"There is no batch generated in {self.__class__.__name__}! " \
+        self.batches = self.batches_generate_fn(
+            self.sorted_data, self.data_len, **iter_conf
+        )
+        assert len(self.batches) > 0, (
+            f"There is no batch generated in {self.__class__.__name__}! "
             f"It's probably because there is a index mismatch between you given main_data in the dataset."
+        )
 
         # make sure that each batch has self.ngpu data indices for even workload on each GPU
         if self.ngpu > 1:
@@ -201,8 +232,11 @@ class Iterator(ABC):
             stride = torch.distributed.get_world_size()
             # set the start point to the global rank of the current process
             # make sure that the batches on GPU no.0 have the least data size (for more memory on no.0 GPU)
-            start_point = stride - torch.distributed.get_rank() - 1 if self.is_descending or self.is_descending is None \
+            start_point = (
+                stride - torch.distributed.get_rank() - 1
+                if self.is_descending or self.is_descending is None
                 else torch.distributed.get_rank()
+            )
             self.batches = [batch[start_point::stride] for batch in self.batches]
 
             # delete all the empty elements in the multi-GPU distributed mode
@@ -212,13 +246,16 @@ class Iterator(ABC):
         # --- 5. Extract the Metadata Information from the Disk to the Memory --- #
         if group_info is not None:
             # --- 6.1. Loading the Group Information of Data Instances from the Disk to the Memory --- #
-            assert isinstance(group_info, Dict), \
-                f"group_info must be given in Dict, but got type(main_data)={type(group_info)}"
+            assert isinstance(
+                group_info, Dict
+            ), f"group_info must be given in Dict, but got type(main_data)={type(group_info)}"
             self.group_info, self.data_index = read_idx2data_file_to_dict(group_info)
 
             # --- 6.2. Data Instance Index Checking between self.group_info and self.dataset.main_data --- #
             # check the data index in self.group_info and self.dataset
-            group_info_keys, dataset_keys = set(self.data_index), set(self.dataset.get_data_index())
+            group_info_keys, dataset_keys = set(self.data_index), set(
+                self.dataset.get_data_index()
+            )
             # delete the redundant key-value pairs in self.group_info
             for redundant_key in group_info_keys.difference(dataset_keys):
                 for group_name in self.group_info.keys():
@@ -229,8 +266,9 @@ class Iterator(ABC):
         else:
             self.group_info, self.data_index = None, self.dataset.get_data_index()
 
-    def batches_generate_fn(self, data_index: List[str], data_len: Dict[str, int], batch_size: int = None) \
-            -> List[List[str]]:
+    def batches_generate_fn(
+        self, data_index: List[str], data_len: Dict[str, int], batch_size: int = None
+    ) -> List[List[str]]:
         """
         This hook interface function generates the batching view based on a specific batch generation strategy.
 
@@ -265,11 +303,15 @@ class Iterator(ABC):
         # argument checking
         if not isinstance(batch_size, int):
             batch_size = int(batch_size)
-        assert batch_size > 0, f"batch_size must be a positive integer, but got {batch_size}."
+        assert (
+            batch_size > 0
+        ), f"batch_size must be a positive integer, but got {batch_size}."
 
         # divide the data into individual batches with equal amount of instances
-        batches = [data_index[i: i + batch_size]
-                   for i in range(0, len(data_index) - batch_size + 1, batch_size)]
+        batches = [
+            data_index[i : i + batch_size]
+            for i in range(0, len(data_index) - batch_size + 1, batch_size)
+        ]
         # in case that there are several uncovered instances at the end of self.sorted_data
         remaining = len(data_index) % batch_size
         if remaining != 0:
@@ -340,7 +382,10 @@ class Iterator(ABC):
 
         """
         # no cut off when batches_per_epoch is not given
-        if self.batches_per_epoch is None or len(self.batches) == self.batches_per_epoch:
+        if (
+            self.batches_per_epoch is None
+            or len(self.batches) == self.batches_per_epoch
+        ):
             batches = self.batches
 
         # the amount of batches is larger than the given batches_per_epoch
@@ -349,11 +394,15 @@ class Iterator(ABC):
             cursor = (self.batches_per_epoch * (epoch - 1)) % len(self.batches)
             # the remaining part of existing batches is enough for this epoch
             if len(self.batches) - cursor >= self.batches_per_epoch:
-                batches = self.batches[cursor: cursor + self.batches_per_epoch]
+                batches = self.batches[cursor : cursor + self.batches_per_epoch]
             # the remaining part is not enough, we need to go back to the beginning of existing batches
             else:
-                batches = self.batches[cursor:] + \
-                          self.batches[: self.batches_per_epoch - len(self.batches) + cursor]
+                batches = (
+                    self.batches[cursor:]
+                    + self.batches[
+                        : self.batches_per_epoch - len(self.batches) + cursor
+                    ]
+                )
 
         # the amount of batches is smaller than the given batches_per_epoch
         elif len(self.batches) < self.batches_per_epoch:
@@ -364,9 +413,12 @@ class Iterator(ABC):
             # looping until we get enough batches
             while current_batch_size < self.batches_per_epoch:
                 # the remaining part of existing batches is enough for us
-                if current_batch_size + len(self.batches) - cursor >= self.batches_per_epoch:
+                if (
+                    current_batch_size + len(self.batches) - cursor
+                    >= self.batches_per_epoch
+                ):
                     last_remain = self.batches_per_epoch - current_batch_size
-                    batches += self.batches[cursor: cursor + last_remain]
+                    batches += self.batches[cursor : cursor + last_remain]
                     current_batch_size += last_remain
                 # the remaining is not enough, we need to go to the beginning and do again
                 else:
@@ -382,27 +434,34 @@ class Iterator(ABC):
         if start_step > 0:
             batches = batches[start_step:]
 
-        return DataLoader(dataset=self.dataset,
-                          batch_sampler=batches,
-                          num_workers=self.num_workers,
-                          pin_memory=self.pin_memory,
-                          collate_fn=self.dataset.collate_fn,
-                          worker_init_fn=partial(worker_init_fn, base_seed=epoch + self.seed,
-                                                 same_worker_seed=self.same_worker_seed))
+        return DataLoader(
+            dataset=self.dataset,
+            batch_sampler=batches,
+            num_workers=self.num_workers,
+            pin_memory=self.pin_memory,
+            collate_fn=self.dataset.collate_fn,
+            worker_init_fn=partial(
+                worker_init_fn,
+                base_seed=epoch + self.seed,
+                same_worker_seed=self.same_worker_seed,
+            ),
+        )
 
     def __repr__(self):
         batch_len = [len(batch) for batch in self.batches]
-        return f"{self.__class__.__name__}(" \
-               f"dataset=({str(self.dataset)}), " \
-               f"seed={self.seed}, " \
-               f"ngpu={self.ngpu}, " \
-               f"num_workers={self.num_workers}, " \
-               f"same_worker_seed={self.same_worker_seed}, " \
-               f"pin_memory={self.pin_memory}, " \
-               f"is_descending={self.is_descending}, " \
-               f"shuffle={self.shuffle}, " \
-               f"total_batches={len(self.batches)}, " \
-               f"batches_per_epoch={len(self)}, " \
-               f"max_batch={max(batch_len)}, " \
-               f"min_batch={min(batch_len)}, " \
-               f"mean_batch={sum(batch_len) / len(batch_len):.1f})"
+        return (
+            f"{self.__class__.__name__}("
+            f"dataset=({str(self.dataset)}), "
+            f"seed={self.seed}, "
+            f"ngpu={self.ngpu}, "
+            f"num_workers={self.num_workers}, "
+            f"same_worker_seed={self.same_worker_seed}, "
+            f"pin_memory={self.pin_memory}, "
+            f"is_descending={self.is_descending}, "
+            f"shuffle={self.shuffle}, "
+            f"total_batches={len(self.batches)}, "
+            f"batches_per_epoch={len(self)}, "
+            f"max_batch={max(batch_len)}, "
+            f"min_batch={min(batch_len)}, "
+            f"mean_batch={sum(batch_len) / len(batch_len):.1f})"
+        )

@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import torch
 import random
 
@@ -20,15 +21,19 @@ class Identity(torch.nn.Module):
         return input
 
     def __repr__(self):
-        return self.__class__.__name__ + '()'
+        return self.__class__.__name__ + "()"
 
 
 def swish_activation(x: torch.Tensor):
     return x * torch.sigmoid(x)
 
 
-def make_mask_from_len(data_len: torch.Tensor, max_len: int = None,
-                       mask_type: torch.dtype = torch.bool, return_3d: bool = True):
+def make_mask_from_len(
+    data_len: torch.Tensor,
+    max_len: int = None,
+    mask_type: torch.dtype = torch.bool,
+    return_3d: bool = True,
+):
     """
 
     Args:
@@ -52,16 +57,18 @@ def make_mask_from_len(data_len: torch.Tensor, max_len: int = None,
     if max_len is None:
         max_len = data_len.max()
     else:
-        assert max_len >= data_len.max(), "max_len should be larger than the maximum of data_len!"
+        assert (
+            max_len >= data_len.max()
+        ), "max_len should be larger than the maximum of data_len!"
 
     if return_3d:
         mask = torch.zeros((batch_size, 1, max_len), dtype=mask_type)
         for i in range(data_len.size(0)):
-            mask[i, :, :data_len[i]] = 1.0
+            mask[i, :, : data_len[i]] = 1.0
     else:
         mask = torch.zeros((batch_size, max_len), dtype=mask_type)
         for i in range(data_len.size(0)):
-            mask[i, :data_len[i]] = 1.0
+            mask[i, : data_len[i]] = 1.0
 
     if data_len.is_cuda:
         mask = mask.cuda(data_len.device)
@@ -89,7 +96,10 @@ def recur_criterion_init(input_conf: Dict, criterion_class: Criterion):
 
     #
     if sum(leaf_flags) == len(input_conf):
-        return {key: recur_criterion_init(value, criterion_class) for key, value in input_conf.items()}
+        return {
+            key: recur_criterion_init(value, criterion_class)
+            for key, value in input_conf.items()
+        }
     #
     elif sum(leaf_flags) == 0:
         return criterion_class(**input_conf)
@@ -97,8 +107,9 @@ def recur_criterion_init(input_conf: Dict, criterion_class: Criterion):
         raise RuntimeError
 
 
-def text2tensor_and_len(text_list: List[str or List[str]], text2tensor_func, ignore_idx: int) \
-        -> (torch.LongTensor, torch.LongTensor):
+def text2tensor_and_len(
+    text_list: List[str or List[str]], text2tensor_func, ignore_idx: int
+) -> (torch.LongTensor, torch.LongTensor):
     """
 
     Args:
@@ -113,9 +124,11 @@ def text2tensor_and_len(text_list: List[str or List[str]], text2tensor_func, ign
         text_list[i] = text2tensor_func(text_list[i])
     text_len = torch.LongTensor([len(t) for t in text_list])
 
-    text = torch.full((text_len.size(0), text_len.max().item()), ignore_idx, dtype=text_len.dtype)
+    text = torch.full(
+        (text_len.size(0), text_len.max().item()), ignore_idx, dtype=text_len.dtype
+    )
     for i in range(text_len.size(0)):
-        text[i][:text_len[i]] = text_list[i]
+        text[i][: text_len[i]] = text_list[i]
     return text, text_len
 
 
@@ -130,7 +143,9 @@ def spk2tensor(spk_list: List[str], spk2idx_dict: Dict) -> torch.LongTensor:
 
     """
     # turn the speaker id strings into the tensors
-    return torch.LongTensor([spk2idx_dict[spk] if spk in spk2idx_dict.keys() else 0 for spk in spk_list])
+    return torch.LongTensor(
+        [spk2idx_dict[spk] if spk in spk2idx_dict.keys() else 0 for spk in spk_list]
+    )
 
 
 def float_near_round(input_float: float):
@@ -148,14 +163,15 @@ def float_near_round(input_float: float):
 
 
 def get_padding_by_dilation(kernel_size, dilation=1):
-    return int((kernel_size*dilation - dilation)/2)
+    return int((kernel_size * dilation - dilation) / 2)
 
 
-def get_min_indices_by_freq(freq_dict: Dict[Any, Union[int, float]],
-                            shuffle: bool = True,
-                            chosen_idx_num: int = 1,
-                            freq_weights: Union[int, float] or List[Union[int, float]] = None) \
-        -> Tuple[List, Dict[Any, Union[int, float]]]:
+def get_min_indices_by_freq(
+    freq_dict: Dict[Any, Union[int, float]],
+    shuffle: bool = True,
+    chosen_idx_num: int = 1,
+    freq_weights: Union[int, float] or List[Union[int, float]] = None,
+) -> Tuple[List, Dict[Any, Union[int, float]]]:
     """
     Get the specified number of indices with minimum values from the input frequency dictionary,
     optionally applying frequency weights, and return the updated frequency dictionary.

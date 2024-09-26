@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.09
 """
+
 import re
 
 # return all the smallest sub-strings surrounded by a pair of angle brackets '<>'
@@ -31,6 +32,7 @@ regex_square_bracket_large = re.compile(r"\[.*\]")
 # d,e,{f,g,{h,i,j,k}} -> {h,i,j,k}
 # f,g,{h,i,j,k} -> {h,i,j,k}
 regex_brace = re.compile(r"{[^{}]*}")
+
 
 def has_nested_structure(string):
     pattern = r"\[.*\[.*\].*\]"

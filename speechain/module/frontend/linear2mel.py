@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import math
 import torch
 import torchaudio
@@ -16,18 +17,20 @@ class LinearSpec2MelSpec(Module):
 
     """
 
-    def module_init(self,
-                    n_fft: int,
-                    n_mels: int,
-                    sr: int = 16000,
-                    fmin: float = 0.0,
-                    fmax: float = None,
-                    clamp: float = 1e-10,
-                    logging: bool = True,
-                    log_base: float = 10.0,
-                    mel_scale: str = 'slaney',
-                    mel_norm: bool = True,
-                    mag_spec: bool = False):
+    def module_init(
+        self,
+        n_fft: int,
+        n_mels: int,
+        sr: int = 16000,
+        fmin: float = 0.0,
+        fmax: float = None,
+        clamp: float = 1e-10,
+        logging: bool = True,
+        log_base: float = 10.0,
+        mel_scale: str = "slaney",
+        mel_norm: bool = True,
+        mag_spec: bool = False,
+    ):
         """
 
         The difference between two different options of mel_scale, i.e., 'htk' and 'slaney', is the relationship between
@@ -117,24 +120,33 @@ class LinearSpec2MelSpec(Module):
         self.n_mels = n_mels
         self.fmin = fmin
         self.fmax = fmax if fmax is not None else sr // 2
-        assert self.fmax > self.fmin, \
-            f"fmax must be larger than fmin, but got fmax={self.fmax} and fmin={self.fmin}!"
+        assert (
+            self.fmax > self.fmin
+        ), f"fmax must be larger than fmin, but got fmax={self.fmax} and fmin={self.fmin}!"
 
         # mel-scale-related arguments
-        assert mel_scale in ['htk', 'slaney'], \
-            f"mel_scale must be either 'htk' or 'slaney', but got mel_scale={mel_scale}"
+        assert mel_scale in [
+            "htk",
+            "slaney",
+        ], f"mel_scale must be either 'htk' or 'slaney', but got mel_scale={mel_scale}"
         self.mel_scale = mel_scale
         self.mel_norm = mel_norm
 
         # mel-fbank generation
-        mel_matrix = torchaudio.functional.melscale_fbanks(sample_rate=self.sr,
-                                                           n_mels=self.n_mels, n_freqs=self.stft_dim,
-                                                           f_min=self.fmin, f_max=self.fmax,
-                                                           norm='slaney' if self.mel_norm else None,
-                                                           mel_scale=self.mel_scale).T
+        mel_matrix = torchaudio.functional.melscale_fbanks(
+            sample_rate=self.sr,
+            n_mels=self.n_mels,
+            n_freqs=self.stft_dim,
+            f_min=self.fmin,
+            f_max=self.fmax,
+            norm="slaney" if self.mel_norm else None,
+            mel_scale=self.mel_scale,
+        ).T
 
         # implement mel-fbank extraction by a linear layer
-        mel_fbanks = torch.nn.Linear(in_features=self.stft_dim, out_features=self.n_mels, bias=False)
+        mel_fbanks = torch.nn.Linear(
+            in_features=self.stft_dim, out_features=self.n_mels, bias=False
+        )
         mel_fbanks.weight = torch.nn.Parameter(mel_matrix, requires_grad=False)
 
         # move the weight from _parameters to _buffers so that these parameters won't influence the training
@@ -190,30 +202,36 @@ class LinearSpec2MelSpec(Module):
         # recover the logarithm operation
         if self.logging:
             feat = torch.pow(
-                torch.full_like(feat, fill_value=torch.e if self.log_base is None else self.log_base), feat
+                torch.full_like(
+                    feat, fill_value=torch.e if self.log_base is None else self.log_base
+                ),
+                feat,
             )
 
         # recover the mel spectrograms back to linear spectrograms
         feat = torch.linalg.lstsq(
-            self.mel_fbanks.weight.data.unsqueeze(0), feat.transpose(-2, -1),
+            self.mel_fbanks.weight.data.unsqueeze(0),
+            feat.transpose(-2, -1),
             # the default driver for CPU data is 'gelsy' which doesn't work and the result is zero
-            driver='gels'
+            driver="gels",
         ).solution.transpose(-2, -1)
 
         # turn the silence part of the shorter utterances to zeros
         for i in range(len(feat_len)):
             if feat_len[i] != feat_len.max():
-                feat[i][feat_len[i]:] = 0
+                feat[i][feat_len[i] :] = 0
 
         # clamp the spectrogram for numerical stability
         return torch.clamp(feat, min=1e-10)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(\n" \
-               f"stft_dim={self.stft_dim}, " \
-               f"n_mels={self.n_mels}, " \
-               f"fmin={self.fmin}, " \
-               f"fmax={self.fmax}, " \
-               f"mel_scale={self.mel_scale}, " \
-               f"mel_norm={self.mel_norm}" \
-               f"\n)"
+        return (
+            f"{self.__class__.__name__}(\n"
+            f"stft_dim={self.stft_dim}, "
+            f"n_mels={self.n_mels}, "
+            f"fmin={self.fmin}, "
+            f"fmax={self.fmax}, "
+            f"mel_scale={self.mel_scale}, "
+            f"mel_norm={self.mel_norm}"
+            f"\n)"
+        )

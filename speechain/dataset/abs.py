@@ -10,7 +10,10 @@ import numpy as np
 from typing import List, Dict, Any, Union, Optional
 from abc import ABC
 
-from speechain.utilbox.data_loading_util import load_idx2data_file, read_idx2data_file_to_dict
+from speechain.utilbox.data_loading_util import (
+    load_idx2data_file,
+    read_idx2data_file_to_dict,
+)
 
 
 class Dataset(torch.utils.data.Dataset, ABC):
@@ -23,10 +26,12 @@ class Dataset(torch.utils.data.Dataset, ABC):
 
     """
 
-    def __init__(self,
-                 main_data: Dict[str, Union[str, List[str]]],
-                 data_selection: Optional[List[Union[List[str], str]]] = None,
-                 **dataset_conf):
+    def __init__(
+        self,
+        main_data: Dict[str, Union[str, List[str]]],
+        data_selection: Optional[List[Union[List[str], str]]] = None,
+        **dataset_conf,
+    ):
         """
         This initialization function reads the main body of the data instances into the memory. The main body is used to
         extract individual data instances from the disk to form a batch during model training or testing.
@@ -76,7 +81,9 @@ class Dataset(torch.utils.data.Dataset, ABC):
 
         # Validate main_data
         if not isinstance(main_data, Dict):
-            raise TypeError(f"Expected main_data to be a Dict, but got {type(main_data)}")
+            raise TypeError(
+                f"Expected main_data to be a Dict, but got {type(main_data)}"
+            )
 
         # Load main body of data instances
         self.main_data, self.data_index = read_idx2data_file_to_dict(main_data)
@@ -84,7 +91,9 @@ class Dataset(torch.utils.data.Dataset, ABC):
         # Apply data selection if specified
         if data_selection is not None:
             # Ensure data_selection is a list of lists
-            if sum([isinstance(i, List) for i in data_selection]) != len(data_selection):
+            if sum([isinstance(i, List) for i in data_selection]) != len(
+                data_selection
+            ):
                 data_selection = [data_selection]
 
             # Iterate through each selection strategy
@@ -92,77 +101,99 @@ class Dataset(torch.utils.data.Dataset, ABC):
                 # Non-meta selection
                 if len(i) == 2:
                     selection_mode, selection_num, meta_info = i[0], i[1], None
-                    if selection_mode not in ['random', 'order', 'rev_order']:
+                    if selection_mode not in ["random", "order", "rev_order"]:
                         raise ValueError(
-                            f"For non-meta selection, mode must be 'random', 'order', or 'rev_order'. Got {selection_mode}")
+                            f"For non-meta selection, mode must be 'random', 'order', or 'rev_order'. Got {selection_mode}"
+                        )
                 # Meta-required selection
                 elif len(i) == 3:
                     selection_mode, selection_num, meta_info = i[0], i[1], i[2]
-                    if selection_mode not in ['min', 'max', 'middle', 'group']:
+                    if selection_mode not in ["min", "max", "middle", "group"]:
                         raise ValueError(
-                            f"For meta selection, mode must be 'min', 'max', 'middle', or 'group'. Got {selection_mode}")
+                            f"For meta selection, mode must be 'min', 'max', 'middle', or 'group'. Got {selection_mode}"
+                        )
                 else:
-                    raise ValueError("Each element of data_selection should be either a 2-element or 3-element list")
+                    raise ValueError(
+                        "Each element of data_selection should be either a 2-element or 3-element list"
+                    )
 
                 # Validate selection_num
                 if isinstance(selection_num, str):
                     # Non-numerical contents are turned into a list for identification
-                    if not selection_num.isdigit() and not selection_num.replace('.', '').isdigit():
-                        assert selection_mode == 'group'
+                    if (
+                        not selection_num.isdigit()
+                        and not selection_num.replace(".", "").isdigit()
+                    ):
+                        assert selection_mode == "group"
                         selection_num = [selection_num]
 
                 valid_selection_num = (
-                        (isinstance(selection_num, float) and 0 < selection_num < 1) or
-                        (isinstance(selection_num, int) and -len(self.data_index) < selection_num < 0) or
-                        isinstance(selection_num, (str, List))
+                    (isinstance(selection_num, float) and 0 < selection_num < 1)
+                    or (
+                        isinstance(selection_num, int)
+                        and -len(self.data_index) < selection_num < 0
+                    )
+                    or isinstance(selection_num, (str, List))
                 )
                 if not valid_selection_num:
                     raise ValueError(
                         "Data selection number should be a float number between 0 and 1, a negative integer, "
-                        "a string, or a list of strings")
+                        "a string, or a list of strings"
+                    )
 
-                if (isinstance(selection_num, (int, float)) and selection_num < 0) and \
-                        (-selection_num >= len(self.data_index)):
-                        raise ValueError("Data selection amount cannot be larger than total number of data instances")
+                if (isinstance(selection_num, (int, float)) and selection_num < 0) and (
+                    -selection_num >= len(self.data_index)
+                ):
+                    raise ValueError(
+                        "Data selection amount cannot be larger than total number of data instances"
+                    )
 
                 # Apply the data selection
-                self.data_index = self.data_selection(self.data_index, selection_mode, selection_num, meta_info)
+                self.data_index = self.data_selection(
+                    self.data_index, selection_mode, selection_num, meta_info
+                )
 
         # Custom initialization for subclasses
         self.data_len = self.data_len_register_fn(self.main_data)
         self.dataset_init_fn(**dataset_conf)
 
     @staticmethod
-    def data_len_register_fn(main_data: Dict[str, Dict[str, str]]) -> Union[Dict[str, Union[int, float]], None]:
+    def data_len_register_fn(
+        main_data: Dict[str, Dict[str, str]]
+    ) -> Union[Dict[str, Union[int, float]], None]:
         """
-            Static hook function that registers default information about the length of each data instance.
+        Static hook function that registers default information about the length of each data instance.
 
-            By default, this function does nothing. If you need to decide the data length on-the-fly, override this function
-            with your own implementation.
+        By default, this function does nothing. If you need to decide the data length on-the-fly, override this function
+        with your own implementation.
 
-            Args:
-                main_data (Dict[str, Dict[str, str]]): Dictionary of main data from which length information is derived.
+        Args:
+            main_data (Dict[str, Dict[str, str]]): Dictionary of main data from which length information is derived.
 
-            Returns:
-                Dict[str, Union[int, float]] or None: Dictionary mapping data instances to their lengths, or None if not implemented.
+        Returns:
+            Dict[str, Union[int, float]] or None: Dictionary mapping data instances to their lengths, or None if not implemented.
         """
         return None
 
     def dataset_init_fn(self, **dataset_conf):
         """
-            Hook function that initializes the custom parts of dataset implementations.
+        Hook function that initializes the custom parts of dataset implementations.
 
-            By default, this function does nothing. If your Dataset subclass has custom parts, override this function
-            with your own implementation.
+        By default, this function does nothing. If your Dataset subclass has custom parts, override this function
+        with your own implementation.
 
-            Args:
-                **dataset_conf: Arguments for the custom initialization of the Dataset subclass.
+        Args:
+            **dataset_conf: Arguments for the custom initialization of the Dataset subclass.
         """
         pass
 
     @staticmethod
-    def data_selection(data_index: List[str], selection_mode: str, selection_num: Union[float, int, str],
-                       meta_info: Union[List[str], str, None] = None) -> List:
+    def data_selection(
+        data_index: List[str],
+        selection_mode: str,
+        selection_num: Union[float, int, str],
+        meta_info: Union[List[str], str, None] = None,
+    ) -> List:
         """
         Selects data instances based on the provided selection strategy.
 
@@ -206,16 +237,22 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if meta_info is None:
             assert isinstance(selection_num, (int, float))
             # Determine absolute or relative number of instances to select
-            selection_num = int(-selection_num if selection_num < 0 else len(sorted_data) * selection_num)
+            selection_num = int(
+                -selection_num
+                if selection_num < 0
+                else len(sorted_data) * selection_num
+            )
             # Selection from the beginning
-            if selection_mode == 'order':
+            if selection_mode == "order":
                 sorted_data = sorted_data[:selection_num]
             # Selection from the end
-            elif selection_mode == 'rev_order':
+            elif selection_mode == "rev_order":
                 sorted_data = sorted_data[-selection_num:]
             # Random selection
-            elif selection_mode == 'random':
-                sorted_data = sorted_data[np.random.randint(0, len(sorted_data), selection_num)]
+            elif selection_mode == "random":
+                sorted_data = sorted_data[
+                    np.random.randint(0, len(sorted_data), selection_num)
+                ]
 
         # Metadata-based selection strategies
         else:
@@ -224,7 +261,9 @@ class Dataset(torch.utils.data.Dataset, ABC):
             meta_info = np.array([[key, value] for key, value in meta_info.items()])
             # Initialize sorted indices and metadata values
             try:
-                meta_sorted_data = meta_info[:, 0][np.argsort(meta_info[:, 1].astype(float))]
+                meta_sorted_data = meta_info[:, 0][
+                    np.argsort(meta_info[:, 1].astype(float))
+                ]
                 meta_sorted_value = np.sort(meta_info[:, 1].astype(float))
             # Catch conversion errors
             except ValueError:
@@ -233,47 +272,74 @@ class Dataset(torch.utils.data.Dataset, ABC):
 
             # Only retain data instances present in both datasets
             retain_flags = np.in1d(meta_sorted_data, sorted_data)
-            meta_sorted_data, meta_sorted_value = meta_sorted_data[retain_flags], meta_sorted_value[retain_flags]
+            meta_sorted_data, meta_sorted_value = (
+                meta_sorted_data[retain_flags],
+                meta_sorted_value[retain_flags],
+            )
 
             # Process selection based on provided selection_num
             if isinstance(selection_num, (int, float)):
                 # 0 < selection_num < 1 means that we relatively select data instances by a percentage number
                 # selection_num < 0 means that we absolutely select data instances by the given value
-                selection_num = int(-selection_num if selection_num < 0 else len(meta_sorted_data) * selection_num)
+                selection_num = int(
+                    -selection_num
+                    if selection_num < 0
+                    else len(meta_sorted_data) * selection_num
+                )
                 # 'min' means the instances with the minimal meta values will be selected
-                if selection_mode == 'min':
+                if selection_mode == "min":
                     removed_sorted_data = meta_sorted_data[selection_num:]
                 # 'max' means the instances with the maximal meta values will be selected
-                elif selection_mode == 'max':
+                elif selection_mode == "max":
                     removed_sorted_data = meta_sorted_data[:-selection_num]
                 # 'middle' means the instances with the minimal and maximal meta values will be excluded
-                elif selection_mode == 'middle':
+                elif selection_mode == "middle":
                     removed_sorted_data = np.concatenate(
-                        (meta_sorted_data[:int((meta_sorted_data.shape[0] - selection_num) / 2)],
-                         meta_sorted_data[-int((meta_sorted_data.shape[0] - selection_num) / 2):]), axis=0)
+                        (
+                            meta_sorted_data[
+                                : int((meta_sorted_data.shape[0] - selection_num) / 2)
+                            ],
+                            meta_sorted_data[
+                                -int((meta_sorted_data.shape[0] - selection_num) / 2) :
+                            ],
+                        ),
+                        axis=0,
+                    )
                 else:
-                    raise RuntimeError(f"If selection_num is given in a integer or float number ({selection_num}), "
-                                       f"selection_mode must be one of ['min', 'max', 'middle']. "
-                                       f"But got {selection_mode}.")
+                    raise RuntimeError(
+                        f"If selection_num is given in a integer or float number ({selection_num}), "
+                        f"selection_mode must be one of ['min', 'max', 'middle']. "
+                        f"But got {selection_mode}."
+                    )
 
             # select the data instances by a given threshold
             elif isinstance(selection_num, str):
                 selection_num = float(selection_num)
                 # 'min' means the instances whose metadata is lower than the given threshold will be selected
-                if selection_mode == 'min':
-                    removed_sorted_data = meta_sorted_data[meta_sorted_value > selection_num]
+                if selection_mode == "min":
+                    removed_sorted_data = meta_sorted_data[
+                        meta_sorted_value > selection_num
+                    ]
                 # 'max' means the instances whose metadata is larger than the given threshold will be selected
-                elif selection_mode == 'max':
-                    removed_sorted_data = meta_sorted_data[meta_sorted_value < selection_num]
+                elif selection_mode == "max":
+                    removed_sorted_data = meta_sorted_data[
+                        meta_sorted_value < selection_num
+                    ]
                 # 'middle' is not supported for the threshold selection
                 else:
-                    raise RuntimeError(f"If selection_num is given in a string ({selection_num}), selection_mode must "
-                                       f"be one of ['min', 'max']. But got {selection_mode}.")
+                    raise RuntimeError(
+                        f"If selection_num is given in a string ({selection_num}), selection_mode must "
+                        f"be one of ['min', 'max']. But got {selection_mode}."
+                    )
 
             # other strings mean the target groups of data instances
             elif isinstance(selection_num, List):
                 removed_sorted_data = meta_sorted_data[
-                    [True if value not in selection_num else False for value in meta_sorted_value]]
+                    [
+                        True if value not in selection_num else False
+                        for value in meta_sorted_value
+                    ]
+                ]
 
             else:
                 raise ValueError("Invalid type for selection_num.")
@@ -379,7 +445,9 @@ class Dataset(torch.utils.data.Dataset, ABC):
         # postprocess Dict[str, List[Any]] by the hook implementation
         return self.collate_main_data_fn(outputs)
 
-    def collate_main_data_fn(self, batch_dict: Dict[str, List]) -> Dict[str, torch.Tensor or List]:
+    def collate_main_data_fn(
+        self, batch_dict: Dict[str, List]
+    ) -> Dict[str, torch.Tensor or List]:
         """
         This hook function decides how to preprocess a dictionary of the extracted batch of data instances before giving
         them to the model. The original hook in the base class packages all the elements other than strings of the batch
@@ -405,7 +473,9 @@ class Dataset(torch.utils.data.Dataset, ABC):
                 batch_dict[key] = torch.stack([ele for ele in batch_dict[key]])
             # List[numpy.ndarry] -> List[torch.Tensor] -> torch.Tensor
             elif isinstance(batch_dict[key][0], np.ndarray):
-                batch_dict[key] = torch.stack([torch.tensor(ele) for ele in batch_dict[key]])
+                batch_dict[key] = torch.stack(
+                    [torch.tensor(ele) for ele in batch_dict[key]]
+                )
             # List[int] -> torch.LongTensor
             elif isinstance(batch_dict[key][0], int):
                 batch_dict[key] = torch.LongTensor(batch_dict[key])

@@ -7,6 +7,7 @@
     Affiliation: NAIST
     Date: 2022.09
 """
+
 from typing import List
 import torch
 
@@ -15,23 +16,25 @@ from speechain.module.abs import Module
 
 class LinearPrenet(Module):
     """
-        The Linear prenet. Usually used before the Transformer TTS decoder.
-        This prenet is made up of one or more Linear blocks which is composed of the components below:
-            1. (mandatory) a Linear layer
-            2. (optional) an activation function
-            3. (optional) a Dropout layer
+    The Linear prenet. Usually used before the Transformer TTS decoder.
+    This prenet is made up of one or more Linear blocks which is composed of the components below:
+        1. (mandatory) a Linear layer
+        2. (optional) an activation function
+        3. (optional) a Dropout layer
 
-        Reference:
-            Neural Speech Synthesis with Transformer Network
-            https://ojs.aaai.org/index.php/AAAI/article/view/4642/4520
+    Reference:
+        Neural Speech Synthesis with Transformer Network
+        https://ojs.aaai.org/index.php/AAAI/article/view/4642/4520
     """
 
-    def module_init(self,
-                    feat_dim: int = None,
-                    lnr_dims: int or List[int] = [256, 256],
-                    lnr_activation: str = 'ReLU',
-                    lnr_dropout: float or List[float] = None,
-                    zero_centered: bool = False):
+    def module_init(
+        self,
+        feat_dim: int = None,
+        lnr_dims: int or List[int] = [256, 256],
+        lnr_activation: str = "ReLU",
+        lnr_dropout: float or List[float] = None,
+        zero_centered: bool = False,
+    ):
         """
 
         Args:
@@ -56,10 +59,12 @@ class LinearPrenet(Module):
         # --- 0. Argument Checking --- #
         # arguments checking
         if lnr_dropout is not None:
-            assert isinstance(lnr_dropout, (List, float)), \
-                "The dropout rates of linear layers must be given as a list of integers or an integer!"
-        assert isinstance(lnr_dims, (List, int)), \
-            "The dimensions of linear layers must be given as a list of integers or an integer!"
+            assert isinstance(
+                lnr_dropout, (List, float)
+            ), "The dropout rates of linear layers must be given as a list of integers or an integer!"
+        assert isinstance(
+            lnr_dims, (List, int)
+        ), "The dimensions of linear layers must be given as a list of integers or an integer!"
 
         # input_size initialization
         if self.input_size is not None:
@@ -79,15 +84,25 @@ class LinearPrenet(Module):
         # The order of activation function and dropout layer is somewhat not a big deal
         # a useful blog: https://sebastianraschka.com/faq/docs/dropout-activation.html
         for i in range(len(self.lnr_dims)):
-            _tmp_lnr.append(torch.nn.Linear(in_features=_prev_dim, out_features=self.lnr_dims[i]))
+            _tmp_lnr.append(
+                torch.nn.Linear(in_features=_prev_dim, out_features=self.lnr_dims[i])
+            )
             if lnr_activation is not None:
                 # no 'ReLU'-series activation is added for the last layer if zero_centered is specified
-                if i != len(self.lnr_dims) - 1 or not (zero_centered and 'ReLU' in lnr_activation):
+                if i != len(self.lnr_dims) - 1 or not (
+                    zero_centered and "ReLU" in lnr_activation
+                ):
                     _tmp_lnr.append(getattr(torch.nn, lnr_activation)())
             if lnr_dropout is not None:
-                _tmp_lnr.append(torch.nn.Dropout(
-                    p=self.lnr_dropout if not isinstance(self.lnr_dropout, List) else self.lnr_dropout[i]
-                ))
+                _tmp_lnr.append(
+                    torch.nn.Dropout(
+                        p=(
+                            self.lnr_dropout
+                            if not isinstance(self.lnr_dropout, List)
+                            else self.lnr_dropout[i]
+                        )
+                    )
+                )
             _prev_dim = self.lnr_dims[i]
 
         self.linear = torch.nn.Sequential(*_tmp_lnr)

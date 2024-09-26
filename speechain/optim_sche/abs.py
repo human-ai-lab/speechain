@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import torch
 import itertools
 import warnings
@@ -28,20 +29,22 @@ class OptimScheduler(ABC):
 
     """
 
-    def __init__(self,
-                 optim_type: str,
-                 optim_conf: Dict[str, Any],
-                 model: Model,
-                 distributed: bool = False,
-                 optim_loss: str = None,
-                 updated_modules: List[str] = None,
-                 step_per_update: int = 1,
-                 use_amp: bool = True,
-                 accum_grad: int = 1,
-                 ft_factor: float = 1.0,
-                 grad_clip: float = 1.0,
-                 grad_norm_type: float = 2.0,
-                 **sche_conf):
+    def __init__(
+        self,
+        optim_type: str,
+        optim_conf: Dict[str, Any],
+        model: Model,
+        distributed: bool = False,
+        optim_loss: str = None,
+        updated_modules: List[str] = None,
+        step_per_update: int = 1,
+        use_amp: bool = True,
+        accum_grad: int = 1,
+        ft_factor: float = 1.0,
+        grad_clip: float = 1.0,
+        grad_norm_type: float = 2.0,
+        **sche_conf,
+    ):
         """
         This initialization function initializes the general part shared by all OptimScheduler subclasses.
         At the end of this function, an interface function `sche_init()` is called to initialize the customized part of
@@ -55,7 +58,7 @@ class OptimScheduler(ABC):
                 Whether the model to be optimized is distributed to multiple GPUs.
                 If True, gradient accumulation will be done asynchronously in the DDP mode to speed up training.
             use_amp: bool = True
-                Whether the Automatic Mixed Precision (AMP) technique is used during back-propagation.  
+                Whether the Automatic Mixed Precision (AMP) technique is used during back-propagation.
                 If True, a built-in `torch.cuda.amp.GradScaler` will be initialized to calculate the gradients.
             accum_grad: int = 1
                 The number of steps to accumulate gradients before optimization.
@@ -84,10 +87,12 @@ class OptimScheduler(ABC):
                 Mainly used to decide the learning rate scheduling strategy.
         """
         # initialize the general part of the scheduler
-        assert (isinstance(accum_grad, int) and accum_grad >= 1) and \
-               (isinstance(step_per_update, int) and step_per_update >= 1), \
-            f"Both of accum_grad and step_per_update should be an integer equal to or larger than 1, " \
+        assert (isinstance(accum_grad, int) and accum_grad >= 1) and (
+            isinstance(step_per_update, int) and step_per_update >= 1
+        ), (
+            f"Both of accum_grad and step_per_update should be an integer equal to or larger than 1, "
             f"but got accum_grad={accum_grad} and step_per_update={step_per_update}."
+        )
         self.model = model
         self.distributed = distributed
 
@@ -98,17 +103,25 @@ class OptimScheduler(ABC):
         self.ft_factor = ft_factor
 
         # optimization-related arguments (loaded from train_cfg)
-        assert isinstance(optim_loss, str) or optim_loss is None, \
-            "Your input optim_loss must be a single string or None! If it's not given, the loss named 'loss' will be " \
-            "used for optimization; If it's given as a string, the loss whose name matches your given string will be " \
+        assert isinstance(optim_loss, str) or optim_loss is None, (
+            "Your input optim_loss must be a single string or None! If it's not given, the loss named 'loss' will be "
+            "used for optimization; If it's given as a string, the loss whose name matches your given string will be "
             "used for optimization."
+        )
         self.optim_loss = optim_loss
         self.step_per_update = step_per_update
 
         # specific parameters are updated
         if updated_modules is not None:
-            self.updated_modules = updated_modules if isinstance(updated_modules, List) else [updated_modules]
-            _updated_modules = [self.model.__getattr__(module).parameters() for module in self.updated_modules]
+            self.updated_modules = (
+                updated_modules
+                if isinstance(updated_modules, List)
+                else [updated_modules]
+            )
+            _updated_modules = [
+                self.model.__getattr__(module).parameters()
+                for module in self.updated_modules
+            ]
             params = itertools.chain(*_updated_modules)
         # all parameters of the model are returned
         else:
@@ -116,7 +129,7 @@ class OptimScheduler(ABC):
             params = self.model.parameters()
 
         # initialize the optimizer part
-        optim_class = import_class('torch.optim.' + optim_type)
+        optim_class = import_class("torch.optim." + optim_type)
         self.optimizer = optim_class(params=params, **optim_conf)
 
         # Initialize the gradient scaler for AMP training
@@ -141,7 +154,15 @@ class OptimScheduler(ABC):
         """
         raise NotImplementedError
 
-    def step(self, losses: Dict[str, torch.Tensor], time_func, optim_name: str, step_num: int, epoch_num: int, logger = None):
+    def step(
+        self,
+        losses: Dict[str, torch.Tensor],
+        time_func,
+        optim_name: str,
+        step_num: int,
+        epoch_num: int,
+        logger=None,
+    ):
         """
         This function optimizes the target parameters of the built-in model pointer with the input training losses.
 
@@ -166,8 +187,11 @@ class OptimScheduler(ABC):
         real_step = (step_num - 1) // self.accum_grad + 1
 
         # context function used when doing the loss backward for efficient gradient accumulation in the DDP mode
-        backward_context = self.model.no_sync if self.distributed and step_num % self.accum_grad != 0 \
+        backward_context = (
+            self.model.no_sync
+            if self.distributed and step_num % self.accum_grad != 0
             else nullcontext
+        )
 
         # --- 1. Loss Backward Part --- #
         with time_func(["loss_backward_time", optim_name]):
@@ -175,11 +199,12 @@ class OptimScheduler(ABC):
             if real_step % self.step_per_update == 0:
                 # pick up the target training loss
                 if self.optim_loss is None:
-                    assert 'loss' in losses.keys(), \
-                        f"In this toolkit when optim_loss is set to None, the optimizer will automatically optimize " \
-                        f"the input loss named 'loss'. Therefore, please name one training loss in the returned Dict " \
+                    assert "loss" in losses.keys(), (
+                        f"In this toolkit when optim_loss is set to None, the optimizer will automatically optimize "
+                        f"the input loss named 'loss'. Therefore, please name one training loss in the returned Dict "
                         f"of your criterion_forward() implementation as 'loss'."
-                    loss = losses['loss']
+                    )
+                    loss = losses["loss"]
                 else:
                     loss = losses[self.optim_loss]
 
@@ -187,7 +212,11 @@ class OptimScheduler(ABC):
                     # average the loss for accumulation
                     loss /= self.accum_grad
                     # backward the loss in either the amp mode or the normal mode
-                    self.scaler.scale(loss).backward() if self.scaler is not None else loss.backward()
+                    (
+                        self.scaler.scale(loss).backward()
+                        if self.scaler is not None
+                        else loss.backward()
+                    )
 
         # --- 2. Model Optimization Part --- #
         with time_func(["optim_time", optim_name]):
@@ -196,7 +225,7 @@ class OptimScheduler(ABC):
                 # update the learning rate for the current step (scaled by the finetuning factor)
                 curr_lr = self.update_lr(real_step=real_step, epoch_num=epoch_num)
                 for param_group in self.optimizer.param_groups:
-                    param_group['lr'] = self.ft_factor * curr_lr
+                    param_group["lr"] = self.ft_factor * curr_lr
 
                 # update the model parameters if the accumulation interval is met
                 if step_num % self.accum_grad == 0:
@@ -215,8 +244,10 @@ class OptimScheduler(ABC):
                     # optimize the target parameters only when the values of gradients are not infinite
                     if not torch.isfinite(grad_norm):
                         if logger is not None:
-                            logger.info(f"The grad_norm in the no.{real_step} real step is infinite! "
-                                        "So, the parameters are not updated in this step.")
+                            logger.info(
+                                f"The grad_norm in the no.{real_step} real step is infinite! "
+                                "So, the parameters are not updated in this step."
+                            )
                         if self.scaler is not None:
                             self.scaler.step(self.optimizer)
                             self.scaler.update()
@@ -255,7 +286,7 @@ class OptimScheduler(ABC):
             The value of the learning rates obtained from `self.optimizer.param_groups`.
 
         """
-        return self.optimizer.param_groups[0]['lr']
+        return self.optimizer.param_groups[0]["lr"]
 
     def state_dict(self) -> Dict:
         """
@@ -268,7 +299,7 @@ class OptimScheduler(ABC):
         """
         return dict(
             optimizer=self.optimizer.state_dict(),
-            scaler=self.scaler.state_dict() if self.scaler is not None else None
+            scaler=self.scaler.state_dict() if self.scaler is not None else None,
         )
 
     def load_state_dict(self, state_dict: Dict[str, Any]):
@@ -281,10 +312,10 @@ class OptimScheduler(ABC):
 
         """
         # load the optimizer
-        self.optimizer.load_state_dict(state_dict['optimizer'])
+        self.optimizer.load_state_dict(state_dict["optimizer"])
         # load the gradient scaler
-        if state_dict['scaler'] is not None:
-            self.scaler.load_state_dict(state_dict['scaler'])
+        if state_dict["scaler"] is not None:
+            self.scaler.load_state_dict(state_dict["scaler"])
 
     def __repr__(self):
         """
@@ -298,11 +329,12 @@ class OptimScheduler(ABC):
             The description string for the OptimScheduler object.
 
         """
-        return f"{self.__class__.__name__}(" \
-               f"optimizer={self.optimizer.__class__.__name__}, " \
-               f"optim_loss={self.optim_loss}, " \
-               f"updated_modules={self.updated_modules}, " \
-               + self.extra_repr_fn() + ")"
+        return (
+            f"{self.__class__.__name__}("
+            f"optimizer={self.optimizer.__class__.__name__}, "
+            f"optim_loss={self.optim_loss}, "
+            f"updated_modules={self.updated_modules}, " + self.extra_repr_fn() + ")"
+        )
 
     def extra_repr_fn(self) -> str:
         """

@@ -8,9 +8,16 @@ from typing import List, Any, Union
 from speechain.utilbox.tensor_util import to_cpu
 
 
-def save_data_by_format(file_format: str, save_path: str, file_name_list: Union[List[str] or str],
-                        file_content_list: Union[List[Union[np.ndarray, torch.Tensor]], np.ndarray, torch.Tensor],
-                        group_ids: List[str] or str = None, sample_rate: int = None):
+def save_data_by_format(
+    file_format: str,
+    save_path: str,
+    file_name_list: Union[List[str] or str],
+    file_content_list: Union[
+        List[Union[np.ndarray, torch.Tensor]], np.ndarray, torch.Tensor
+    ],
+    group_ids: List[str] or str = None,
+    sample_rate: int = None,
+):
     """
     Save data in the specified format to disk.
 
@@ -59,7 +66,7 @@ def save_data_by_format(file_format: str, save_path: str, file_name_list: Union[
     for i, (name, content) in enumerate(zip(file_name_list, file_content_list)):
         # convert content to numpy array if it is a PyTorch tensor
         if isinstance(content, torch.Tensor):
-            content = to_cpu(content, tgt='numpy')
+            content = to_cpu(content, tgt="numpy")
 
         # if group_ids is not None, create subdirectory for this file's group
         if group_ids is not None:
@@ -69,30 +76,50 @@ def save_data_by_format(file_format: str, save_path: str, file_name_list: Union[
 
         # make sure the saving folder exists
         os.makedirs(file_save_path, exist_ok=True)
-        file_path = os.path.join(file_save_path, f'{name}.{file_format}')
+        file_path = os.path.join(file_save_path, f"{name}.{file_format}")
         # check the existence of the target file to make sure that data saving won't fail due to the system errors that cannot be captured by Python
         while not os.path.exists(file_path):
             # save the file in the specified format
-            if file_format == 'npy':
+            if file_format == "npy":
                 np.save(file_path, content.astype(np.float32))
 
-            elif file_format == 'npz':
-                assert sample_rate is not None, "sample_rate must be provided for npz format"
-                np.savez(file_path, feat=content.astype(np.float32), sample_rate=sample_rate)
+            elif file_format == "npz":
+                assert (
+                    sample_rate is not None
+                ), "sample_rate must be provided for npz format"
+                np.savez(
+                    file_path, feat=content.astype(np.float32), sample_rate=sample_rate
+                )
 
-            elif file_format == 'wav':
-                assert sample_rate is not None, "sample_rate must be provided for wav format"
-                sf.write(file=file_path, data=content, samplerate=sample_rate, format='WAV',
-                         subtype=sf.default_subtype('WAV'))
+            elif file_format == "wav":
+                assert (
+                    sample_rate is not None
+                ), "sample_rate must be provided for wav format"
+                sf.write(
+                    file=file_path,
+                    data=content,
+                    samplerate=sample_rate,
+                    format="WAV",
+                    subtype=sf.default_subtype("WAV"),
+                )
 
-            elif file_format == 'flac':
-                assert sample_rate is not None, "sample_rate must be provided for flac format"
-                sf.write(file=file_path, data=content, samplerate=sample_rate, format='FLAC',
-                         subtype=sf.default_subtype('FLAC'))
+            elif file_format == "flac":
+                assert (
+                    sample_rate is not None
+                ), "sample_rate must be provided for flac format"
+                sf.write(
+                    file=file_path,
+                    data=content,
+                    samplerate=sample_rate,
+                    format="FLAC",
+                    subtype=sf.default_subtype("FLAC"),
+                )
 
             else:
-                raise NotImplementedError(f"File format '{file_format}' is not supported. "
-                                          f"Please use one of the supported formats: 'npy', 'npz', 'wav', 'flac'")
+                raise NotImplementedError(
+                    f"File format '{file_format}' is not supported. "
+                    f"Please use one of the supported formats: 'npy', 'npz', 'wav', 'flac'"
+                )
 
         # map the original file names to their corresponding file paths in disk
         name2file_path[name] = file_path

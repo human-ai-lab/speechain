@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 from typing import List, Dict
 
 from speechain.iterator.abs import Iterator
@@ -20,8 +21,10 @@ class BlockIterator(Iterator):
     data instances in a batch as the rectangle length and the maximal data length as the rectangle width.
 
     """
-    def batches_generate_fn(self, data_index: List[str], data_len: Dict[str, int], batch_len: int = None) \
-            -> List[List[str]]:
+
+    def batches_generate_fn(
+        self, data_index: List[str], data_len: Dict[str, int], batch_len: int = None
+    ) -> List[List[str]]:
         """
         All the data instances in the built-in Dataset object will be grouped into batches with the same total lengths.
         The lengths used for grouping is given in data_len. The customized argument batch_len specifies the total length
@@ -40,7 +43,9 @@ class BlockIterator(Iterator):
         if not isinstance(batch_len, int):
             batch_len = int(batch_len)
         # configuration initialization
-        assert batch_len > 0, f"batch_len must be a positive integer, but got {batch_len}."
+        assert (
+            batch_len > 0
+        ), f"batch_len must be a positive integer, but got {batch_len}."
 
         # divide the data into individual batches by their lengths
         batches = []

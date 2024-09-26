@@ -18,13 +18,10 @@ class LanguageModel(Module):
         2. ASR-LM joint decoding by speechain.model.ar_asr.ARASR
 
     """
-    embedding_class_dict = dict(
-        embed=EmbedPrenet
-    )
 
-    encoder_class_dict = dict(
-        transformer=TransformerEncoder
-    )
+    embedding_class_dict = dict(embed=EmbedPrenet)
+
+    encoder_class_dict = dict(transformer=TransformerEncoder)
 
     def module_init(self, vocab_size: int, emb: Dict, encoder: Dict):
         """
@@ -36,21 +33,29 @@ class LanguageModel(Module):
 
         """
         # LM embedding layer
-        assert 'type' in emb.keys(), "There must a key named 'type' in model['module_conf']['embedding']!"
-        embedding_class = self.embedding_class_dict[emb['type']]
-        emb['conf'] = dict() if 'conf' not in emb.keys() else emb['conf']
-        self.embedding = embedding_class(vocab_size=vocab_size, **emb['conf'])
+        assert (
+            "type" in emb.keys()
+        ), "There must a key named 'type' in model['module_conf']['embedding']!"
+        embedding_class = self.embedding_class_dict[emb["type"]]
+        emb["conf"] = dict() if "conf" not in emb.keys() else emb["conf"]
+        self.embedding = embedding_class(vocab_size=vocab_size, **emb["conf"])
 
         # LM encoder part
-        assert 'type' in encoder.keys(), "There must a key named 'type' in model['module_conf']['encoder']!"
-        encoder_class = self.encoder_class_dict[encoder['type']]
-        encoder['conf'] = dict() if 'conf' not in encoder.keys() else encoder['conf']
+        assert (
+            "type" in encoder.keys()
+        ), "There must a key named 'type' in model['module_conf']['encoder']!"
+        encoder_class = self.encoder_class_dict[encoder["type"]]
+        encoder["conf"] = dict() if "conf" not in encoder.keys() else encoder["conf"]
         # the LM encoder is automatically set to unidirectional
-        encoder['conf']['uni_direction'] = True
-        self.encoder = encoder_class(input_size=self.embedding.output_size, **encoder['conf'])
+        encoder["conf"]["uni_direction"] = True
+        self.encoder = encoder_class(
+            input_size=self.embedding.output_size, **encoder["conf"]
+        )
 
         # LM token prediction layer
-        self.postnet = TokenPostnet(input_size=self.encoder.output_size, vocab_size=vocab_size)
+        self.postnet = TokenPostnet(
+            input_size=self.encoder.output_size, vocab_size=vocab_size
+        )
 
     def forward(self, text: torch.Tensor, text_len: torch.Tensor):
         """

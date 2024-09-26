@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.09
 """
+
 import torch
 import warnings
 from speechain.module.abs import Module
@@ -41,12 +42,14 @@ class FeatureNormalization(Module):
 
     """
 
-    def module_init(self,
-                    norm_type: str = 'global',
-                    mean_norm: bool = True,
-                    std_norm: bool = True,
-                    clamp: float = 1e-10,
-                    max_epoch_num: int = 4):
+    def module_init(
+        self,
+        norm_type: str = "global",
+        mean_norm: bool = True,
+        std_norm: bool = True,
+        clamp: float = 1e-10,
+        max_epoch_num: int = 4,
+    ):
         """
 
         Args:
@@ -73,8 +76,13 @@ class FeatureNormalization(Module):
         if self.input_size is not None:
             self.output_size = self.input_size
 
-    def forward(self, feat: torch.Tensor, feat_len: torch.Tensor,
-                group_ids: torch.Tensor or str or int = None, epoch: int = None):
+    def forward(
+        self,
+        feat: torch.Tensor,
+        feat_len: torch.Tensor,
+        group_ids: torch.Tensor or str or int = None,
+        epoch: int = None,
+    ):
         """
 
         Args:
@@ -88,32 +96,46 @@ class FeatureNormalization(Module):
         Returns:
 
         """
-        if self.norm_type == 'group':
-            assert group_ids is not None, \
-                "You are using group-level feature normalization, but group_ids is not given. " \
+        if self.norm_type == "group":
+            assert group_ids is not None, (
+                "You are using group-level feature normalization, but group_ids is not given. "
                 "Please check 'data_cfg' in your configuration."
+            )
         # para preparation
         batch_size, squeeze_flag = feat.size(0), False
         if len(feat.shape) == 2:
             feat, squeeze_flag = feat.unsqueeze(-1), True
         elif len(feat.shape) != 3:
-            raise RuntimeError(f"{self.__class__.__name__} only accepts the input vectors in the shape of "
-                               f"(batch, length, channel) or (batch, length), but got shape={feat.shape}!")
+            raise RuntimeError(
+                f"{self.__class__.__name__} only accepts the input vectors in the shape of "
+                f"(batch, length, channel) or (batch, length), but got shape={feat.shape}!"
+            )
 
         # --- Mean and Standard Variance Initialization --- #
         # calculate the mean values of all channels of all the input utterances
-        curr_means = None if not self.mean_norm else \
-            torch.stack([feat[i][:feat_len[i]].mean(dim=0) for i in range(batch_size)])
+        curr_means = (
+            None
+            if not self.mean_norm
+            else torch.stack(
+                [feat[i][: feat_len[i]].mean(dim=0) for i in range(batch_size)]
+            )
+        )
 
         # calculate the std values of all channels of all the input utterances
-        curr_stds = None if not self.std_norm else \
-            torch.clamp(
-                input=torch.stack([feat[i][:feat_len[i]].std(dim=0) for i in range(batch_size)]), min=self.clamp
+        curr_stds = (
+            None
+            if not self.std_norm
+            else torch.clamp(
+                input=torch.stack(
+                    [feat[i][: feat_len[i]].std(dim=0) for i in range(batch_size)]
+                ),
+                min=self.clamp,
             )
+        )
 
         # --- Perform Normalization based on Different branches --- #
         # utterance-level normalization or group-level normalization without group_ids
-        if self.norm_type == 'utterance':
+        if self.norm_type == "utterance":
             feat = feat - curr_means.unsqueeze(1) if curr_means is not None else feat
             feat = feat / curr_stds.unsqueeze(1) if curr_stds is not None else feat
 
@@ -122,10 +144,14 @@ class FeatureNormalization(Module):
             # only gather the batch sizes from other processes in the DDP model of training
             all_batch_size = None
             if self.training:
-                all_batch_size = self.gather_scalars(batch_size, feat.device) if self.distributed else batch_size
+                all_batch_size = (
+                    self.gather_scalars(batch_size, feat.device)
+                    if self.distributed
+                    else batch_size
+                )
 
             # group-level normalization with tensor group_ids (input utterances belong to different groups)
-            if self.norm_type == 'group' and isinstance(group_ids, torch.Tensor):
+            if self.norm_type == "group" and isinstance(group_ids, torch.Tensor):
                 # only update the mean and std of the specific group during training
                 if self.training:
                     # DDP mode
@@ -133,11 +159,17 @@ class FeatureNormalization(Module):
                         # gather all the group ids from other processes
                         all_group_ids = self.gather_vectors(group_ids, all_batch_size)
                         # gather all the mean vectors from other processes
-                        all_curr_means = None if curr_means is None else \
-                            self.gather_matrices(curr_means, all_batch_size)
+                        all_curr_means = (
+                            None
+                            if curr_means is None
+                            else self.gather_matrices(curr_means, all_batch_size)
+                        )
                         # gather all the std vectors from other processes
-                        all_curr_stds = None if curr_stds is None else \
-                            self.gather_matrices(curr_stds, all_batch_size)
+                        all_curr_stds = (
+                            None
+                            if curr_stds is None
+                            else self.gather_matrices(curr_stds, all_batch_size)
+                        )
                     # single-GPU mode
                     else:
                         # not perform gathering
@@ -156,14 +188,25 @@ class FeatureNormalization(Module):
                     )
 
                     # register the mean, std, and batch numbers into the buffer
-                    group_keys = list(group_mean_dict.keys()) if group_mean_dict is not None \
+                    group_keys = (
+                        list(group_mean_dict.keys())
+                        if group_mean_dict is not None
                         else list(group_std_dict.keys())
+                    )
                     for group_id in group_keys:
                         self.register_mean_std_batch(
-                            curr_aver_mean=group_mean_dict[group_id].mean(
-                                dim=0) if group_mean_dict is not None else None,
-                            curr_aver_std=group_std_dict[group_id].mean(dim=0) if group_std_dict is not None else None,
-                            prefix=group_id, epoch=epoch
+                            curr_aver_mean=(
+                                group_mean_dict[group_id].mean(dim=0)
+                                if group_mean_dict is not None
+                                else None
+                            ),
+                            curr_aver_std=(
+                                group_std_dict[group_id].mean(dim=0)
+                                if group_std_dict is not None
+                                else None
+                            ),
+                            prefix=group_id,
+                            epoch=epoch,
                         )
                     # update the average mean & std of all the groups
                     # (i.e. the average distribution for unknown samples during inference)
@@ -175,11 +218,17 @@ class FeatureNormalization(Module):
                     group_id = group_ids[i].item() if group_ids is not None else None
 
                     if self.mean_norm:
-                        feat[i] -= self.get_buffer("aver_mean") if not hasattr(self, f"{group_id}_mean") else \
-                            self.get_buffer(f"{group_id}_mean")
+                        feat[i] -= (
+                            self.get_buffer("aver_mean")
+                            if not hasattr(self, f"{group_id}_mean")
+                            else self.get_buffer(f"{group_id}_mean")
+                        )
                     if self.std_norm:
-                        feat[i] /= self.get_buffer("aver_std") if not hasattr(self, f"{group_id}_std") else \
-                            self.get_buffer(f"{group_id}_std")
+                        feat[i] /= (
+                            self.get_buffer("aver_std")
+                            if not hasattr(self, f"{group_id}_std")
+                            else self.get_buffer(f"{group_id}_std")
+                        )
 
             # batch-level & global-level normalization (these two scenarios share the batch-level mean & std)
             else:
@@ -188,22 +237,43 @@ class FeatureNormalization(Module):
                     # gather the mean and std from the other processes in the DDP mode
                     if self.distributed:
                         # gather the sums of batch means from all the processes
-                        batch_mean_sum = curr_means.sum(dim=0) if curr_means is not None else None
-                        all_batch_mean_sums = self.gather_vectors(
-                            batch_mean_sum) if batch_mean_sum is not None else None
-                        batch_mean = None if all_batch_mean_sums is None else \
-                            all_batch_mean_sums.sum(dim=0) / all_batch_size.sum()
+                        batch_mean_sum = (
+                            curr_means.sum(dim=0) if curr_means is not None else None
+                        )
+                        all_batch_mean_sums = (
+                            self.gather_vectors(batch_mean_sum)
+                            if batch_mean_sum is not None
+                            else None
+                        )
+                        batch_mean = (
+                            None
+                            if all_batch_mean_sums is None
+                            else all_batch_mean_sums.sum(dim=0) / all_batch_size.sum()
+                        )
 
                         # gather the sums of batch stds from all the processes
-                        batch_std_sum = curr_stds.sum(dim=0) if curr_stds is not None else None
-                        all_batch_std_sums = self.gather_vectors(batch_std_sum) if batch_std_sum is not None else None
-                        batch_std = None if all_batch_std_sums is None else \
-                            all_batch_std_sums.sum(dim=0) / all_batch_size.sum()
+                        batch_std_sum = (
+                            curr_stds.sum(dim=0) if curr_stds is not None else None
+                        )
+                        all_batch_std_sums = (
+                            self.gather_vectors(batch_std_sum)
+                            if batch_std_sum is not None
+                            else None
+                        )
+                        batch_std = (
+                            None
+                            if all_batch_std_sums is None
+                            else all_batch_std_sums.sum(dim=0) / all_batch_size.sum()
+                        )
 
                     # single-GPU mode
                     else:
-                        batch_mean = curr_means.mean(dim=0) if curr_means is not None else None
-                        batch_std = curr_stds.mean(dim=0) if curr_stds is not None else None
+                        batch_mean = (
+                            curr_means.mean(dim=0) if curr_means is not None else None
+                        )
+                        batch_std = (
+                            curr_stds.mean(dim=0) if curr_stds is not None else None
+                        )
 
                 # do nothing for batch-level mean and std during evaluation
                 else:
@@ -211,87 +281,149 @@ class FeatureNormalization(Module):
                     batch_std = None
 
                 # batch-level normalization
-                if self.norm_type == 'batch':
+                if self.norm_type == "batch":
                     # normalize the input utterances by the batch mean and std during training
                     if self.training:
                         feat = feat - batch_mean if batch_mean is not None else feat
                         feat = feat / batch_std if batch_std is not None else feat
                     # normalize the input utterances by the utterance-specific mean and std during evaluation
                     else:
-                        feat = feat - curr_means.unsqueeze(1) if curr_means is not None else feat
-                        feat = feat / curr_stds.unsqueeze(1) if curr_stds is not None else feat
+                        feat = (
+                            feat - curr_means.unsqueeze(1)
+                            if curr_means is not None
+                            else feat
+                        )
+                        feat = (
+                            feat / curr_stds.unsqueeze(1)
+                            if curr_stds is not None
+                            else feat
+                        )
 
                 # global-level normalization or
                 # group-level normalization with str or int group_ids (input utterances belong to the same group)
                 else:
-                    assert self.norm_type in ['global', 'group'], \
-                        f"norm_type can only be one of 'utterance', 'batch', 'group', 'global', " \
+                    assert self.norm_type in ["global", "group"], (
+                        f"norm_type can only be one of 'utterance', 'batch', 'group', 'global', "
                         f"but got norm_type={self.norm_type}!"
-                    if self.norm_type == 'group':
-                        assert isinstance(group_ids, (str, int)), \
-                            f"If all the utterances in a single batch belong to the same group, " \
-                            f"you should give group_ids as a string or integer. " \
+                    )
+                    if self.norm_type == "group":
+                        assert isinstance(group_ids, (str, int)), (
+                            f"If all the utterances in a single batch belong to the same group, "
+                            f"you should give group_ids as a string or integer. "
                             f"But got type(group_ids)={type(group_ids)}."
+                        )
 
                     # only update the mean and std during training
-                    prefix = 'global' if self.norm_type == 'global' else group_ids
+                    prefix = "global" if self.norm_type == "global" else group_ids
                     if self.training:
-                        self.register_mean_std_batch(curr_aver_mean=batch_mean, curr_aver_std=batch_std,
-                                                     prefix=prefix, epoch=epoch)
+                        self.register_mean_std_batch(
+                            curr_aver_mean=batch_mean,
+                            curr_aver_std=batch_std,
+                            prefix=prefix,
+                            epoch=epoch,
+                        )
 
                     # if the group_ids is given as a string or int,
                     # we assume that there are no unknown testing samples during inference
-                    feat = feat - self.get_buffer(f"{prefix}_mean") if curr_means is not None else feat
-                    feat = feat / self.get_buffer(f"{prefix}_std") if curr_stds is not None else feat
+                    feat = (
+                        feat - self.get_buffer(f"{prefix}_mean")
+                        if curr_means is not None
+                        else feat
+                    )
+                    feat = (
+                        feat / self.get_buffer(f"{prefix}_std")
+                        if curr_stds is not None
+                        else feat
+                    )
 
         return feat.squeeze(-1) if squeeze_flag else feat, feat_len
 
     @staticmethod
     def gather_scalars(scalar: int, device: torch.device) -> torch.LongTensor:
         # gather the input scalars
-        all_scalars = [torch.LongTensor([0]).cuda(device) for _ in range(torch.distributed.get_world_size())]
-        torch.distributed.all_gather(all_scalars, torch.LongTensor([scalar]).cuda(device))
+        all_scalars = [
+            torch.LongTensor([0]).cuda(device)
+            for _ in range(torch.distributed.get_world_size())
+        ]
+        torch.distributed.all_gather(
+            all_scalars, torch.LongTensor([scalar]).cuda(device)
+        )
         return torch.LongTensor(all_scalars)
 
     @staticmethod
-    def gather_vectors(vector: torch.Tensor, all_batch_size: torch.Tensor = None) -> torch.Tensor:
+    def gather_vectors(
+        vector: torch.Tensor, all_batch_size: torch.Tensor = None
+    ) -> torch.Tensor:
         # vectors of all the processes may have different length
         if all_batch_size is not None:
             curr_batch_size = all_batch_size[torch.distributed.get_rank()].item()
             max_batch_size = all_batch_size.max().item()
             if curr_batch_size < max_batch_size:
-                vector = torch.cat((vector, torch.zeros(max_batch_size - curr_batch_size,
-                                                        dtype=vector.dtype, device=vector.device)))
-            all_vectors = [torch.Tensor([0 for _ in range(max_batch_size)]).type_as(vector).cuda(vector.device)
-                           for _ in range(torch.distributed.get_world_size())]
+                vector = torch.cat(
+                    (
+                        vector,
+                        torch.zeros(
+                            max_batch_size - curr_batch_size,
+                            dtype=vector.dtype,
+                            device=vector.device,
+                        ),
+                    )
+                )
+            all_vectors = [
+                torch.Tensor([0 for _ in range(max_batch_size)])
+                .type_as(vector)
+                .cuda(vector.device)
+                for _ in range(torch.distributed.get_world_size())
+            ]
         # all the vectors are equal in length
         else:
-            all_vectors = [torch.zeros_like(vector, device=vector.device)
-                           for _ in range(torch.distributed.get_world_size())]
+            all_vectors = [
+                torch.zeros_like(vector, device=vector.device)
+                for _ in range(torch.distributed.get_world_size())
+            ]
 
         # gather the vectors from other processes to all_vectors
         torch.distributed.all_gather(all_vectors, vector)
 
         # remove the padding
-        return torch.stack(all_vectors) if all_batch_size is None else \
-            torch.cat([all_vectors[i][:all_batch_size[i]] for i in range(len(all_vectors))])
+        return (
+            torch.stack(all_vectors)
+            if all_batch_size is None
+            else torch.cat(
+                [all_vectors[i][: all_batch_size[i]] for i in range(len(all_vectors))]
+            )
+        )
 
     @staticmethod
-    def gather_matrices(matrix: torch.Tensor, all_batch_size: torch.Tensor) -> torch.Tensor:
+    def gather_matrices(
+        matrix: torch.Tensor, all_batch_size: torch.Tensor
+    ) -> torch.Tensor:
         curr_batch_size = all_batch_size[torch.distributed.get_rank()].item()
         max_batch_size = all_batch_size.max().item()
         # padding the matrix if necessary
         if curr_batch_size < max_batch_size:
-            matrix = torch.cat((matrix, torch.zeros(max_batch_size - curr_batch_size, matrix.size(-1),
-                                                    device=matrix.device)))
+            matrix = torch.cat(
+                (
+                    matrix,
+                    torch.zeros(
+                        max_batch_size - curr_batch_size,
+                        matrix.size(-1),
+                        device=matrix.device,
+                    ),
+                )
+            )
 
         # gather the matrices from other processes to all_matrices
-        all_matrices = [torch.zeros_like(matrix, device=matrix.device)
-                        for _ in range(torch.distributed.get_world_size())]
+        all_matrices = [
+            torch.zeros_like(matrix, device=matrix.device)
+            for _ in range(torch.distributed.get_world_size())
+        ]
         torch.distributed.all_gather(all_matrices, matrix)
 
         # remove the padding
-        return torch.cat([all_matrices[i][:all_batch_size[i]] for i in range(len(all_matrices))])
+        return torch.cat(
+            [all_matrices[i][: all_batch_size[i]] for i in range(len(all_matrices))]
+        )
 
     @staticmethod
     def sort_data_by_group(raw_data: torch.Tensor, group_ids: torch.Tensor):
@@ -316,12 +448,18 @@ class FeatureNormalization(Module):
                     group_dict[curr_group] = []
                 group_dict[curr_group].append(raw_data[i])
             # turn each group list into a 2d tensor
-            return {group_id: torch.stack(group_list) for group_id, group_list in group_dict.items()}
+            return {
+                group_id: torch.stack(group_list)
+                for group_id, group_list in group_dict.items()
+            }
 
-    def register_mean_std_batch(self,
-                                curr_aver_mean: torch.Tensor,
-                                curr_aver_std: torch.Tensor,
-                                prefix: str, epoch: int):
+    def register_mean_std_batch(
+        self,
+        curr_aver_mean: torch.Tensor,
+        curr_aver_std: torch.Tensor,
+        prefix: str,
+        epoch: int,
+    ):
         """
 
         Args:
@@ -333,9 +471,14 @@ class FeatureNormalization(Module):
         """
         # update the observed global batch number
         if epoch is None or not hasattr(self, f"{prefix}_batch"):
-            self.register_buffer(f"{prefix}_batch", torch.LongTensor([1]).cuda(device=curr_aver_mean.device))
+            self.register_buffer(
+                f"{prefix}_batch",
+                torch.LongTensor([1]).cuda(device=curr_aver_mean.device),
+            )
         elif epoch <= self.max_epoch_num:
-            self.register_buffer(f"{prefix}_batch", self.get_buffer(f"{prefix}_batch") + 1)
+            self.register_buffer(
+                f"{prefix}_batch", self.get_buffer(f"{prefix}_batch") + 1
+            )
 
         # update the observed global mean & std only in the predefined batch number
         if epoch is None or epoch <= self.max_epoch_num:
@@ -348,8 +491,11 @@ class FeatureNormalization(Module):
                     self.register_buffer(f"{prefix}_mean", curr_aver_mean)
                 else:
                     prev_aver_mean = self.get_buffer(f"{prefix}_mean")
-                    self.register_buffer(f"{prefix}_mean",
-                                         curr_weight * curr_aver_mean + (1 - curr_weight) * prev_aver_mean)
+                    self.register_buffer(
+                        f"{prefix}_mean",
+                        curr_weight * curr_aver_mean
+                        + (1 - curr_weight) * prev_aver_mean,
+                    )
 
             # update the observed global std
             if self.std_norm:
@@ -357,8 +503,10 @@ class FeatureNormalization(Module):
                     self.register_buffer(f"{prefix}_std", curr_aver_std)
                 else:
                     prev_aver_std = self.get_buffer(f"{prefix}_std")
-                    self.register_buffer(f"{prefix}_std",
-                                         curr_weight * curr_aver_std + (1 - curr_weight) * prev_aver_std)
+                    self.register_buffer(
+                        f"{prefix}_std",
+                        curr_weight * curr_aver_std + (1 - curr_weight) * prev_aver_std,
+                    )
 
     def update_aver_mean_std(self, epoch: int):
         """
@@ -371,15 +519,17 @@ class FeatureNormalization(Module):
             _group_mean_num, _group_std_num = 0, 0
             _aver_mean, _aver_std = None, None
             for name, buff in self.named_buffers():
-                if name.endswith('_mean'):
+                if name.endswith("_mean"):
                     _group_mean_num += 1
-                    _aver_mean = buff.clone() if _aver_mean is None else _aver_mean + buff
-                elif name.endswith('_std'):
+                    _aver_mean = (
+                        buff.clone() if _aver_mean is None else _aver_mean + buff
+                    )
+                elif name.endswith("_std"):
                     _group_std_num += 1
                     _aver_std = buff.clone() if _aver_std is None else _aver_std + buff
 
-            self.register_buffer('aver_mean', _aver_mean / _group_mean_num)
-            self.register_buffer('aver_std', _aver_std / _group_std_num)
+            self.register_buffer("aver_mean", _aver_mean / _group_mean_num)
+            self.register_buffer("aver_std", _aver_std / _group_std_num)
 
     def recover(self, feat: torch.Tensor, group_ids: torch.Tensor or str or int = None):
         """
@@ -391,47 +541,95 @@ class FeatureNormalization(Module):
         Returns:
 
         """
-        assert self.norm_type not in ['utterance', 'batch'], \
-            "If norm_type is either 'utterance' or 'batch', the normalized features cannot be recovered."
+        assert self.norm_type not in [
+            "utterance",
+            "batch",
+        ], "If norm_type is either 'utterance' or 'batch', the normalized features cannot be recovered."
 
         # global normalization or
         # group-level normalization with str or int group_ids (input utterances belong to the same group)
-        if self.norm_type == 'global' or (self.norm_type == 'group' and isinstance(group_ids, (str, int))):
-            prefix = 'global' if self.norm_type == 'global' else str(group_ids)
+        if self.norm_type == "global" or (
+            self.norm_type == "group" and isinstance(group_ids, (str, int))
+        ):
+            prefix = "global" if self.norm_type == "global" else str(group_ids)
             feat = feat * self.get_buffer(f"{prefix}_std") if self.std_norm else feat
             feat = feat + self.get_buffer(f"{prefix}_mean") if self.mean_norm else feat
         # group-level normalization with tensor group_ids (input utterances belong to different groups)
         # recover by the average mean & std when meeting an unknown group during inference
-        elif self.norm_type == 'group' and isinstance(group_ids, torch.Tensor):
-            feat = feat * torch.stack(
-                [self.get_buffer(f"{g_id.item():d}_std") if hasattr(self, f"{g_id.item():d}_std") else
-                 self.get_buffer("aver_std") for g_id in group_ids], dim=0
-            ).unsqueeze(1) if self.std_norm else feat
+        elif self.norm_type == "group" and isinstance(group_ids, torch.Tensor):
+            feat = (
+                feat
+                * torch.stack(
+                    [
+                        (
+                            self.get_buffer(f"{g_id.item():d}_std")
+                            if hasattr(self, f"{g_id.item():d}_std")
+                            else self.get_buffer("aver_std")
+                        )
+                        for g_id in group_ids
+                    ],
+                    dim=0,
+                ).unsqueeze(1)
+                if self.std_norm
+                else feat
+            )
 
-            feat = feat + torch.stack(
-                [self.get_buffer(f"{g_id.item():d}_mean") if hasattr(self, f"{g_id.item():d}_mean") else
-                 self.get_buffer("aver_mean") for g_id in group_ids], dim=0
-            ).unsqueeze(1) if self.mean_norm else feat
+            feat = (
+                feat
+                + torch.stack(
+                    [
+                        (
+                            self.get_buffer(f"{g_id.item():d}_mean")
+                            if hasattr(self, f"{g_id.item():d}_mean")
+                            else self.get_buffer("aver_mean")
+                        )
+                        for g_id in group_ids
+                    ],
+                    dim=0,
+                ).unsqueeze(1)
+                if self.mean_norm
+                else feat
+            )
         # group-level normalization with None group_ids, recover by the average mean & std
-        elif self.norm_type == 'group' and group_ids is None:
-            feat = feat * self.get_buffer("aver_std").expand(1, 1, -1) if self.std_norm else feat
-            feat = feat + self.get_buffer("aver_mean").expand(1, 1, -1) if self.mean_norm else feat
+        elif self.norm_type == "group" and group_ids is None:
+            feat = (
+                feat * self.get_buffer("aver_std").expand(1, 1, -1)
+                if self.std_norm
+                else feat
+            )
+            feat = (
+                feat + self.get_buffer("aver_mean").expand(1, 1, -1)
+                if self.mean_norm
+                else feat
+            )
         else:
             raise RuntimeError
 
         return feat
 
-    def _load_from_state_dict(self, state_dict, prefix, local_metadata, strict,
-                              missing_keys, unexpected_keys, error_msgs):
+    def _load_from_state_dict(
+        self,
+        state_dict,
+        prefix,
+        local_metadata,
+        strict,
+        missing_keys,
+        unexpected_keys,
+        error_msgs,
+    ):
         """
         Lazily register all the buffer variables ending with '_batch', '_std', or '_mean' from state_dict to self.
 
         """
         for key in state_dict.keys():
             if key.startswith(prefix):
-                input_name = key[len(prefix):].split('.', 1)[0]
+                input_name = key[len(prefix) :].split(".", 1)[0]
 
-                if '_' in input_name and input_name.split('_')[-1] in ['batch', 'std', 'mean']:
+                if "_" in input_name and input_name.split("_")[-1] in [
+                    "batch",
+                    "std",
+                    "mean",
+                ]:
                     self.register_buffer(input_name, state_dict[key])
                 else:
                     unexpected_keys.append(key)

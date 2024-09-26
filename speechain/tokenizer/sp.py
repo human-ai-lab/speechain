@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import os
 import shutil
 from typing import List
@@ -38,12 +39,14 @@ class SentencePieceTokenizer(Tokenizer):
         """
         # The model in token_path token_model has the highest priority for token_model initialization
         if token_path is not None:
-            token_model = os.path.join(parse_path_args(token_path), 'model')
+            token_model = os.path.join(parse_path_args(token_path), "model")
 
         # if token_path is not given or model does not exist, use the backup on in copy_path
         if token_path is None or not os.path.exists(token_model):
-            assert copy_path is not None, "Please give copy_path for SentencePiece model backup!"
-            token_model = os.path.join(parse_path_args(copy_path), 'token_model')
+            assert (
+                copy_path is not None
+            ), "Please give copy_path for SentencePiece model backup!"
+            token_model = os.path.join(parse_path_args(copy_path), "token_model")
 
         # initialize the tokenizer model by the sentencepiece package
         self.sp_model = spm.SentencePieceProcessor()
@@ -52,7 +55,7 @@ class SentencePieceTokenizer(Tokenizer):
         # save the backup if copy_path is given
         if copy_path is not None:
             try:
-                shutil.copy(src=token_model, dst=os.path.join(copy_path, 'token_model'))
+                shutil.copy(src=token_model, dst=os.path.join(copy_path, "token_model"))
             except shutil.SameFileError:
                 pass
 
@@ -67,10 +70,18 @@ class SentencePieceTokenizer(Tokenizer):
         """
         if isinstance(tensor, torch.Tensor):
             tensor = tensor.tolist()
-        text = self.sp_model.decode_ids([t for t in tensor if t not in [self.sos_eos_idx, self.ignore_idx]])
+        text = self.sp_model.decode_ids(
+            [t for t in tensor if t not in [self.sos_eos_idx, self.ignore_idx]]
+        )
         return text
 
-    def text2tensor(self, text: str, no_sos: bool = False, no_eos: bool = False, return_tensor: bool = True):
+    def text2tensor(
+        self,
+        text: str,
+        no_sos: bool = False,
+        no_eos: bool = False,
+        return_tensor: bool = True,
+    ):
         """
 
         Args:

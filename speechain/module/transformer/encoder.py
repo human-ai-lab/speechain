@@ -4,6 +4,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import torch
 from torch import nn
 from typing import List, Dict, Any
@@ -25,18 +26,20 @@ class TransformerEncoderLayer(Module):
 
     """
 
-    def module_init(self,
-                    d_model: int = 512,
-                    num_heads: int = 8,
-                    scale_dp_by_head: bool = False,
-                    att_dropout: float = 0.1,
-                    fdfwd_dim: int = 2048,
-                    fdfwd_type: str = 'linear',
-                    fdfwd_activation: str = 'ReLU',
-                    fdfwd_args: Dict[str, Any] = {},
-                    fdfwd_dropout: float = 0.1,
-                    res_dropout: float = 0.1,
-                    layernorm_first: bool = True):
+    def module_init(
+        self,
+        d_model: int = 512,
+        num_heads: int = 8,
+        scale_dp_by_head: bool = False,
+        att_dropout: float = 0.1,
+        fdfwd_dim: int = 2048,
+        fdfwd_type: str = "linear",
+        fdfwd_activation: str = "ReLU",
+        fdfwd_args: Dict[str, Any] = {},
+        fdfwd_dropout: float = 0.1,
+        res_dropout: float = 0.1,
+        layernorm_first: bool = True,
+    ):
         """
 
         Args:
@@ -68,13 +71,22 @@ class TransformerEncoderLayer(Module):
 
         """
         # initialize multi-head attention layer
-        self.multihead_att = MultiHeadedAttention(d_model=d_model, num_heads=num_heads, dropout=att_dropout,
-                                                  scale_dp_by_head=scale_dp_by_head)
+        self.multihead_att = MultiHeadedAttention(
+            d_model=d_model,
+            num_heads=num_heads,
+            dropout=att_dropout,
+            scale_dp_by_head=scale_dp_by_head,
+        )
 
         # initialize feedforward layer
-        self.feed_forward = PositionwiseFeedForward(d_model=d_model, fdfwd_dim=fdfwd_dim, fdfwd_type=fdfwd_type,
-                                                    fdfwd_activation=fdfwd_activation, fdfwd_args=fdfwd_args,
-                                                    dropout=fdfwd_dropout)
+        self.feed_forward = PositionwiseFeedForward(
+            d_model=d_model,
+            fdfwd_dim=fdfwd_dim,
+            fdfwd_type=fdfwd_type,
+            fdfwd_activation=fdfwd_activation,
+            fdfwd_args=fdfwd_args,
+            dropout=fdfwd_dropout,
+        )
 
         # initialize residual dropout layer
         self.dropout = nn.Dropout(res_dropout)
@@ -99,7 +111,7 @@ class TransformerEncoderLayer(Module):
 
         """
 
-        'Multi-head Attention Layer part'
+        "Multi-head Attention Layer part"
         # go through the LayerNorm layer before the multi-head attention layer or not
         src_norm = self.att_layernorm(src) if self.layernorm_first else src
 
@@ -108,65 +120,75 @@ class TransformerEncoderLayer(Module):
         att_output = self.dropout(att_hidden) + src
 
         # go through the LayerNorm layer after the multi-head attention layer or not
-        att_output = self.att_layernorm(att_output) if not self.layernorm_first else att_output
+        att_output = (
+            self.att_layernorm(att_output) if not self.layernorm_first else att_output
+        )
 
-        'Positional FeedForward Layer part'
+        "Positional FeedForward Layer part"
         # go through the LayerNorm layer before the feedforward layer or not
-        att_output_norm = self.fdfwd_layernorm(att_output) if self.layernorm_first else att_output
+        att_output_norm = (
+            self.fdfwd_layernorm(att_output) if self.layernorm_first else att_output
+        )
 
         # go through the feedforward layer and perform the residual connection
         fdfwd_hidden = self.feed_forward(att_output_norm)
         fdfwd_output = self.dropout(fdfwd_hidden) + att_output
 
         # go through the LayerNorm layer after the feedforward layer or not
-        fdfwd_output = self.fdfwd_layernorm(fdfwd_output) if not self.layernorm_first else fdfwd_output
+        fdfwd_output = (
+            self.fdfwd_layernorm(fdfwd_output)
+            if not self.layernorm_first
+            else fdfwd_output
+        )
 
         return fdfwd_output, attmat
 
 
 class TransformerEncoder(Module):
     """
-        The Transformer encoder for any Sequence-to-Sequence tasks.
-        Reference:
-            Attention is all you need
-            https://proceedings.neurips.cc/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf
+    The Transformer encoder for any Sequence-to-Sequence tasks.
+    Reference:
+        Attention is all you need
+        https://proceedings.neurips.cc/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf
 
-        Our Transformer encoder implements the following properties:
-            1. Different positional encoding. (Mix or Sep)
-            2. Different positions of the LayerNorm layer (first or last)
-            3. Time Frame Downsampling (pool or concat)
-        For the details, please refer to the docstrings of PositionalEncoding and TransformerEncoderLayer.
+    Our Transformer encoder implements the following properties:
+        1. Different positional encoding. (Mix or Sep)
+        2. Different positions of the LayerNorm layer (first or last)
+        3. Time Frame Downsampling (pool or concat)
+    For the details, please refer to the docstrings of PositionalEncoding and TransformerEncoderLayer.
 
-        In our Transformer implementation, there are 4 places to place the Dropout layers:
-            1. After adding the positional encoding into the embedded features.
-            2. After the softmax operation and before reweighting all the values by these weights in the
-                multi-head attention layer.
-            3. Between two feedforward linear layers there will be a Dropout layer.
-            4. Before performing residual connect in a Transformer layer.
+    In our Transformer implementation, there are 4 places to place the Dropout layers:
+        1. After adding the positional encoding into the embedded features.
+        2. After the softmax operation and before reweighting all the values by these weights in the
+            multi-head attention layer.
+        3. Between two feedforward linear layers there will be a Dropout layer.
+        4. Before performing residual connect in a Transformer layer.
 
     """
 
-    def module_init(self,
-                    posenc_type: str = 'mix',
-                    posenc_maxlen: int = 5000,
-                    posenc_dropout: float = 0.1,
-                    posenc_scale: bool = False,
-                    posenc_init_alpha: float = 1.0,
-                    emb_layernorm: bool = False,
-                    emb_scale: bool = False,
-                    d_model: int = 512,
-                    num_heads: int = 4,
-                    num_layers: int = 8,
-                    scale_dp_by_head: bool = False,
-                    att_dropout: float = 0.1,
-                    fdfwd_dim: int = 2048,
-                    fdfwd_type: str = 'linear',
-                    fdfwd_activation: str = 'ReLU',
-                    fdfwd_args: Dict[str, Any] = {},
-                    fdfwd_dropout: float = 0.1,
-                    res_dropout: float = 0.1,
-                    layernorm_first: bool = True,
-                    uni_direction: bool = False):
+    def module_init(
+        self,
+        posenc_type: str = "mix",
+        posenc_maxlen: int = 5000,
+        posenc_dropout: float = 0.1,
+        posenc_scale: bool = False,
+        posenc_init_alpha: float = 1.0,
+        emb_layernorm: bool = False,
+        emb_scale: bool = False,
+        d_model: int = 512,
+        num_heads: int = 4,
+        num_layers: int = 8,
+        scale_dp_by_head: bool = False,
+        att_dropout: float = 0.1,
+        fdfwd_dim: int = 2048,
+        fdfwd_type: str = "linear",
+        fdfwd_activation: str = "ReLU",
+        fdfwd_args: Dict[str, Any] = {},
+        fdfwd_dropout: float = 0.1,
+        res_dropout: float = 0.1,
+        layernorm_first: bool = True,
+        uni_direction: bool = False,
+    ):
         """
 
         Args:
@@ -235,29 +257,36 @@ class TransformerEncoder(Module):
         self.uni_direction = uni_direction
 
         # initialize positional encoding layer
-        self.posenc = PositionalEncoding(posenc_type=posenc_type,
-                                         d_model=d_model,
-                                         emb_scale=emb_scale,
-                                         emb_layernorm=emb_layernorm,
-                                         posenc_scale=posenc_scale,
-                                         init_alpha=posenc_init_alpha,
-                                         max_len=posenc_maxlen,
-                                         dropout=posenc_dropout)
+        self.posenc = PositionalEncoding(
+            posenc_type=posenc_type,
+            d_model=d_model,
+            emb_scale=emb_scale,
+            emb_layernorm=emb_layernorm,
+            posenc_scale=posenc_scale,
+            init_alpha=posenc_init_alpha,
+            max_len=posenc_maxlen,
+            dropout=posenc_dropout,
+        )
 
         # initialize transformer layers
-        self.trfm_layers = torch.nn.ModuleList([
-            TransformerEncoderLayer(d_model=d_model,
-                                    num_heads=num_heads,
-                                    scale_dp_by_head=scale_dp_by_head,
-                                    att_dropout=att_dropout,
-                                    fdfwd_dim=fdfwd_dim,
-                                    fdfwd_type=fdfwd_type,
-                                    fdfwd_activation=fdfwd_activation,
-                                    fdfwd_args=fdfwd_args,
-                                    fdfwd_dropout=fdfwd_dropout,
-                                    res_dropout=res_dropout,
-                                    layernorm_first=layernorm_first)
-            for _ in range(num_layers)])
+        self.trfm_layers = torch.nn.ModuleList(
+            [
+                TransformerEncoderLayer(
+                    d_model=d_model,
+                    num_heads=num_heads,
+                    scale_dp_by_head=scale_dp_by_head,
+                    att_dropout=att_dropout,
+                    fdfwd_dim=fdfwd_dim,
+                    fdfwd_type=fdfwd_type,
+                    fdfwd_activation=fdfwd_activation,
+                    fdfwd_args=fdfwd_args,
+                    fdfwd_dropout=fdfwd_dropout,
+                    res_dropout=res_dropout,
+                    layernorm_first=layernorm_first,
+                )
+                for _ in range(num_layers)
+            ]
+        )
 
         # initialize layernorm layer if necessary
         if self.layernorm_first:
@@ -277,7 +306,9 @@ class TransformerEncoder(Module):
         Returns:
 
         """
-        return ~torch.triu(torch.ones(batch_size, maxlen, maxlen, dtype=torch.bool), diagonal=1)
+        return ~torch.triu(
+            torch.ones(batch_size, maxlen, maxlen, dtype=torch.bool), diagonal=1
+        )
 
     def forward(self, src: torch.Tensor, mask: torch.Tensor):
         """
@@ -305,8 +336,10 @@ class TransformerEncoder(Module):
         # generate the low-triangular mask for self-attention layers
         if self.uni_direction:
             batch_size, _, src_maxlen = mask.size()
-            mask = torch.logical_and(mask.repeat(1, src_maxlen, 1),
-                                     self.subsequent_mask(batch_size, src_maxlen).to(mask.device))
+            mask = torch.logical_and(
+                mask.repeat(1, src_maxlen, 1),
+                self.subsequent_mask(batch_size, src_maxlen).to(mask.device),
+            )
 
         # go through the Transformer layers
         attmat, hidden = [], []

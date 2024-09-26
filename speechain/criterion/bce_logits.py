@@ -7,6 +7,7 @@
     Affiliation: NAIST
     Date: 2022.09
 """
+
 import torch
 
 from speechain.criterion.abs import Criterion
@@ -14,9 +15,7 @@ from speechain.utilbox.train_util import make_mask_from_len
 
 
 class BCELogits(Criterion):
-    """
-
-    """
+    """ """
 
     def criterion_init(self, pos_weight: float = 1.0, is_normalized: bool = True):
         """
@@ -28,13 +27,12 @@ class BCELogits(Criterion):
                 Controls whether the sentence normalization is performed for stop loss calculation.
 
         """
-        self.bce_loss = torch.nn.BCEWithLogitsLoss(reduction='none', pos_weight=torch.Tensor([pos_weight]))
+        self.bce_loss = torch.nn.BCEWithLogitsLoss(
+            reduction="none", pos_weight=torch.Tensor([pos_weight])
+        )
         self.is_normalized = is_normalized
 
-    def __call__(self,
-                 pred: torch.Tensor,
-                 tgt: torch.Tensor,
-                 tgt_len: torch.Tensor):
+    def __call__(self, pred: torch.Tensor, tgt: torch.Tensor, tgt_len: torch.Tensor):
         """
 
         Args:

@@ -3,6 +3,7 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+
 import sys, os
 import logging
 import logging.handlers
@@ -32,8 +33,13 @@ def distributed_zero_first(distributed: bool, rank: int):
         torch.distributed.barrier()
 
 
-def logger_stdout_file(log_path, file_name: str = None, distributed: bool = False,
-                       rank: int = 0, name_candidate: int = 1000):
+def logger_stdout_file(
+    log_path,
+    file_name: str = None,
+    distributed: bool = False,
+    rank: int = 0,
+    name_candidate: int = 1000,
+):
     """
 
     Args:
@@ -51,7 +57,9 @@ def logger_stdout_file(log_path, file_name: str = None, distributed: bool = Fals
     rootLogger.setLevel(logging.INFO)
 
     # initialize the file handler
-    logFormatter = logging.Formatter("[ %(asctime)s | %(levelname)s ] %(message)s", "%d/%m/%Y %H:%M:%S")
+    logFormatter = logging.Formatter(
+        "[ %(asctime)s | %(levelname)s ] %(message)s", "%d/%m/%Y %H:%M:%S"
+    )
     if not os.path.exists(log_path):
         os.makedirs(log_path, exist_ok=True)
 
@@ -62,7 +70,9 @@ def logger_stdout_file(log_path, file_name: str = None, distributed: bool = Fals
         # looping all the candidate names
         result_log = None
         for i in range(name_candidate):
-            result_log = os.path.join(log_path, f'{file_name}.log' if i == 0 else f'{file_name}{i}.log')
+            result_log = os.path.join(
+                log_path, f"{file_name}.log" if i == 0 else f"{file_name}{i}.log"
+            )
             # non-existing file is the target
             if not os.path.exists(result_log):
                 break

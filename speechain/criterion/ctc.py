@@ -8,6 +8,7 @@ class CTCLoss(Criterion):
     The wrapper class for torch.nn.functional.ctc_loss
 
     """
+
     def criterion_init(self, blank: int = 0, zero_infinity: bool = True):
         """
 
@@ -24,8 +25,13 @@ class CTCLoss(Criterion):
         self.blank = blank
         self.zero_infinity = zero_infinity
 
-    def __call__(self, ctc_logits: torch.Tensor, enc_feat_len: torch.Tensor,
-                 text: torch.Tensor, text_len: torch.Tensor):
+    def __call__(
+        self,
+        ctc_logits: torch.Tensor,
+        enc_feat_len: torch.Tensor,
+        text: torch.Tensor,
+        text_len: torch.Tensor,
+    ):
         """
 
         Args:
@@ -48,11 +54,18 @@ class CTCLoss(Criterion):
         text, text_len = text[:, 1:-1], text_len - 2
         if len(text.shape) == 1:
             text = text.unsqueeze(-1)
-        text = torch.cat([text[i, :text_len[i]] for i in range(batch)])
+        text = torch.cat([text[i, : text_len[i]] for i in range(batch)])
 
         # obtain the ctc loss for each data instances in the given batch
-        loss = torch.nn.functional.ctc_loss(ctc_logits, text, enc_feat_len, text_len,
-                                            blank=self.blank, reduction='none', zero_infinity=self.zero_infinity)
+        loss = torch.nn.functional.ctc_loss(
+            ctc_logits,
+            text,
+            enc_feat_len,
+            text_len,
+            blank=self.blank,
+            reduction="none",
+            zero_infinity=self.zero_infinity,
+        )
         return loss.mean()
 
     def recover(self, ctc_text: torch.Tensor, ctc_text_len: torch.Tensor):
