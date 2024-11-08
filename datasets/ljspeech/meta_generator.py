@@ -42,13 +42,19 @@ class LJSpeechMetaGenerator(SpeechTextMetaGenerator):
         """
 
         Args:
-            src_path:
-            txt_format:
-            valid_section:
-            test_section:
-            separator:
+            src_path: The path to the root directory of the LJSpeech dataset.
+            txt_format: 
+            valid_section: The section number(s) of LJSpeech you want to use as the validation set.
+            test_section: The section number(s) of LJSpeech you want to use as the test set.
+            separator: How to separate different section numbers in 'valid_section' and 'test_section', e.g., ','.
 
-        Returns:
+        Returns: 
+            A dictionary containing the statistical information of the LJSpeech dataset.
+            The dictionary contains three subsets: 'train', 'valid', and 'test'.
+            Each subset contains the following information:
+                - idx2wav: A dictionary mapping from the file name to the absolute path of the wav file.
+                - idx2spk: A dictionary mapping from the file name to the speaker id.
+                - idx2gen: A dictionary mapping from the file name to the speaker gender.
 
         """
         # --- 0. Argument Checking --- #

@@ -20,7 +20,7 @@ function print_help_message {
     --exp_cfg EXP_CFG \\                                    # The name of your specified configuration file in ${SPEECHAIN_ROOT}/recipes/{task}/{dataset}/{subset}/exp_cfg
     [--data_cfg DATA_CFG] \\                                # The name of your specified configuration file in ${SPEECHAIN_ROOT}/recipes/{task}/{dataset}/{subset}/data_cfg (default: none)
     [--infer_cfg INFER_CFG] \\                              # The name of your specified configuration file in ${SPEECHAIN_ROOT}/config/{task}/ (default: none)
-    [--ngpu NGPU] \\                                        # The value of 'ngpu' given to runner.py (default: none)
+    [--ngpu NGPU] \\                                        # The value of 'ngpu' given to runner.py (default: 2)
     [--gpus GPUS] \\                                        # The value of 'gpus' given to runner.py (default: none)
     [--train_num_workers TRAIN_NUM_WORKERS] \\              # The value of 'train_num_workers' given to runner.py (default: none)
     [--valid_num_workers VALID_NUM_WORKERS] \\              # The value of 'valid_num_workers' given to runner.py (default: none)
