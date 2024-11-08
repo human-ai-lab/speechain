@@ -210,6 +210,11 @@ fi
 
 
 # --- 2. Execute the Job --- #
+# Add timing functionality
+start_time=$(date +%s.%N)
+echo "Start time: $(date)"
+echo "Running the job..."
+
 # ${args} should not be surrounded by double-quote
 # shellcheck disable=SC2086
 bash "${recipe_run_root}" ${args}
@@ -218,4 +223,11 @@ if $? != 0;then
   # shellcheck disable=SC2086
   # shellcheck disable=SC1090
   source "${recipe_run_root}" ${args}
+  exit_code=$?
 fi
+
+end_time=$(date +%s.%N)
+exc_time=$(echo "${end_time} - ${start_time}" | bc)
+printf "Execution time: %.6f seconds\n" ${exc_time}
+
+exit ${exit_code}

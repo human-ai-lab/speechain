@@ -36,8 +36,8 @@ vocab_subset: train-960
 token_type: sentencepiece
 token_num: bpe5k
 
-# batch-related values
-batch_len: 2.4e7
+# batch-related values, orig: 2.4e7
+batch_len: 2.4e6
 
 # model-related
 ctc_weight: 0.3

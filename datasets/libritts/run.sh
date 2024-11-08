@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #  Author: Heli Qi
 #  Affiliation: NAIST
 #  Date: 2022.11
@@ -52,7 +53,7 @@ feat_type=wav
 # empty feat_config means no feature extraction configuration
 feat_config=
 # empty sample_rate means the sampling rate of the original LibriTTS (24kHz) will be used
-sample_rate=
+sample_rate=16000
 # empty spk_emb_model means no speaker embedding will be extracted
 spk_emb_model=
 # tokenizer for LibriTTS is default to be g2p
@@ -69,7 +70,7 @@ split_by_whitespace=true
 # arguments used by data_download.sh
 separator=','
 # text format for LibriTTS is default to be normal
-txt_format=punc
+txt_format=no-punc
 
 
 # LibriTTS-specific arguments
