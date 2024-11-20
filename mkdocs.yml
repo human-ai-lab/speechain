@@ -1,0 +1,24 @@
+# mkdocs.yml
+site_name: Speechain
+site_description: Documentation for Speechain
+
+theme:
+  name: "material"
+
+plugins:
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [speechain]
+          import:
+            - https://docs.python.org/3/objects.inv
+  - search
+
+
+nav:
+  - index.md
+  - datasets.md
+  - asr.md
+  - tts.md
+  - reference.md
+  

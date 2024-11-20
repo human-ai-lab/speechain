@@ -199,11 +199,11 @@ done
 
 # --- 0. Argument Checking --- #
 if [ -z ${tts_model_path} ];then
-   echo "Please give the path of the TTS model you want to use by '--tts_model_path TTS_MODEL_PATH'!"
+   echo "Give the path of the TTS model you want to use by '--tts_model_path TTS_MODEL_PATH'!"
    exit 1
 else
   if ! grep -q '/' <<< "${tts_model_path}";then
-    echo "For tts_model_path, please give either its absolute address or in-toolkit relative path!"
+    echo "For tts_model_path, give either its absolute address or in-toolkit relative path!"
     exit 1
   fi
 fi

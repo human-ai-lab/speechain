@@ -68,7 +68,7 @@ character_coverage=1.0
 split_by_whitespace=true
 # arguments used by stat_info_generator.py
 separator=','
-txt_format=no-punc  # punc or no-punc
+txt_format=punc  # punc or no-punc
   
 
 # LJSpeech-specific arguments
