@@ -23,9 +23,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install mkdocs-material mkdocstrings[python]
-          pip install -e .
+          # pip install -e .
           
       - name: Build documentation
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         run: mkdocs build
         
       - name: Deploy to GitHub Pages
