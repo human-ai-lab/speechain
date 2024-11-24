@@ -42,8 +42,8 @@ Anytime when you encounter problems when using our toolkit, please don't hesitat
     - Easy-to-set finetuning factor to scale down the learning rates without any modification of the scheduler configuration.  
 * **Model Evaluation:**
     - Multi-level _.md_ evaluation reports (overall-level, group-level model, and sample-level) without any - yout misplacement.  
-   - Histogram visualization for the distribution of evaluation metrics.  
-   - TopN bad case analysis for better model diagnosis.
+    - Histogram visualization for the distribution of evaluation metrics.  
+    - TopN bad case analysis for better model diagnosis.
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain#table-of-contents)
 
