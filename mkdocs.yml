@@ -1,6 +1,8 @@
 # mkdocs.yml
 site_name: Speechain
-site_description: Documentation for Speechain
+site_description: Documentation for Speechain Toolkit
+
+repo_url: https://github.com/bagustris/speechain
 
 theme:
   name: "material"
