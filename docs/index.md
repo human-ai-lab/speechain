@@ -12,40 +12,40 @@ If you find our toolkit helpful for your research, we sincerely hope that you ca
 Anytime when you encounter problems when using our toolkit, please don't hesitate to leave us an issue!
 
 ## Table of Contents
-1. [**Machine Speech Chain**](https://github.com/ahclab/SpeeChain#machine-speech-chain)
-2. [**Toolkit Characteristics**](https://github.com/ahclab/SpeeChain#toolkit-characteristics)
-3. [**Get a Quick Start**](https://github.com/ahclab/SpeeChain#get-a-quick-start)
+1. [**Machine Speech Chain**](https://github.com/bagustris/SpeeChain#machine-speech-chain)
+2. [**Toolkit Characteristics**](https://github.com/bagustris/SpeeChain#toolkit-characteristics)
+3. [**Get a Quick Start**](https://github.com/bagustris/SpeeChain#get-a-quick-start)
 
 
 ## Machine Speech Chain
 * Offline TTS→ASR Chain
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain#table-of-contents)
 
 
 ## Toolkit Characteristics
 * **Data Processing:**
-  - On-the-fly Log-Mel Spectrogram Extraction
-  - On-the-fly SpecAugment
-  - On-the-fly Feature Normalization
+    - On-the-fly Log-Mel Spectrogram Extraction  
+    - On-the-fly SpecAugment  
+    - On-the-fly Feature Normalization  
 * **Model Training:**
-  - Multi-GPU Model Distribution based on _torch.nn.parallel.DistributedDataParallel_
-  - Real-time status reporting by online _Tensorboard_ and offline _Matplotlib_
-  - Real-time learning dynamics visualization (attention visualization, spectrogram visualization)
+    - Multi-GPU Model Distribution based on _torch.nn.parallel.DistributedDataParallel_   
+    - Real-time status reporting by online _Tensorboard_ and offline _Matplotlib_  
+    - Real-time learning dynamics visualization (attention visualization, spectrogram visualization)  
 * **Data Loading:**
-  - On-the-fly mixture of multiple datasets in a single dataloader
-  - On-the-fly data selection for each dataloader to filter the undesired data samples.
-  - Multi-dataloader batch generation to form training batches by multiple datasets. 
+    - On-the-fly mixture of multiple datasets in a single dataloader.  
+    - On-the-fly data selection for each dataloader to filter the undesired data samples.  
+    - Multi-dataloader batch generation to form training batches by multiple datasets.   
 * **Optimization:**
-  - Model training can be done by multiple optimizers. Each optimizer is responsible for a specific part -  model parameters.
-  - Gradient accumulation for mimicking the large-batch gradients by the ones on several small batches.
-  - Easy-to-set finetuning factor to scale down the learning rates without any modification of the scheduler configuration. 
+    - Model training can be done by multiple optimizers. Each optimizer is responsible for a specific part -  model parameters.  
+    - Gradient accumulation for mimicking the large-batch gradients by the ones on several small batches.  
+    - Easy-to-set finetuning factor to scale down the learning rates without any modification of the scheduler configuration.  
 * **Model Evaluation:**
-  - Multi-level _.md_ evaluation reports (overall-level, group-level model, and sample-level) without any - yout misplacement. 
-  - Histogram visualization for the distribution of evaluation metrics
-  - TopN bad case analysis for better model diagnosis.
+    - Multi-level _.md_ evaluation reports (overall-level, group-level model, and sample-level) without any - yout misplacement.  
+   - Histogram visualization for the distribution of evaluation metrics.  
+   - TopN bad case analysis for better model diagnosis.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain#table-of-contents)
 
 
 ## Get a Quick Start
@@ -53,7 +53,7 @@ We recommend you first install *Anaconda* into your machine before using our too
 After the installation of *Anaconda*, please follow the steps below to deploy our toolkit on your machine:
 
  1. Find a path with enough disk memory space. (e.g. at least 500GB if you want to use _LibriSpeech_ or _LibriTTS_ datasets).  
- 2. Clone our toolkit by `git clone https://github.com/ahclab/SpeeChain.git`.  
+ 2. Clone our toolkit by `git clone https://github.com/bagustris/SpeeChain.git`.  
  3. Go to the root path of our toolkit by `cd SpeeChain`.  
  4. Run `source envir_preparation.sh` to build the environment for SpeeChain toolkit.  
 After execution, a virtual environment named `speechain` will be created and two environmental variables `SPEECHAIN_ROOT` and `SPEECHAIN_PYTHON` will be initialized in your `~/.bashrc`.  
@@ -66,6 +66,6 @@ If the environment `speechain` is not successfully activated, please run `conda 
    
     - `SPEECHAIN_PYTHON` should be the absolute path of the python compiler in the folder of `speechain` environment (i.e. `/xxx/anaconda3/envs/speechain/bin/python3.X` where `/xxx/` is where your `anaconda3` is placed and `X` depends on `environment.yaml`).  
 
- 7. Read the [handbook](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#speechain-handbook) and start your journey in SpeeChain!  
+ 7. Read the [handbook](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#speechain-handbook) and start your journey in SpeeChain!  
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain#table-of-contents)
