@@ -1,26 +1,27 @@
 # Datasets
-This folder contains all the available datasets in this toolkit. 
+
+The `dataset` folder contains all the available datasets in this toolkit. 
 Each dataset corresponds to a sub-folder and has a uniform file system. 
 You can easily dump your target dataset to your machine by following the instructions below. 
 If you want to contribute a new dataset, we would appreciate it if you could follow our file systems and metadata formats.
 
-👆[Back to the handbook page](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#speechain-handbook)
+👆[Back to the handbook page](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#speechain-handbook)
 
 ## Table of Contents
-1. [**File System**](https://github.com/ahclab/SpeeChain/tree/main/datasets#file-system)
-2. [**Metadata Format**](https://github.com/ahclab/SpeeChain/tree/main/datasets#metadata-format)
-    1. [idx2wav](https://github.com/ahclab/SpeeChain/tree/main/datasets#idx2wav)
-    2. [idx2wav_len](https://github.com/ahclab/SpeeChain/tree/main/datasets#idx2wav_len)
-    3. [idx2feat](https://github.com/ahclab/SpeeChain/tree/main/datasets#idx2feat)
-    4. [idx2feat_len](https://github.com/ahclab/SpeeChain/tree/main/datasets#idx2feat_len)
-    5. [idx2text](https://github.com/ahclab/SpeeChain/tree/main/datasets#idx2text)
-    6. [idx2spk](https://github.com/ahclab/SpeeChain/tree/main/datasets#idx2spk)
-    7. [idx2spk_feat](https://github.com/ahclab/SpeeChain/tree/main/datasets#idx2spk_feat)
-    8. [spk_list](https://github.com/ahclab/SpeeChain/tree/main/datasets#spk_list)
-    9. [idx2gen](https://github.com/ahclab/SpeeChain/tree/main/datasets#idx2gen)
-3. [**How to Dump a Dataset on your Machine**](https://github.com/ahclab/SpeeChain/tree/main/datasets#how-to-dump-a-dataset-on-your-machine)
-4. [**How to Extract Speaker Embedding by my own model**](https://github.com/ahclab/SpeeChain/tree/main/datasets#how-to-extract-speaker-embedding-by-my-own-model)
-6. [**How to Contribute a New Dataset**](https://github.com/ahclab/SpeeChain/tree/main/datasets#how-to-contribute-a-new-dataset)
+1. [**File System**](https://github.com/bagustris/SpeeChain/tree/main/datasets#file-system)
+2. [**Metadata Format**](https://github.com/bagustris/SpeeChain/tree/main/datasets#metadata-format)
+    1. [idx2wav](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2wav)
+    2. [idx2wav_len](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2wav_len)
+    3. [idx2feat](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2feat)
+    4. [idx2feat_len](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2feat_len)
+    5. [idx2text](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2text)
+    6. [idx2spk](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2spk)
+    7. [idx2spk_feat](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2spk_feat)
+    8. [spk_list](https://github.com/bagustris/SpeeChain/tree/main/datasets#spk_list)
+    9. [idx2gen](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2gen)
+3. [**How to Dump a Dataset on your Machine**](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-dump-a-dataset-on-your-machine)
+4. [**How to Extract Speaker Embedding by my own model**](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-extract-speaker-embedding-by-my-own-model)
+6. [**How to Contribute a New Dataset**](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-contribute-a-new-dataset)
 
 ## File System
 ```
@@ -64,7 +65,7 @@ If you want to contribute a new dataset, we would appreciate it if you could fol
 ```
 The names in the braces({}) mean the undefined names depending on the settings of datasets and configuration.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
 
 
 ## Metadata Format
@@ -87,7 +88,7 @@ For example,
 ```
 Any audio files that can be processed by `soundfile.read()` (such as .flac, .wav, ...) are OK in _idx2wav_.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
 
 
 #### idx2wav_len
@@ -103,7 +104,7 @@ For example,
 103-1240-0004 200240
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
 
 
 #### idx2feat
@@ -121,7 +122,7 @@ For example,
 feat_config is the name of the used feature extraction configuration file.
 In our toolkit, acoustic feature of a waveform is saved as a .npy file by the NumPy package.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
 
 
 #### idx2feat_len
@@ -137,7 +138,7 @@ For example,
 103-1240-0004 1251
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
 
 
 #### idx2text
@@ -156,7 +157,7 @@ For example,
 **Note**: you don't need to worry about the blanks inside each transcript text string. 
 Those additional blanks will be ignored in the subsequent processing.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
 
 
 #### idx2spk
@@ -171,7 +172,7 @@ For example,
 103-1240-0004 103
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
 
 
 #### idx2spk_feat
@@ -188,7 +189,7 @@ For example,
 1034_121119_000018_000000 ${SPEECHAIN_ROOT}/datasets/libritts/data/wav/train-clean-100/xvector/1034_121119_000018_000000.npy
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
 
 
 #### spk_list
@@ -209,7 +210,7 @@ For example,
 1686
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
 
 
 #### idx2gen
@@ -224,7 +225,7 @@ For example,
 103-1240-0004 F
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
 
 
 ## How to Dump a Dataset on your Machine
@@ -239,39 +240,39 @@ For dumping an existing dataset,
    2. **If you want to save the dumped data and metadata files outside the toolkit folder (`${SPEECHAIN_ROOT}`)**, please attach the argument `--tgt_path {the-path-you-want-to-save-files}` to the command `bash run.sh` in the no.3 step above.
    Please make sure that `tgt_path` is an absolute path starting with a slash '/'.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
 
 ## How to Extract Speaker Embedding by my own model
 If you want to use the pretrained speaker embedding model on your machine, please
-1. Don't give the argument `--spk_emb_model` when running the command `bash run.sh`
-3. Write your own extraction script. You can use the metadata files `idx2wav` and `idx2wav_len` to read and organize the audio files. 
+1. Don't give the argument `--spk_emb_model` when running the command `bash run.sh`  
+2. Write your own extraction script. You can use the metadata files `idx2wav` and `idx2wav_len` to read and organize the audio files. 
 Please save all the speaker embedding vectors to a specific folder in the same directory of `idx2wav` and give a metadata file named `idx2spk_feat` for data reference.  
 **Note:** 
-   1. For the file format of `idx2spk_feat`, please click [here](https://github.com/ahclab/SpeeChain/tree/main/datasets#idx2spk_feat) for reference.
+   1. For the file format of `idx2spk_feat`, please click [here](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2spk_feat) for reference.
    2. Please keep the same data index with `idx2wav` in your `idx2spk_feat`.
    3. Each speaker embedding vector should be in the shape of `[1, spk_feat_dim]`.
    4. Speaker embedding vectors could be saved in two ways:
       1. save each vector to an individual `.npy` file
       2. save all vectors to a `.npz` file where the index of each vector is exactly the one in `idx2spk_feat`.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
 
 ## How to Contribute a New Dataset
 If the dataset that you want to use for your experiments is not included here, 
 you could make the dumping pipeline of your target dataset by the following instructions:
-1. Go to `${SPEECHAIN_ROOT}/datasets/`.
-2. Run `bash data_dumping.sh --help` to familiarize yourself with the involved arguments.
-3. Make a new folder in `${SPEECHAIN_ROOT}/datasets/` with the name as your target dataset.
-4. Make a new ***data_download.sh*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to download your target dataset from the internet.
-Please download the dataset into `${SPEECHAIN_ROOT}/datasets/{dataset_name}/data/wav`.
-5. Make a new ***meta_generator.py*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to extract the metadata files of your target dataset. 
-Please refer to `${SPEECHAIN_ROOT}/datasets/meta_generator.py` for instructions of how to override the pipeline of metadata generation.
-6. If needed, make a new ***meta_post_processor.py*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to post-process the extracted metadata files of all the subsets. 
+
+1. Go to `${SPEECHAIN_ROOT}/datasets/`.  
+2. Run `bash data_dumping.sh --help` to familiarize yourself with the involved arguments.  
+3. Make a new folder in `${SPEECHAIN_ROOT}/datasets/` with the name as your target dataset.  
+4. Make a new ***data_download.sh*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to download your target dataset from the internet. Please download the dataset into `${SPEECHAIN_ROOT}/datasets/{dataset_name}/data/wav`.
+5. Make a new ***meta_generator.py*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to extract the metadata files of your target dataset. Please refer to `${SPEECHAIN_ROOT}/datasets/meta_generator.py` for instructions of how to override the pipeline of metadata generation.  
+6. If needed, make a new ***meta_post_processor.py*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to post-process the extracted metadata files of all the subsets.   
 (e.g. combine _train-clean-100_ and _train-clean-360_ of _LibriSpeech_ into _train-clean-460_)
-Please refer to `${SPEECHAIN_ROOT}/datasets/meta_post_processor.py` for instructions of how to override the pipeline of metadata post-processing.
-7. Make a new ***run.sh*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to manipulate the dumping pipeline of your target dataset. 
+Please refer to `${SPEECHAIN_ROOT}/datasets/meta_post_processor.py` for instructions of how to override the pipeline of metadata post-processing.  
+7. Make a new ***run.sh*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to manipulate the dumping pipeline of your target dataset.   
 You could refer to the ones in the existing dataset folders as a template.
 
-**Note**: Please keep the same script names (i.e., `data_download.sh`, `meta_generator.py`, and `meta_post_processor.py`) for the compatibility with `data_dumping.sh`.
+**Note**:   
+Please keep the same script names (i.e., `data_download.sh`, `meta_generator.py`, and `meta_post_processor.py`) for the compatibility with `data_dumping.sh`.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
