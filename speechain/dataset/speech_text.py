@@ -42,27 +42,27 @@ class SpeechTextDataset(Dataset):
         """Dataset initialization function.
 
         Args:
-            use_g2p (bool, optional): Whether to process the raw string by G2P. We don't 
-                recommend you to turn it on because on-the-fly transformer from string to 
+            use_g2p (bool, optional): Whether to process the raw string by G2P. We don't
+                recommend you to turn it on because on-the-fly transformer from string to
                 phoneme list consumes a lot of CPU resources. Defaults to False.
-            
-            unk_mask_prob (float, optional): Probability of masking tokens as unknown. 
+
+            unk_mask_prob (float, optional): Probability of masking tokens as unknown.
                 Defaults to 0.0.
-            use_speed_perturb (bool, optional): Whether to perturb the speed of the 
+            use_speed_perturb (bool, optional): Whether to perturb the speed of the
                 waveforms. Defaults to False.
             sample_rate (int, optional): Audio sampling rate in Hz. Defaults to 16000.
-            perturb_range (List[float], optional): Range of speed perturbation factors. 
+            perturb_range (List[float], optional): Range of speed perturbation factors.
                 Defaults to [0.9, 1.0, 1.1].
-            
-            pitch_conf (Dict, optional): The configuration given to convert_wav_to_pitch() 
-                for pitch extraction. If not given, pitch extraction will not be done 
+
+            pitch_conf (Dict, optional): The configuration given to convert_wav_to_pitch()
+                for pitch extraction. If not given, pitch extraction will not be done
                 on-the-fly. Defaults to None.
 
         Note:
             Phoneme related: use_g2p
             Waveform related: unk_mask_prob, use_speed_perturb, sample_rate, perturb_range
             Pitch related: pitch_conf
-        """        
+        """
         # register sampling rate for later check
         self.sample_rate = sample_rate
         warnings.warn(

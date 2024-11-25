@@ -338,9 +338,9 @@ class Speech2LinearSpec(Module):
                 # move the weight from _parameters to _buffers so that these parameters won't influence the training
                 _para_keys = list(inv_preemph_filter._parameters.keys())
                 for name in _para_keys:
-                    inv_preemph_filter._buffers[name] = (
-                        inv_preemph_filter._parameters.pop(name)
-                    )
+                    inv_preemph_filter._buffers[
+                        name
+                    ] = inv_preemph_filter._parameters.pop(name)
                 self.inv_preemph_filter = inv_preemph_filter
 
             wav = F.pad(wav.unsqueeze(1), (inv_preemph_winlen - 1, 0))
