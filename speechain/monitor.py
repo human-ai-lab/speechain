@@ -48,21 +48,15 @@ class Monitor(ABC):
 
     def __init__(
         self, logger, args: argparse.Namespace, result_path: str = None, **kwargs
-    ):
-        """
-        Initializes the monitor class.
+    ) -> None:
+        """Initializes the monitor class.
 
         Args:
-            logger:
-                A logger object for logging messages.
-            args:
-                Command line arguments passed as a Namespace object.
-            result_path:
-                Path to the directory where results should be saved.
-            kwargs:
-                Additional keyword arguments.
-        """
-        # Initialize shared members
+            logger: A logger object for logging messages.
+            args: Command line arguments passed as a Namespace object.
+            result_path: Path to the directory where results should be saved.
+            **kwargs: Additional keyword arguments.
+        """        # Initialize shared members
         self.logger = logger
         self.result_path = (
             args.train_result_path
@@ -106,7 +100,7 @@ class Monitor(ABC):
             daemon=True,
         ).start()
 
-    def enqueue(self, logs: Dict or List[Dict]):
+    def enqueue(self, logs: Dict or List[Dict]) -> None:
         """
         Enqueues logs into the logs_queue.
 
@@ -122,7 +116,7 @@ class Monitor(ABC):
         else:
             raise RuntimeError("Expected logs to be a Dict or a List[Dict].")
 
-    def empty_queue(self):
+    def empty_queue(self) -> None:
         """
         Checks if the logs queue is empty.
 
@@ -133,12 +127,12 @@ class Monitor(ABC):
         return self.logs_queue.empty()
 
     @contextmanager
-    def measure_time(self, names: str or List[str]):
+    def measure_time(self, names: str or List[str]) -> None:
         """
         Context manager for measuring time of execution.
 
         Args:
-            names:
+            names (str or List[str]):
                 Name or list of names for the operations to be timed.
         """
         start = time.perf_counter()
@@ -157,12 +151,12 @@ class Monitor(ABC):
             dict_pointer = dict_pointer[name]
         dict_pointer.append(t)
 
-    def refresh_step_records(self, records: Dict = None):
+    def refresh_step_records(self, records: Dict = None) -> None:
         """
         Refreshes the step records by resetting the values.
 
         Args:
-            records:
+            records (Dict, optional):
                 A dictionary containing the records to be refreshed.
         """
         if records is None:
@@ -180,14 +174,14 @@ class Monitor(ABC):
         else:
             raise RuntimeError("Expected records to be of type Dict.")
 
-    def record_step_info(self, key: str, step_info: Dict):
+    def record_step_info(self, key: str, step_info: Dict) -> None:
         """
         Records information at each step during training or evaluation.
 
         Args:
-            key:
+            key (str):
                 Key under which information should be recorded.
-            step_info:
+            step_info (Dict):
                 Dictionary containing the information to be recorded.
         """
         for name, info in step_info.items():
@@ -202,12 +196,12 @@ class Monitor(ABC):
                 info = info[0]
             self.step_records[key][name].append(info)
 
-    def record_consumed_time(self, epoch_message: str):
+    def record_consumed_time(self, epoch_message: str) -> str:
         """
         Records time consumed in each epoch during training or evaluation.
 
         Args:
-            epoch_message:
+            epoch_message (str):
                 String to be included in the epoch message.
 
         Returns:
@@ -228,12 +222,12 @@ class Monitor(ABC):
 
         return epoch_message
 
-    def record_consumed_memory(self, epoch_message: str):
+    def record_consumed_memory(self, epoch_message: str) -> str:
         """
         Records memory consumed in each epoch during training or evaluation.
 
         Args:
-            epoch_message:
+            epoch_message (str):
                 String to be included in the epoch message.
 
         Returns:
@@ -300,12 +294,12 @@ class Monitor(ABC):
 
         return epoch_message
 
-    def record_criteria(self, epoch_message: str):
+    def record_criteria(self, epoch_message: str) -> str:
         """
         Records criteria in each epoch during training or evaluation.
 
         Args:
-            epoch_message:
+            epoch_message (str):
                 String to be included in the epoch message.
 
         Returns:
@@ -329,12 +323,12 @@ class Monitor(ABC):
         return epoch_message
 
     @abstractmethod
-    def monitor_init(self, args: argparse.Namespace, **kwargs):
+    def monitor_init(self, args: argparse.Namespace, **kwargs) -> None:
         """
         Abstract method for initializing the monitor.
 
         Args:
-            args:
+            args (str):
                 Command line arguments passed as a Namespace object.
             kwargs:
                 Additional keyword arguments.
@@ -342,14 +336,14 @@ class Monitor(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def start_epoch(self, **kwargs):
+    def start_epoch(self, **kwargs) -> None:
         """
         Abstract method to be called at the start of each epoch.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def step(self, **kwargs):
+    def step(self, **kwargs) -> None:
         """
         Abstract method to be called at each step in an epoch.
         """
@@ -363,7 +357,7 @@ class Monitor(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def state_dict(self):
+    def state_dict(self) -> Dict:
         """
         This method currently performs no operation and always returns None.
 
@@ -376,12 +370,12 @@ class Monitor(ABC):
         """
         return None
 
-    def load_state_dict(self, state_dict: Dict = None):
+    def load_state_dict(self, state_dict: Dict = None) -> None:
         """
         Loads the Monitor state.
 
         Args:
-            state_dict:
+            state_dict (Dict):
                 Dictionary containing a whole state of the Monitor.
         """
         if state_dict is not None:

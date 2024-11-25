@@ -1,4 +1,6 @@
-# Automatic Speech Recognition (ASR)
+# ASR
+
+ASR (Automatic Speech Recognition) is a technology that converts spoken language into text. ASR is widely used in various applications such as voice assistants, dictation software, and transcription services. SpeeChain provides a collection of ASR recipes that allow users to train and evaluate ASR models on various datasets. The recipes include configurations for different backbones, such as transformer and conformer, and provide pretrained models for reproducibility. Users can also create their own ASR models by following the instructions in the recipes.
 
 👆[Back to the recipe README.md](https://github.com/ahclab/SpeeChain/tree/main/recipes#recipes-folder-of-the-speechain-toolkit)
 

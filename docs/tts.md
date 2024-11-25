@@ -1,4 +1,6 @@
-# Text-To-Speech Synthesis (TTS)
+# TTS
+
+This folder contains recipes for training a Text-To-Speech Synthesis (TTS) model.
 
 👆[Back to the recipe README.md](https://github.com/ahclab/SpeeChain/tree/main/recipes#recipes-folder-of-the-speechain-toolkit)
 
