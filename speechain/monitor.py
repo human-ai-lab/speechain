@@ -56,7 +56,7 @@ class Monitor(ABC):
             args: Command line arguments passed as a Namespace object.
             result_path: Path to the directory where results should be saved.
             **kwargs: Additional keyword arguments.
-        """        # Initialize shared members
+        """  # Initialize shared members
         self.logger = logger
         self.result_path = (
             args.train_result_path

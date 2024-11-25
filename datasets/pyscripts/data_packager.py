@@ -6,15 +6,15 @@
 import argparse
 import os
 import warnings
-
-import numpy as np
-import h5py
-import soundfile as sf
-
-from typing import Dict
 from functools import partial
 from multiprocessing import Pool
-from speechain.utilbox.dump_util import parse_readable_number, get_readable_memory
+from typing import Dict
+
+import h5py
+import numpy as np
+import soundfile as sf
+
+from speechain.utilbox.dump_util import get_readable_memory, parse_readable_number
 
 
 def parse():

@@ -4,8 +4,9 @@
     Date: 2022.11
 """
 import os
-import numpy as np
 from typing import Dict, List
+
+import numpy as np
 
 from datasets.meta_post_processor import SpeechTextMetaPostProcessor
 

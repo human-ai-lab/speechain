@@ -1,9 +1,8 @@
-""" Abstract base class for all models.
+﻿""" Abstract base class for all models.
 
 Author: Heli Qi
 Affiliation: NAIST  
 Date: 2022.07"""
-
 
 import copy
 import os
@@ -44,20 +43,20 @@ class Model(torch.nn.Module, ABC):
     """
 
     # available parameter initialization functions
-    init_class_dict: Dict = dict { # explicitely defined
-        xavier: torch.nn.init.xavier_normal_,
-        xavier_normal: torch.nn.init.xavier_normal_,
-        xavier_uniform: torch.nn.init.xavier_uniform_,
-        kaiming: torch.nn.init.kaiming_normal_,
-        kaiming_normal: torch.nn.init.kaiming_normal_,
-        kaiming_uniform: torch.nn.init.kaiming_uniform_,
-        uniform: torch.nn.init.uniform_,
-        normal: torch.nn.init.normal_,
-        zeros: torch.nn.init.zeros_,
+    init_class_dict: Dict = {
+        "xavier": torch.nn.init.xavier_normal_,
+        "xavier_normal": torch.nn.init.xavier_normal_,
+        "xavier_uniform": torch.nn.init.xavier_uniform_,
+        "kaiming": torch.nn.init.kaiming_normal_,
+        "kaiming_normal": torch.nn.init.kaiming_normal_,
+        "kaiming_uniform": torch.nn.init.kaiming_uniform_,
+        "uniform": torch.nn.init.uniform_,
+        "normal": torch.nn.init.normal_,
+        "zeros": torch.nn.init.zeros_,
     }
 
     # some modules have their own parameter initialization methods
-    default_init_modules: List = [ # explicitely defined
+    default_init_modules: List = [  # explicitely defined
         torch.nn.Embedding,
         torch.nn.LayerNorm,
         torch.nn.BatchNorm1d,
@@ -117,14 +116,14 @@ class Model(torch.nn.Module, ABC):
                 4. If you give 'frozen_modules: encoder_prenet.conv.0.bias', only the bias vector of the first
                 convolution layer of the prenet of your encoder will be frozen
 
-        Args:  
-            device (torch.device): 
+        Args:
+            device (torch.device):
                 The computational device used for model calculation in the current GPU process.
             model_conf (Dict):
                 The model configuration used for general model initialization.
             module_conf (Dict):
                 The module configuration used for network structure initialization.
-            criterion_conf (Dict): 
+            criterion_conf (Dict):
                 The criterion configuration used for criterion (loss functions and evaluation metrics) initialization.
         """
         super(Model, self).__init__()
@@ -297,7 +296,7 @@ class Model(torch.nn.Module, ABC):
                 The combination of the arguments in your given `module_conf` and `model_conf['customize_conf']`.
 
         """
-        pass # raise NotImplementedError
+        pass  # raise NotImplementedError
 
     @abstractmethod
     def criterion_init(self, **criterion_conf: Any) -> None:
@@ -310,7 +309,7 @@ class Model(torch.nn.Module, ABC):
                 The arguments in your given `criterion_conf`.
 
         """
-        pass # raise NotImplementedError
+        pass  # raise NotImplementedError
 
     @staticmethod
     def bad_cases_selection_init_fn() -> List[List[str or int]] or None:
@@ -636,7 +635,7 @@ class Model(torch.nn.Module, ABC):
             Some intermediate results (e.g., attention matrices) can also be returned for later use.
 
         """
-        pass # raise NotImplementedError
+        pass  # raise NotImplementedError
 
     @abstractmethod
     def criterion_forward(
@@ -659,16 +658,16 @@ class Model(torch.nn.Module, ABC):
             evaluation metrics used to record the validation status.
 
         """
-        pass # raise NotImplementedError
+        pass  # raise NotImplementedError
 
     def get_recordable_para(self) -> Dict[str, torch.Tensor]:
         """
-        Recursively retrieves the recordable parameters from the module's 
+        Recursively retrieves the recordable parameters from the module's
         sub-modules.
-        
+
         Returns:
             Dict[str, torch.Tensor]: A dictionary mapping the parameter names to their corresponding tensor values.
-        
+
 
         """
 
@@ -787,7 +786,7 @@ class Model(torch.nn.Module, ABC):
         Returns:
 
         """
-        pass #raise NotImplementedError
+        pass  # raise NotImplementedError
 
     def evaluate(self, test_batch: Dict, infer_conf: Dict):
         """
@@ -903,7 +902,7 @@ class Model(torch.nn.Module, ABC):
             where `/x/xx/` is your result path given in your `exp_cfg`.
 
         """
-        pass # raise NotImplementedError
+        pass  # raise NotImplementedError
 
     def register_instance_reports(
         self, md_list_dict: Dict[str, List], extra_string_list: List[str] = None

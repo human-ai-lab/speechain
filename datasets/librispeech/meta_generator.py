@@ -5,10 +5,10 @@
 """
 import argparse
 import os
-
 from functools import partial
 from multiprocessing import Pool
 from typing import Dict, List
+
 from tqdm import tqdm
 
 from datasets.meta_generator import SpeechTextMetaGenerator

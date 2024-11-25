@@ -1,11 +1,16 @@
-import os
 import argparse
-import numpy as np
-
-from tqdm import tqdm
-from typing import List
+import os
 from multiprocessing import Pool
-from speechain.utilbox.data_loading_util import read_data_by_path, parse_path_args, load_idx2data_file
+from typing import List
+
+import numpy as np
+from tqdm import tqdm
+
+from speechain.utilbox.data_loading_util import (
+    load_idx2data_file,
+    parse_path_args,
+    read_data_by_path,
+)
 
 
 def parse():

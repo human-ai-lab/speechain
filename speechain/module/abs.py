@@ -56,7 +56,7 @@ class Module(torch.nn.Module, ABC):
         You could utilize `self.input_size` in your `module_init()` implement to initialize your module and give the
         output data dimension to `self.output_size`.
 
-        Note: 
+        Note:
         The usage of these two member variables is not mandatory, but it would be a convenient way for you to
         initialize your module.
 
@@ -147,7 +147,7 @@ class Module(torch.nn.Module, ABC):
         """This function returns the parameters of the module that you want to record as part of step information.
 
         If you want to record the value of the customized parameters of your module:
-        
+
         1. when it is a leaf (no _Module_ members) in the nested _Module_ tree of the model, please override this
             function and return the parameter values in a _Dict_.
             For an example, you can refer to [${SPEECHAIN_ROOT}/speechain/module/transformer/pos_enc.py]().

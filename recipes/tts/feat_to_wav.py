@@ -5,26 +5,29 @@
 """
 import argparse
 import os
+from functools import partial
+from multiprocessing import Pool
+from typing import Dict, List, Union
 
 import numpy as np
 import torch
-
-from tqdm import tqdm
-from typing import Dict, List, Union
-from functools import partial
-from multiprocessing import Pool
 from speechbrain.pretrained import HIFIGAN
-
-from speechain.utilbox.type_util import str2dict, str2bool
-from speechain.utilbox.data_loading_util import parse_path_args, load_idx2data_file, read_data_by_path, search_file_in_subfolder
-from speechain.utilbox.yaml_util import load_yaml
-from speechain.utilbox.import_util import get_idle_gpu
-from speechain.utilbox.data_saving_util import save_data_by_format
-from speechain.utilbox.sb_util import get_speechbrain_hifigan
+from tqdm import tqdm
 
 from speechain.module.abs import Module
-from speechain.module.frontend.speech2mel import Speech2MelSpec
 from speechain.module.frontend.speech2linear import Speech2LinearSpec
+from speechain.module.frontend.speech2mel import Speech2MelSpec
+from speechain.utilbox.data_loading_util import (
+    load_idx2data_file,
+    parse_path_args,
+    read_data_by_path,
+    search_file_in_subfolder,
+)
+from speechain.utilbox.data_saving_util import save_data_by_format
+from speechain.utilbox.import_util import get_idle_gpu
+from speechain.utilbox.sb_util import get_speechbrain_hifigan
+from speechain.utilbox.type_util import str2bool, str2dict
+from speechain.utilbox.yaml_util import load_yaml
 
 
 def parse():

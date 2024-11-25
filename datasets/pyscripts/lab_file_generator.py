@@ -1,13 +1,13 @@
-import os
 import argparse
+import os
+from functools import partial
+from multiprocessing import Pool
 from typing import List
 
 from tqdm import tqdm
-from multiprocessing import Pool
-from functools import partial
 
-from speechain.utilbox.import_util import parse_path_args
 from speechain.utilbox.data_loading_util import load_idx2data_file
+from speechain.utilbox.import_util import parse_path_args
 from speechain.utilbox.type_util import str2bool
 
 

@@ -3,20 +3,23 @@
     Affiliation: NAIST
     Date: 2022.07
 """
-import shutil
-
-from tqdm import tqdm
-from typing import List
-
-import torchaudio
-import soundfile as sf
 import argparse
 import os
-import numpy as np
-
-from multiprocessing import Pool
+import shutil
 from functools import partial
-from speechain.utilbox.data_loading_util import parse_path_args, load_idx2data_file, read_data_by_path
+from multiprocessing import Pool
+from typing import List
+
+import numpy as np
+import soundfile as sf
+import torchaudio
+from tqdm import tqdm
+
+from speechain.utilbox.data_loading_util import (
+    load_idx2data_file,
+    parse_path_args,
+    read_data_by_path,
+)
 
 
 def parse():

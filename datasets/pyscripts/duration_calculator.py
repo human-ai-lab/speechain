@@ -5,18 +5,20 @@
 """
 import argparse
 import os
+from collections import Counter
+from functools import partial
+from multiprocessing import Pool
 from typing import Dict, List
 
-import textgrid as tg
 import numpy as np
-
-from multiprocessing import Pool
-from functools import partial
+import textgrid as tg
 from tqdm import tqdm
-from collections import Counter
 
+from speechain.utilbox.data_loading_util import (
+    load_idx2data_file,
+    search_file_in_subfolder,
+)
 from speechain.utilbox.import_util import parse_path_args
-from speechain.utilbox.data_loading_util import load_idx2data_file, search_file_in_subfolder
 from speechain.utilbox.type_util import str2bool, str2none
 
 
