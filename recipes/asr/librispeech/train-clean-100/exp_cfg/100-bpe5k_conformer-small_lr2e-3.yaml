@@ -36,7 +36,7 @@ token_type: sentencepiece
 token_num: bpe5k
 
 # batch-related
-batch_len: 2.4e7
+batch_len: 2.4e6 #7
 
 # model-related
 ctc_weight: 0.3

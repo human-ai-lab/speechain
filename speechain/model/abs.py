@@ -283,7 +283,7 @@ class Model(torch.nn.Module, ABC):
                     )
 
     @abstractmethod
-    def module_init(self, **kwargs: Any) -> None:
+    def module_init(self, **kwargs) -> None:
         """
         The interface function that initializes the Module members of the model. These Module members make up the
         neural network structure of the model. Some models have their customized part that also needs to be
@@ -299,7 +299,7 @@ class Model(torch.nn.Module, ABC):
         pass  # raise NotImplementedError
 
     @abstractmethod
-    def criterion_init(self, **criterion_conf: Any) -> None:
+    def criterion_init(self, **criterion_conf) -> None:
         """
         The interface function that initializes the Criterion members of the model. These Criterion members can be
         divided into two parts: the loss functions used for training and the evaluation metrics used for validation.
