@@ -39,24 +39,30 @@ class SpeechTextDataset(Dataset):
         perturb_range: List[float] = [0.9, 1.0, 1.1],
         pitch_conf: Dict = None,
     ):
-        """
+        """Dataset initialization function.
 
         Args:
-            # phoneme-related
-            use_g2p: bool = False
-                Whether to process the raw string by G2P. We don't recommend you to turn it on because on-the-fly
-                transformer from string to phoneme list consumes a lot of CPU resources.
-            # waveform-related
-            use_speed_perturb: bool = False
-                Whether to perturb the speed of the waveforms
-            sample_rate: int = 16000
-            perturb_range: List[float] = [0.9, 1.0, 1.1]
-            # pitch-related
-            pitch_conf: Dict = None
-                The configuration given to convert_wav_to_pitch() for pitch extraction.
-                If not given, pitch extraction will not be done on-the-fly.
+            use_g2p (bool, optional): Whether to process the raw string by G2P. We don't 
+                recommend you to turn it on because on-the-fly transformer from string to 
+                phoneme list consumes a lot of CPU resources. Defaults to False.
+            
+            unk_mask_prob (float, optional): Probability of masking tokens as unknown. 
+                Defaults to 0.0.
+            use_speed_perturb (bool, optional): Whether to perturb the speed of the 
+                waveforms. Defaults to False.
+            sample_rate (int, optional): Audio sampling rate in Hz. Defaults to 16000.
+            perturb_range (List[float], optional): Range of speed perturbation factors. 
+                Defaults to [0.9, 1.0, 1.1].
+            
+            pitch_conf (Dict, optional): The configuration given to convert_wav_to_pitch() 
+                for pitch extraction. If not given, pitch extraction will not be done 
+                on-the-fly. Defaults to None.
 
-        """
+        Note:
+            Phoneme related: use_g2p
+            Waveform related: unk_mask_prob, use_speed_perturb, sample_rate, perturb_range
+            Pitch related: pitch_conf
+        """        
         # register sampling rate for later check
         self.sample_rate = sample_rate
         warnings.warn(
@@ -125,17 +131,17 @@ class SpeechTextDataset(Dataset):
         vectors. Text data remains unprocessed strings and the tokenization will be done later in the model.
 
         Args:
-            batch_dict: Dict[str, List]
-            The keys of the input `batch_dict` dictionary should be one of the following:
+            batch_dict (Dict[str, List]): The keys of the input `batch_dict` dictionary should be one of the following:
                 1. `feat`: a List of 2d `torch.Tensor` with different lengths.
                 2. `pitch`: a List of 1d `torch.Tensor` with different lengths.
                 3. `text`: a List of text strings.
                 4. `spk_ids`: a List of speaker ID strings.
                 5. `spk_feat`: a List of 2d `torch.Tensor` with equal lengths.
 
-        Returns: Dict[str, torch.Tensor or List]
-            `feat` and `spk_feat` are in the form of three-dimensional `torch.Tensor`;
-            `text` and `spk_ids` are in the form of List of raw strings whose discretization is done in the Model object.
+        Returns:
+            A dictionary mapping strings to either torch.Tensor or List, where:
+                - feat and spk_feat are three-dimensional torch.Tensor
+                - text and spk_ids are lists of raw strings whose discretization is done in the Model object
 
         """
 

@@ -6,6 +6,7 @@ repo_url: https://github.com/bagustris/speechain
 
 theme:
   name: "material"
+  favicon: img/favicon.ico
 
 plugins:
   - mkdocstrings:
@@ -15,6 +16,7 @@ plugins:
           import:
             - https://docs.python.org/3/objects.inv
   - search
+  - autorefs
 
 
 nav:
