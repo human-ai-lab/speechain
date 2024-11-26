@@ -27,8 +27,8 @@ txt_format: no-punc
 token_type: sentencepiece
 token_num: bpe5k
 
-# batch-related values
-batch_len: 6e4
+# batch-related values, 6e4
+batch_len: 6e3
 
 # model-related
 label_smoothing: 0.0
