@@ -3,23 +3,22 @@
     Affiliation: NAIST
     Date: 2022.07
 """
+import argparse
 import os
 import shutil
-import argparse
+from collections import Counter
 
 import numpy as np
 import sentencepiece as spm
-
-from tqdm import tqdm
 from g2p_en import G2p
-from collections import Counter
+from tqdm import tqdm
 
 from speechain.tokenizer.g2p import abnormal_phns, cmu_phn_list
 from speechain.tokenizer.sp import SentencePieceTokenizer
-from speechain.utilbox.type_util import str2bool, str_or_int
+from speechain.utilbox.data_loading_util import load_idx2data_file, parse_path_args
 from speechain.utilbox.dump_util import get_readable_number
 from speechain.utilbox.text_util import text2word_list
-from speechain.utilbox.data_loading_util import load_idx2data_file, parse_path_args
+from speechain.utilbox.type_util import str2bool, str_or_int
 
 
 def parse():

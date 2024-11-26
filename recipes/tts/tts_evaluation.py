@@ -1,19 +1,28 @@
-import os
 import argparse
-import librosa
-import numpy as np
-
-from tqdm import tqdm
-from typing import List
+import os
 from functools import partial
 from multiprocessing import Pool
+from typing import List
+
+import librosa
+import numpy as np
 from fastdtw import fastdtw
 from scipy.spatial.distance import euclidean
+from tqdm import tqdm
 
-from speechain.utilbox.type_util import str2list
-from speechain.utilbox.data_loading_util import parse_path_args, load_idx2data_file, read_data_by_path, search_file_in_subfolder
-from speechain.utilbox.feat_util import convert_wav_to_mfcc, convert_wav_to_logmel, convert_wav_to_pitch
+from speechain.utilbox.data_loading_util import (
+    load_idx2data_file,
+    parse_path_args,
+    read_data_by_path,
+    search_file_in_subfolder,
+)
+from speechain.utilbox.feat_util import (
+    convert_wav_to_logmel,
+    convert_wav_to_mfcc,
+    convert_wav_to_pitch,
+)
 from speechain.utilbox.md_util import get_list_strings
+from speechain.utilbox.type_util import str2list
 
 
 def parse():

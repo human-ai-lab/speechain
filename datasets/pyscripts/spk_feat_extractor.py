@@ -5,11 +5,12 @@
 """
 import argparse
 import os
-import numpy as np
 from functools import partial
 from multiprocessing import Pool
 
-from speechain.utilbox.data_loading_util import parse_path_args, load_idx2data_file
+import numpy as np
+
+from speechain.utilbox.data_loading_util import load_idx2data_file, parse_path_args
 from speechain.utilbox.import_util import get_idle_gpu
 from speechain.utilbox.spk_util import extract_spk_feat
 

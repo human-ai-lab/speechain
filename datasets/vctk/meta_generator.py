@@ -4,16 +4,16 @@
     Date: 2022.07
 """
 import argparse
-from typing import Dict, List
-
 import os
 import re
+from typing import Dict, List
+
 from tqdm import tqdm
 
 from datasets.meta_generator import SpeechTextMetaGenerator
+from speechain.utilbox.data_loading_util import search_file_in_subfolder
 from speechain.utilbox.dump_util import en_text_process
 from speechain.utilbox.type_util import str2list
-from speechain.utilbox.data_loading_util import search_file_in_subfolder
 
 
 class VCTKMetaGenerator(SpeechTextMetaGenerator):

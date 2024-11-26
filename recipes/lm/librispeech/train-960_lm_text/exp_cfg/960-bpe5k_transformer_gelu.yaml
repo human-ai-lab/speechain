@@ -28,7 +28,7 @@ token_type: sentencepiece
 token_num: bpe5k
 
 # batch-related values
-batch_len: 4.5e4
+batch_len: 4.5e3 #4.5e4
 
 # model-related
 label_smoothing: 0.0

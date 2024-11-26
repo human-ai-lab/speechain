@@ -12,7 +12,6 @@ from speechain.utilbox.train_util import swish_activation
 
 
 class ConvolutionModule(Module):
-
     def module_init(self, input_channels: int = None, depthwise_kernel_size: int = 31):
 
         if input_channels is None:
@@ -66,7 +65,6 @@ class ConvolutionModule(Module):
 
 
 class ConformerEncoderLayer(Module):
-
     def module_init(
         self,
         d_model: int = 512,

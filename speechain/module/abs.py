@@ -55,7 +55,9 @@ class Module(torch.nn.Module, ABC):
 
         You could utilize `self.input_size` in your `module_init()` implement to initialize your module and give the
         output data dimension to `self.output_size`.
-        Note: The usage of these two member variables is not mandatory, but it would be a convenient way for you to
+
+        Note:
+        The usage of these two member variables is not mandatory, but it would be a convenient way for you to
         initialize your module.
 
         Args:
@@ -142,15 +144,16 @@ class Module(torch.nn.Module, ABC):
         raise NotImplementedError
 
     def get_recordable_para(self) -> Dict or None:
-        """
-        This function returns the parameters of the module that you want to record as part of step information.
+        """This function returns the parameters of the module that you want to record as part of step information.
 
         If you want to record the value of the customized parameters of your module:
+
         1. when it is a leaf (no _Module_ members) in the nested _Module_ tree of the model, please override this
             function and return the parameter values in a _Dict_.
             For an example, you can refer to [${SPEECHAIN_ROOT}/speechain/module/transformer/pos_enc.py]().
-        2. when it is a non-leaf (with _Module_ members) in the nested _Module_ tree of the model, please follow the
-        pseudocode below:
+
+        2. when it is a non-leaf (with _Module_ members) in the nested _Module_ tree of the model, please follow the pseudocode below:
+
          >>> class YourModule(Module):
          ...   def get_recordable_para(self) -> Dict or None:
          ...      output = dict()
@@ -162,8 +165,6 @@ class Module(torch.nn.Module, ABC):
             For the leaf module, the default implementation returns None;
             For the non-leaf module, the default implementation returns a Dict containing names and recordable
             parameters of its member modules.
-
-
         """
         # for the leaf module, the default implementation returns None
         if sum([isinstance(module, Module) for module in self._modules.values()]) == 0:

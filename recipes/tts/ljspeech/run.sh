@@ -1,3 +1,4 @@
+#!/bin/bash
 ### Author: Heli Qi
 ### Affiliation: NAIST
 ### Date: 2022.12
@@ -236,8 +237,9 @@ fi
 # --- 2. Execute the Job --- #
 # ${args} should not be surrounded by double-quote
 # shellcheck disable=SC2086
-bash "${recipe_run_root}" ${args}
-if $? != 0;then
+# bash "${recipe_run_root}" ${args}
+# if [ $? -ne 0 ]; then #$? != 0;then
+if ! bash "${recipe_run_root}" ${args};then
   echo "The command 'bash ""${recipe_run_root}"" ${args}' failed to be executed and returns $?!"
   exit $?
 fi

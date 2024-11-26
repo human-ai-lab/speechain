@@ -3,17 +3,25 @@
     Affiliation: NAIST
     Date: 2022.12
 """
-import os
 import argparse
-import numpy as np
-
-from typing import Dict
+import os
 from functools import partial
 from multiprocessing import Pool
+from typing import Dict
 
-from speechain.utilbox.data_loading_util import parse_path_args, load_idx2data_file, read_data_by_path
+import numpy as np
+
+from speechain.utilbox.data_loading_util import (
+    load_idx2data_file,
+    parse_path_args,
+    read_data_by_path,
+)
+from speechain.utilbox.feat_util import (
+    convert_wav_to_logmel,
+    convert_wav_to_mfcc,
+    convert_wav_to_stft,
+)
 from speechain.utilbox.yaml_util import load_yaml
-from speechain.utilbox.feat_util import convert_wav_to_stft, convert_wav_to_logmel, convert_wav_to_mfcc
 
 
 def parse():

@@ -1,16 +1,21 @@
-import os
 import argparse
-import numpy as np
-
+import os
 from functools import partial
 from multiprocessing import Pool
 from typing import List, Union
 
+import numpy as np
+
+from speechain.utilbox.data_loading_util import (
+    load_idx2data_file,
+    parse_path_args,
+    read_data_by_path,
+    search_file_in_subfolder,
+)
 from speechain.utilbox.import_util import get_idle_gpu
-from speechain.utilbox.type_util import str2list
-from speechain.utilbox.data_loading_util import parse_path_args, load_idx2data_file, search_file_in_subfolder, read_data_by_path
-from speechain.utilbox.spk_util import extract_spk_feat
 from speechain.utilbox.md_util import save_md_report
+from speechain.utilbox.spk_util import extract_spk_feat
+from speechain.utilbox.type_util import str2list
 
 
 def parse():

@@ -38,3 +38,7 @@ tmp/
 # OS generated files
 .DS_Store
 # IDE files
+.vscode/
+
+# others
+*.egg-info

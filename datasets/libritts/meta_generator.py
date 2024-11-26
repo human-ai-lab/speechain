@@ -5,8 +5,8 @@
 """
 import argparse
 import os
-from multiprocessing import Pool
 from functools import partial
+from multiprocessing import Pool
 from typing import Dict, List
 
 from datasets.meta_generator import SpeechTextMetaGenerator

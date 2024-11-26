@@ -1,8 +1,8 @@
-﻿"""
-    Author: Heli Qi
-    Affiliation: NAIST
-    Date: 2022.07
-"""
+﻿""" Abstract base class for all models.
+
+Author: Heli Qi
+Affiliation: NAIST  
+Date: 2022.07"""
 
 import copy
 import os
@@ -36,23 +36,27 @@ class Model(torch.nn.Module, ABC):
     base class. init_class_dict` contains all the available initialization functions of the model parameters while
     `default_init_modules` includes the network layers that have their own initialization functions.
 
+    Attributes:
+        init_class_dict (Dict): Available parameter initialization functions
+        default_init_modules (List): Network layers with own initialization functions
+
     """
 
     # available parameter initialization functions
-    init_class_dict = dict(
-        xavier=torch.nn.init.xavier_normal_,
-        xavier_normal=torch.nn.init.xavier_normal_,
-        xavier_uniform=torch.nn.init.xavier_uniform_,
-        kaiming=torch.nn.init.kaiming_normal_,
-        kaiming_normal=torch.nn.init.kaiming_normal_,
-        kaiming_uniform=torch.nn.init.kaiming_uniform_,
-        uniform=torch.nn.init.uniform_,
-        normal=torch.nn.init.normal_,
-        zeros=torch.nn.init.zeros_,
-    )
+    init_class_dict: Dict = {
+        "xavier": torch.nn.init.xavier_normal_,
+        "xavier_normal": torch.nn.init.xavier_normal_,
+        "xavier_uniform": torch.nn.init.xavier_uniform_,
+        "kaiming": torch.nn.init.kaiming_normal_,
+        "kaiming_normal": torch.nn.init.kaiming_normal_,
+        "kaiming_uniform": torch.nn.init.kaiming_uniform_,
+        "uniform": torch.nn.init.uniform_,
+        "normal": torch.nn.init.normal_,
+        "zeros": torch.nn.init.zeros_,
+    }
 
     # some modules have their own parameter initialization methods
-    default_init_modules = [
+    default_init_modules: List = [  # explicitely defined
         torch.nn.Embedding,
         torch.nn.LayerNorm,
         torch.nn.BatchNorm1d,
@@ -112,14 +116,14 @@ class Model(torch.nn.Module, ABC):
                 4. If you give 'frozen_modules: encoder_prenet.conv.0.bias', only the bias vector of the first
                 convolution layer of the prenet of your encoder will be frozen
 
-        Args:.
-            device: torch.device
+        Args:
+            device (torch.device):
                 The computational device used for model calculation in the current GPU process.
-            model_conf: Dict
+            model_conf (Dict):
                 The model configuration used for general model initialization.
-            module_conf: Dict
+            module_conf (Dict):
                 The module configuration used for network structure initialization.
-            criterion_conf: Dict
+            criterion_conf (Dict):
                 The criterion configuration used for criterion (loss functions and evaluation metrics) initialization.
         """
         super(Model, self).__init__()
@@ -279,7 +283,7 @@ class Model(torch.nn.Module, ABC):
                     )
 
     @abstractmethod
-    def module_init(self, **kwargs):
+    def module_init(self, **kwargs) -> None:
         """
         The interface function that initializes the Module members of the model. These Module members make up the
         neural network structure of the model. Some models have their customized part that also needs to be
@@ -292,10 +296,10 @@ class Model(torch.nn.Module, ABC):
                 The combination of the arguments in your given `module_conf` and `model_conf['customize_conf']`.
 
         """
-        raise NotImplementedError
+        pass  # raise NotImplementedError
 
     @abstractmethod
-    def criterion_init(self, **criterion_conf):
+    def criterion_init(self, **criterion_conf) -> None:
         """
         The interface function that initializes the Criterion members of the model. These Criterion members can be
         divided into two parts: the loss functions used for training and the evaluation metrics used for validation.
@@ -303,10 +307,9 @@ class Model(torch.nn.Module, ABC):
         Args:
             **criterion_conf:
                 The arguments in your given `criterion_conf`.
-        Returns:
 
         """
-        raise NotImplementedError
+        pass  # raise NotImplementedError
 
     @staticmethod
     def bad_cases_selection_init_fn() -> List[List[str or int]] or None:
@@ -632,7 +635,7 @@ class Model(torch.nn.Module, ABC):
             Some intermediate results (e.g., attention matrices) can also be returned for later use.
 
         """
-        raise NotImplementedError
+        pass  # raise NotImplementedError
 
     @abstractmethod
     def criterion_forward(
@@ -655,12 +658,16 @@ class Model(torch.nn.Module, ABC):
             evaluation metrics used to record the validation status.
 
         """
-        raise NotImplementedError
+        pass  # raise NotImplementedError
 
     def get_recordable_para(self) -> Dict[str, torch.Tensor]:
         """
+        Recursively retrieves the recordable parameters from the module's
+        sub-modules.
 
         Returns:
+            Dict[str, torch.Tensor]: A dictionary mapping the parameter names to their corresponding tensor values.
+
 
         """
 
@@ -779,7 +786,7 @@ class Model(torch.nn.Module, ABC):
         Returns:
 
         """
-        raise NotImplementedError
+        pass  # raise NotImplementedError
 
     def evaluate(self, test_batch: Dict, infer_conf: Dict):
         """
@@ -895,7 +902,7 @@ class Model(torch.nn.Module, ABC):
             where `/x/xx/` is your result path given in your `exp_cfg`.
 
         """
-        raise NotImplementedError
+        pass  # raise NotImplementedError
 
     def register_instance_reports(
         self, md_list_dict: Dict[str, List], extra_string_list: List[str] = None

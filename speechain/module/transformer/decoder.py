@@ -179,7 +179,6 @@ class TransformerDecoderLayer(Module):
 
 
 class TransformerDecoder(Module):
-
     def module_init(
         self,
         posenc_type: str = "mix",
