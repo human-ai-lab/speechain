@@ -13,6 +13,7 @@ from datasets.meta_post_processor import SpeechTextMetaPostProcessor
 
 class LibriSpeechMetaPostProcessor(SpeechTextMetaPostProcessor):
     """
+        Gathers all the meta data files for manually-created subsets 'train-clean-460', 'train-960', and 'dev' of the LibriSpeech dataset.
     
     """
 

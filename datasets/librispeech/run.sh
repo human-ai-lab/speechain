@@ -2,6 +2,8 @@
 #  Affiliation: NAIST
 #  Date: 2022.11
 
+# 2024.11.26: @bagustris added subsets of dev-clean-2, train-clean-5
+
 if [ -z "${SPEECHAIN_ROOT}" ];then
   echo "Cannot find environmental variable SPEECHAIN_ROOT.
   Please move to the root path of the toolkit and run envir_preparation.sh there!"
@@ -30,7 +32,7 @@ function print_help_message {
     [--character_coverage CHARACTER_COVERAGE] \\          # The character_coverage argument for building sentencepiece tokenizer model. (default: 1.0)
     [--split_by_whitespace SPLIT_BY_WHITESPACE] \\        # The split_by_whitespace argument for building sentencepiece tokenizer model. (default: true)
     [--separator SEPARATOR] \\                            # The separator used to separate the 'subsets' arguments from a string into an array of string. (default: ',')
-    [--dump_part DUMP_PART]                              # Which part of LibriSpeech you would like to dump. '100' means 'train-clean-100'; '460' means 'train-clean-100' + 'train-clean-360'; '960' means 'train-clean-100' + 'train-clean-360' + 'train-other-500'. 'dev-clean', 'dev-other', 'test-clean', 'test-other' will be dumped for all options. (default: '960')" >&2
+    [--dump_part DUMP_PART]                              # Which part of LibriSpeech you would like to dump. '100' means 'train-clean-100'; '460' means 'train-clean-100' + 'train-clean-360'; '960' means 'train-clean-100' + 'train-clean-360' + 'train-other-500'. 'dev-clean', 'dev-clean-5', 'dev-other', 'test-clean', 'test-clean-5', test-other' will be dumped for all options. (default: '960')" >&2
   exit 1
 }
 
@@ -72,9 +74,9 @@ txt_format=no-punc
 
 # LibriSpeech-specific arguments
 # which part of LibriSpeech corpus you want to dump
-# 100: train-clean-100; 460: train-clean-100 + train-clean-360; 960: train-clean-100 + train-clean-360 + train-other-500
-# dev-clean, dev-other, test-clean, test-other will be downloaded regardless of your input dump_part
-dump_part=960
+# 5: train-clean-5; 100: train-clean-100; 460: train-clean-100 + train-clean-360; 960: train-clean-100 + train-clean-360 + train-other-500
+# dev-clean, dev-clean-2, dev-other, test-clean, test-other will be downloaded regardless of your input dump_part
+dump_part=5
 
 
 ### get args from the command line ###
@@ -183,6 +185,17 @@ fi
 # --- Argument Initialization --- #
 # only generate the vocabulary for the training sets (vocab_subsets)
 case "${dump_part}" in
+  5)
+    subsets="train-clean-5"
+    subsets_args="train-clean-5"
+    vocab_src_subsets="${subsets} dev-clean-2"
+
+    if [ ${token_type} == 'sentencepiece' ] && [ -z ${vocab_size} ]; then
+      vocab_size=1000
+    elif [ ${token_type} == 'word' ] && [ -z ${vocab_size} ];then
+      vocab_size=5000
+    fi
+    ;;
   100)
     subsets="train-clean-100"
     subsets_args="train-clean-100"
@@ -207,8 +220,8 @@ case "${dump_part}" in
     ;;
   960)
     subsets="train-clean-100 train-clean-360 train-other-500"
-    subsets_args="train-clean-100${separator}train-clean-360${separator}train-other-500"
-    vocab_src_subsets="${subsets} train-clean-460 train-960 dev-clean dev-other dev test-clean test-other"
+    subsets_args="train-clean-100${separator}train-clean-360${separator}train-other-500${separator}"
+    vocab_src_subsets="${subsets} train-clean-460 train-960 dev-clean dev-clean-2 dev-other dev test-clean test-other"
 
     if [ ${token_type} == 'sentencepiece' ] && [ -z ${vocab_size} ]; then
       vocab_size=5000
@@ -217,13 +230,13 @@ case "${dump_part}" in
     fi
     ;;
   ?)
-    echo "Your input dump_part '${dump_part}' is invalid. It must be one of [100, 460, 960]!"
+    echo "Your input dump_part '${dump_part}' is invalid. It must be one of [5, 100, 460, 960]!"
     exit 1
 esac
 
 # attach dev and test sets to 'subsets' arguments for any input dump_part
-subsets="${subsets} dev-clean dev-other test-clean test-other"
-subsets_args="${subsets_args}${separator}dev-clean${separator}dev-other${separator}test-clean${separator}test-other"
+subsets="${subsets} dev-clean dev-clean-2 dev-other test-clean test-other"
+subsets_args="${subsets_args}${separator}dev-clean${separator}dev-clean-2${separator}dev-other${separator}test-clean${separator}test-other"
 # enter extra arguments for vocab_generator.py
 vocab_generate_args=
 # number of tokens in the vocabulary

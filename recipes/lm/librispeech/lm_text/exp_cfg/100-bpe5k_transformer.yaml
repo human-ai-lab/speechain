@@ -15,7 +15,7 @@
 ###################################
 # Experiment Parameters and setup #
 ###################################
-# if your dumped dataset is outside the toolkit folder, please change dataset_path. There should be a folder named 'libritts' in dataset_path
+# if your dumped dataset is outside the toolkit folder, please change dataset_path. There should be a folder named 'librispeech' in dataset_path
 dataset_path: datasets/
 
 # data-related
@@ -28,7 +28,7 @@ token_type: sentencepiece
 token_num: bpe5k
 
 # batch-related values
-batch_len: 4.5e4
+batch_len: 4.5e3 # 4.5e4
 
 # model-related
 label_smoothing: 0.0
@@ -55,7 +55,7 @@ ft_factor: 1.0
 grad_clip: 5.0
 
 # multi-GPU-related
-ngpu: 2 # please change ngpu based on the situation of your machine
+ngpu: 1 # please change ngpu based on the situation of your machine
 gpus: null # null means the GPUs with the largest free memory will be used
 
 # training-related
@@ -134,7 +134,8 @@ train_cfg:
     model_conf:
       customize_conf:
         token_type: !ref <token_type>
-        token_vocab: !ref <data_root>/<token_type>/<vocab_set>/<token_num>/<txt_format>/vocab
+        # token_vocab: !ref <data_root>/<token_type>/<vocab_set>/<token_num>/<txt_format>/vocab
+        token_path: !ref <data_root>/<token_type>/<vocab_set>/<token_num>/<txt_format>
 
     module_conf:
       emb:
