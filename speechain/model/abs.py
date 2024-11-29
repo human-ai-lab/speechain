@@ -1,4 +1,4 @@
-﻿""" Abstract base class for all models.
+""" Abstract base class for all models.
 
 Author: Heli Qi
 Affiliation: NAIST  

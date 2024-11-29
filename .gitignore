@@ -6,21 +6,22 @@
 .idea/remote-mappings.xml
 .idea/speechain.iml
 .idea/vcs.xml
+
 # pyc files
-speechain/utilbox/__init__.py
-speechain/utilbox/__pycache__/__init__.cpython-38.pyc
-speechain/utilbox/__pycache__/__init__.cpython-39.pyc
-speechain/utilbox/__pycache__/gpu_util.cpython-38.pyc
-speechain/utilbox/__pycache__/gpu_util.cpython-39.pyc
-speechain/utilbox/__pycache__/import_util.cpython-38.pyc
-speechain/utilbox/__pycache__/log_util.cpython-38.pyc
-speechain/utilbox/__pycache__/log_util.cpython-39.pyc
-speechain/utilbox/__pycache__/regex_util.cpython-38.pyc
-speechain/utilbox/__pycache__/signal_util.cpython-38.pyc
-speechain/utilbox/__pycache__/tensor_util.cpython-38.pyc
-speechain/utilbox/__pycache__/thread_util.cpython-38.pyc
-speechain/utilbox/__pycache__/train_util.cpython-38.pyc
-speechain/utilbox/__pycache__/train_util.cpython-39.pyc
+# speechain/utilbox/__init__.py
+# speechain/utilbox/__pycache__/__init__.cpython-38.pyc
+# speechain/utilbox/__pycache__/__init__.cpython-39.pyc
+# speechain/utilbox/__pycache__/gpu_util.cpython-38.pyc
+# speechain/utilbox/__pycache__/gpu_util.cpython-39.pyc
+# speechain/utilbox/__pycache__/import_util.cpython-38.pyc
+# speechain/utilbox/__pycache__/log_util.cpython-38.pyc
+# speechain/utilbox/__pycache__/log_util.cpython-39.pyc
+# speechain/utilbox/__pycache__/regex_util.cpython-38.pyc
+# speechain/utilbox/__pycache__/signal_util.cpython-38.pyc
+# speechain/utilbox/__pycache__/tensor_util.cpython-38.pyc
+# speechain/utilbox/__pycache__/thread_util.cpython-38.pyc
+# speechain/utilbox/__pycache__/train_util.cpython-38.pyc
+# speechain/utilbox/__pycache__/train_util.cpython-39.pyc
 
 # bak files and directories
 *.bak
@@ -42,3 +43,6 @@ tmp/
 
 # others
 *.egg-info
+
+# datasets, use -f to force add
+datasets/

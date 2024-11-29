@@ -13,8 +13,8 @@ root = Path(__file__).parent.parent
 src = root / "speechain"
 
 # exclude modules from being included in the documentation
-exclude_modules = {str(src / "model/abs.py")}
-# exclude_modules = {} 
+# exclude_modules = {str(src / "model/abs.py")}
+exclude_modules = {} 
 
 # Iterate through all Python files in source directory
 for path in sorted(src.rglob("*.py")):

@@ -7,7 +7,7 @@ repo_url: https://github.com/bagustris/speechain
 theme:
   name: "material"
   favicon: img/favicon.ico
-  logo: img/speechain.png
+  logo: img/speechain_inverted.png
 
 plugins:
   - search
