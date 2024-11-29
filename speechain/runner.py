@@ -1987,8 +1987,8 @@ class Runner(object):
 
         # check the GPU configuration
         assert len(args.gpus) >= args.ngpu, (
-            f"The visible GPUs {args.gpus} are fewer than the GPUs you would like to use {args.ngpu}! "
-            f"Please use the argument '--gpus' to directly specify your target GPUs."
+            f"Error: The visible GPUs {args.gpus} are fewer than the GPUs you would like to use {args.ngpu}, default is 2! "
+            f"Use the argument '--gpu' to directly specify your target GPUs."
         )
         if len(args.gpus) == 1:
             args.gpus = args.gpus[0]

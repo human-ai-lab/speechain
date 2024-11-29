@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 ### Author: Heli Qi
 ### Affiliation: NAIST
 ### Date: 2022.12
@@ -6,7 +7,7 @@
 # --- Global References --- #
 if [ -z "${SPEECHAIN_ROOT}" ] || [ -z "${SPEECHAIN_PYTHON}" ];then
   echo "Cannot find environmental variables SPEECHAIN_ROOT and SPEECHAIN_PYTHON.
-  Please move to the root path of the toolkit and run envir_preparation.sh there!"
+  Create the root and Python path of the toolkit by run create_env.sh!"
   exit 1
 fi
 recipe_run_root=${SPEECHAIN_ROOT}/recipes/run.sh
@@ -138,7 +139,7 @@ while getopts ":h-:" optchar; do
       print_help_message
       ;;
     *)
-      echo "Please refer to an argument by '--'."
+      echo "Error: Refer to an argument by '--'."
       exit 1
       ;;
   esac
@@ -159,7 +160,7 @@ args="
 
 #
 if [ -z ${exp_cfg} ];then
-   echo "Please give an experimental configuration by '--exp_cfg'!"
+   echo "Error: Invalid argument, give experimental configuration by '--exp_cfg'!"
    exit 1
 else
   args="${args} --exp_cfg ${exp_cfg}"
@@ -217,8 +218,8 @@ echo "Running the job..."
 
 # ${args} should not be surrounded by double-quote
 # shellcheck disable=SC2086
-bash "${recipe_run_root}" ${args}
-if $? != 0;then
+# bash "${recipe_run_root}" ${args}
+if ! bash "${recipe_run_root}" ${args}; then #$? != 0;then
   # ${args} should not be surrounded by double-quote
   # shellcheck disable=SC2086
   # shellcheck disable=SC1090

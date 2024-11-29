@@ -6,7 +6,7 @@
 # the path to place the downloaded dataset, default to the current path
 download_path=${PWD}
 # which subsets of LibriSpeech you want to download, default to all the subsets
-subsets="train-clean-100,train-clean-360,train-other-500,dev-clean,dev-other,test-clean,test-other"
+subsets="train-clean-100,train-clean-360,train-clean-5,train-other-500,dev-clean,dev-clean-2,dev-other,test-clean,test-other"
 # the separator used to separate the input 'subsets' argument from a string into an array of string, default to be comma
 separator=','
 
@@ -71,7 +71,9 @@ all_subsets=(
 'train-clean-100'
 'train-clean-360'
 'train-other-500'
+'train-clean-5'
 'dev-clean'
+'dev-clean-2'
 'dev-other'
 'test-clean'
 'test-other'
@@ -117,6 +119,14 @@ for (( n=0; n < ${#subsets[*]}; n++ )); do
   if [ ! -d "${download_path}/data/wav/${set}" ]; then
     # download the data package if it doesn't exist
     if [ ! -f "${download_path}/data/${set}.tar.gz" ]; then
+      # check if choosing mini-librispeech (subset: train-clean-5, dev-clean-2)
+      if [ "${set}" == "train-clean-5" ] || [ "${set}" == "dev-clean-2" ]; then
+        echo "Download data from https://www.openslr.org/resources/31/${set}.tar.gz to ${download_path}/data/${set}.tar.gz"
+        wget -P ${download_path}/data https://www.openslr.org/resources/31/"${set}".tar.gz
+      else
+        echo "Download data from https://www.openslr.org/resources/12/${set}.tar.gz to ${download_path}/data/${set}.tar.gz"
+        wget -P ${download_path}/data https://www.openslr.org/resources/12/"${set}".tar.gz
+      fi
       echo "Download data from https://www.openslr.org/resources/12/${set}.tar.gz to ${download_path}/data/${set}.tar.gz"
       wget -P ${download_path}/data https://www.openslr.org/resources/12/"${set}".tar.gz
     else
