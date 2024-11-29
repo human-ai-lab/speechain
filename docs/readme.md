@@ -5,11 +5,11 @@
 pip install mkdocs-material mkdocstrings[python]
 
 # build documentation
-mkdocs build
+mkdocs build -v
 
 # serve documentation
-mkdocs serve
+mkdocs serve -v
 
-# deploy to github pages
+# deploy to github pages, not mandatory auto build when push
 mkdocs gh-deploy
 ```
