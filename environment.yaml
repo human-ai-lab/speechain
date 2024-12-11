@@ -33,7 +33,7 @@ dependencies:
   - pip:
     - absl-py==1.0.0
     - appdirs==1.4.4
-    - asr-evaluation==2.0.4
+    # - asr-evaluation==2.0.4
     - attrs==21.4.0
     - audioread==2.1.9
     - beautifulsoup4==4.12.2

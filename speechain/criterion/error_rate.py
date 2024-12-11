@@ -57,10 +57,10 @@ class ErrorRate(Criterion):
         """
 
         Args:
-            hypo_text:
-            real_text:
-            tokenizer:
-            do_aver:
+            hypo_text (torch.Tensor or List[str] or str): the hypothesis text
+            real_text (torch.Tensor or List[str] or str): the reference text
+            tokenizer (Tokenizer): the tokenizer
+            do_aver (bool): whether to average the error rate over the batch
 
         Returns:
 
