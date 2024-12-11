@@ -19,13 +19,18 @@
 	</tr>
 	<tr>
 	    <td rowspan="8">librispeech</td>
+       <td>train-clean-5</td>
+       <td>5-bpe1k_transformer-wide_lr2e-3</td>
+       <td> 42.08% / 22.03% </td>
+       <td> % / % </td>
+   <tr>
 	    <td rowspan="4">train-clean-100</td>
 	    <td>100-bpe5k_transformer-wide_lr2e-3</td>
 	    <td> 8.40% / 21.92% </td>
 	    <td> 5.50% / 15.56% </td>
 	</tr>
     <tr>
-        <td>100-bpe5k_conformer-small_lr2e-3</td>
+       <td>100-bpe5k_conformer-small_lr2e-3</td>
 	    <td> 8.50% / 23.50% </td>
 	    <td> 5.45% / 16.74% </td>
     </tr>

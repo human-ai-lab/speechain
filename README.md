@@ -46,6 +46,10 @@ Anytime when you encounter problems when using our toolkit, please don't hesitat
 
 
 ## Get a Quick Start
+
+The simplest recipe is Mini LibriSpeech. It takes about 2 hours to train a model on a single GPU. 
+
+
 We recommend you first install *Anaconda* into your machine before using our toolkit. 
 After the installation of *Anaconda*, please follow the steps below to deploy our toolkit on your machine:
 1. Find a path with enough disk memory space. (e.g. at least 500GB if you want to use _LibriSpeech_ or _LibriTTS_ datasets).
@@ -63,3 +67,6 @@ If either one is empty, please manually add them into your `~/.bashrc` by `expor
 7. Read the [handbook](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#speechain-handbook) and start your journey in SpeeChain!
 
 👆[Back to the table of contents](https://github.com/ahclab/SpeeChain#table-of-contents)
+
+## Acknowledgement
+Part of this software was developed in a project commissioned by the New Energy and Industrial Technology Development Organization (NEDO).
