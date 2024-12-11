@@ -67,3 +67,4 @@ recipes/
 datasets
 config/
 site/
+.ruff-cache/
