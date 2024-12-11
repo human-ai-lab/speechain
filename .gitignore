@@ -25,6 +25,14 @@
 
 # bak files and directories
 *.bak
+*.bak?
+*.new
+*.new?
+*.old
+*.old?
+*.orig
+*.orig?
+
 # cache files
 *.cache
 __pycache__
@@ -58,3 +66,4 @@ env/
 recipes/
 datasets
 config/
+site/
