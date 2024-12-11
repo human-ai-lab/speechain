@@ -1341,9 +1341,9 @@ class Runner(object):
             infer_cfg_dict = dict()
             for cfg in args.infer_cfg:
                 if isinstance(cfg, str):
-                    infer_cfg_dict[".".join(cfg.split("/")[-1].split(".")[:-1])] = (
-                        load_yaml(open(cfg))
-                    )
+                    infer_cfg_dict[
+                        ".".join(cfg.split("/")[-1].split(".")[:-1])
+                    ] = load_yaml(open(cfg))
                 elif isinstance(cfg, Dict):
                     cfg = dict(sorted(cfg.items(), key=lambda x: x[0]))
                     infer_cfg_dict[
