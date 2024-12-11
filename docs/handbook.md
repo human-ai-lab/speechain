@@ -1,4 +1,5 @@
-# SpeeChain Handbook
+# Handbook
+
 Our documentation is organized by different roles in this toolkit. 
 You can start the journey of SpeeChain by your current position.
 
