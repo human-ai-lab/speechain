@@ -46,3 +46,15 @@ tmp/
 
 # datasets, use -f to force add
 datasets/
+
+
+# virtual environment
+venv/
+.venv/
+env/
+.env/
+
+# specific folders
+recipes/
+datasets
+config/
