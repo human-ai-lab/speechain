@@ -1,21 +1,24 @@
-# Recipes Directory of the SpeeChain toolkit
-The SpeeChain toolkit organizes its recipes by task, each located within a dedicated sub-folder in /speechain/recipes/. 
+# Recipes 
+
+## Directory for reripes of the SpeeChain toolkit
+
+The SpeeChain toolkit organizes its recipes by task, each located within a dedicated sub-folder in `/speechain/recipes/`. 
 Every task sub-folder hosts second-level sub-folders that pertain to individual datasets.
 
-👆[Back to the handbook page](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#speechain-handbook)
+👆[Back to the handbook page](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#speechain-handbook)
 
 ## Table of Contents
-1. [**Available Datasets**](https://github.com/ahclab/SpeeChain/tree/main/recipes#available-datasets)
-   1. [ASR (Automatic Speech Recognition)](https://github.com/ahclab/SpeeChain/tree/main/recipes#automatic-speech-recognition-asr)
-   2. [TTS (Text-To-Speech Synthesis)](https://github.com/ahclab/SpeeChain/tree/main/recipes#text-to-speech-synthesis-tts)
-   3. [Offline TTS-to-ASR Chain](https://github.com/ahclab/SpeeChain/tree/main/recipes#offline-tts-to-asr-chain)
-2. [**Experimental File System**](https://github.com/ahclab/SpeeChain/tree/main/recipes#experimental-file-system)
+1. [**Available Datasets**](https://github.com/bagustris/SpeeChain/tree/main/recipes#available-datasets)
+   1. [ASR (Automatic Speech Recognition)](https://github.com/bagustris/SpeeChain/tree/main/recipes#automatic-speech-recognition-asr)
+   2. [TTS (Text-To-Speech Synthesis)](https://github.com/bagustris/SpeeChain/tree/main/recipes#text-to-speech-synthesis-tts)
+   3. [Offline TTS-to-ASR Chain](https://github.com/bagustris/SpeeChain/tree/main/recipes#offline-tts-to-asr-chain)
+2. [**Experimental File System**](https://github.com/bagustris/SpeeChain/tree/main/recipes#experimental-file-system)
 
 
 ## Available Datasets
 Each task comes with a dedicated README.md file found within its respective folder, providing further details and instructions. 
 Follow the hyperlinks below to navigate to the README.md file for your target task.
-### [Automatic Speech Recognition (ASR)](https://github.com/ahclab/SpeeChain/tree/main/recipes/asr#automatic-speech-recognition-asr)
+### [Automatic Speech Recognition (ASR)](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#automatic-speech-recognition-asr)
 Refer to this sample structure for an overview of how the ASR folder is organized:
 ```
 /asr
@@ -32,10 +35,10 @@ Refer to this sample structure for an overview of how the ASR folder is organize
             ...
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/recipes#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/recipes#table-of-contents)
 
 
-### [Text-To-Speech Synthesis (TTS)](https://github.com/ahclab/SpeeChain/tree/main/recipes/tts#text-to-speech-synthesis-tts)
+### [Text-To-Speech Synthesis (TTS)](https://github.com/bagustris/SpeeChain/tree/main/recipes/tts#text-to-speech-synthesis-tts)
 Refer to this sample structure for an overview of how the TTS folder is organized:
 ```
 /tts
@@ -52,9 +55,9 @@ Refer to this sample structure for an overview of how the TTS folder is organize
     /vctk                   # TTS Recipes for the VCTK dataset, VCTK doesn't have the official subset division.
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/recipes#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/recipes#table-of-contents)
 
-### [Offline TTS-to-ASR Chain](https://github.com/ahclab/SpeeChain/tree/main/recipes/offline_tts2asr#offline-tts-to-asr-chain)
+### [Offline TTS-to-ASR Chain](https://github.com/bagustris/SpeeChain/tree/main/recipes/offline_tts2asr#offline-tts-to-asr-chain)
 Refer to this sample structure for an overview of how the offline TTS-to-ASR Chain folder is organized:
 ```
 /offline_tts2asr
@@ -66,7 +69,7 @@ Refer to this sample structure for an overview of how the offline TTS-to-ASR Cha
             ...
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/recipes#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/recipes#table-of-contents)
 
 ## Experimental File System
 The file structure of an experiment folder is as follows:
@@ -146,5 +149,5 @@ The file structure of an experiment folder is as follows:
         train.log           # Log file that contains the training process of the given training sets and validation sets
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/recipes#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/recipes#table-of-contents)
 
