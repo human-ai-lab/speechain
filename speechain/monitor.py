@@ -1781,9 +1781,9 @@ class TestMonitor(Monitor):
             if not isinstance(result_list[0], (int, float)):
                 continue
 
-            content_dict[
-                metric
-            ] = f"{np.mean(result_list):.4f} ± {np.std(result_list):.4f}"
+            content_dict[metric] = (
+                f"{np.mean(result_list):.4f} ± {np.std(result_list):.4f}"
+            )
         result_string += get_list_strings(content_dict=content_dict)
 
         # record the group-level model performance

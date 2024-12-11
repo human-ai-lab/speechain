@@ -43,9 +43,7 @@ class Noamlr(OptimScheduler):
         # para recording
         self.d_model = d_model
         self.init_lr = (
-            d_model**-0.5
-            if d_model is not None
-            else self.get_lr() * warmup_steps**0.5
+            d_model**-0.5 if d_model is not None else self.get_lr() * warmup_steps**0.5
         )
         self.warmup_steps = warmup_steps
 
