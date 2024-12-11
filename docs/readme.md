@@ -2,7 +2,7 @@
 
 ```bash
 # install necessary packages
-pip install mkdocs-material mkdocstrings[python]
+pip install mkdocs-material mkdocstrings[python] mkdocs-gen-files mkdos-literate-nav mkdocs-section-index
 
 # build documentation
 mkdocs build -v

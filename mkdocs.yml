@@ -34,6 +34,8 @@ markdown_extensions:
 nav:
   - index.md
   - datasets.md
+  - recipes.md
   - asr.md
   - tts.md
+  - handbook.md
   - Reference: reference/ 
