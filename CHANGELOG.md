@@ -8,10 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security
 
 ## [Unreleased]
+## [0.1.2] - 2024-12-11 
+### Added
+- a new requirements.txt file
+- `humanfriendly.py` in `utilbox` along with its test file
+
+
 ## [0.1.1] - 2024-09-30
 
 ### Added
 - yaml file is added `recipes/asr/librispeech/train-960/exp_cfg/960-bpe5k_transformer-wide_ctc_perturb.yaml`
+- train-clean-5 recipe
 
 ### Changed
 - repo name from SpeeChain to speechain
