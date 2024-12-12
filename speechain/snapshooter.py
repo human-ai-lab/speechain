@@ -27,8 +27,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 class Plotter(ABC):
-    """ Plotter is the base class for all plotters.
-    """
+    """Plotter is the base class for all plotters."""
 
     @abstractmethod
     def __init__(self, **kwargs):
@@ -46,11 +45,10 @@ class Plotter(ABC):
 
 
 class CurvePlotter(Plotter):
-    """ CurvePlotter does the job of plotting the curve of the given material. 
-    """
+    """CurvePlotter does the job of plotting the curve of the given material."""
 
     def __init__(self, plot_conf: Dict = None, grid_conf: Dict = None):
-        """ Initialize the CurvePlotter.
+        """Initialize the CurvePlotter.
 
         Args:
             plot_conf (Dict): the configuration of the plot
@@ -79,7 +77,7 @@ class CurvePlotter(Plotter):
         ylabel: str,
         x_stride: int = 1,
     ):
-        """ Plot the curve of the given material.
+        """Plot the curve of the given material.
 
         Args:
             ax (matplotlib.axes._subplots.AxesSubplot): the axis of the figure
@@ -90,7 +88,7 @@ class CurvePlotter(Plotter):
             x_stride (int): the stride of the x-axis
 
         Returns:
-            None    
+            None
         """
         # set up the figure label of x and y axes
         ax.set_xlabel(xlabel if xlabel is not None else None)
@@ -134,7 +132,7 @@ class CurvePlotter(Plotter):
                 plt.legend()
 
     def save(self, materials: Dict, save_path: str, x_stride: int = 1):
-        """ Save the given material into a specific .txt file for easy visualization.
+        """Save the given material into a specific .txt file for easy visualization.
 
         Args:
             materials (Dict): the material to be saved
@@ -177,11 +175,10 @@ class CurvePlotter(Plotter):
 
 
 class MatrixPlotter(Plotter):
-    """ Plot the matrix of the given material.
-    """
+    """Plot the matrix of the given material."""
 
     def __init__(self, **plot_conf):
-        """ Initialize the plotter.
+        """Initialize the plotter.
 
         Args:
             **plot_conf:
@@ -244,14 +241,13 @@ class MatrixPlotter(Plotter):
             save_path (str): the path to save the materials
 
         Returns:
-            None    
+            None
         """
         np.savez(os.path.join(save_path, f"epoch{epoch}.npz"), **materials)
 
 
 class HistPlotter(Plotter):
-    """HistPlotter does the job of plotting the histogram of the given material. 
-    """
+    """HistPlotter does the job of plotting the histogram of the given material."""
 
     def __init__(self, plot_conf: Dict = None, grid_conf: Dict = None):
         """
@@ -358,9 +354,7 @@ def snapshot_logs(
 
 
 class SnapShooter:
-    """SnapShooter does the job of recording snapshots of the model during training or validation.
-
-    """
+    """SnapShooter does the job of recording snapshots of the model during training or validation."""
 
     def __init__(
         self,
@@ -372,7 +366,7 @@ class SnapShooter:
         matrix_plotter_conf: Dict = None,
         hist_plotter_conf: Dict = None,
     ):
-        """ Initialize the SnapShooter.
+        """Initialize the SnapShooter.
         Args:
             result_path:
             fig_width:
