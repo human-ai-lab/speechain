@@ -3,14 +3,15 @@ from typing import Union
 
 import torch
 from speechbrain.pretrained import HIFIGAN
+from speechain.module.vocoder import HiFiGAN  # New module to implement
 
 from speechain.utilbox.data_loading_util import parse_path_args
 
 
 class SpeechBrainWrapper(object):
-    """
-    A wrapper class for the vocoder forward function of the speechbrain package.
-    This wrapper is not impemented as a Module because we don't want it to be in the computational graph of a TTS model.
+    """A wrapper class for the vocoder forward function of the speechbrain package.
+    
+    This wrapper is not implemented as a Module because we don't want it to be in the computational graph of a TTS model.
 
     Before wrapping:
         feat -> vocoder -> wav

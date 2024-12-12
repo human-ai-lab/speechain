@@ -5,6 +5,7 @@ import numpy as np
 import torch
 import torchaudio
 from speechbrain.pretrained import EncoderClassifier
+from speechain.module.encoder import SpeakerEncoder  # New module to implement
 from tqdm import tqdm
 
 from speechain.utilbox.data_loading_util import read_data_by_path
