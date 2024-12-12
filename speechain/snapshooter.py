@@ -27,7 +27,8 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 class Plotter(ABC):
-    """ """
+    """ Plotter is the base class for all plotters.
+    """
 
     @abstractmethod
     def __init__(self, **kwargs):
@@ -45,14 +46,15 @@ class Plotter(ABC):
 
 
 class CurvePlotter(Plotter):
-    """ """
+    """ CurvePlotter does the job of plotting the curve of the given material. 
+    """
 
     def __init__(self, plot_conf: Dict = None, grid_conf: Dict = None):
-        """
+        """ Initialize the CurvePlotter.
 
         Args:
-            plot_conf:
-            grid_conf:
+            plot_conf (Dict): the configuration of the plot
+            grid_conf (Dict): the configuration of the grid
         """
         # default arguments of the plot_conf
         self.plot_conf = dict(linestyle="-", linewidth=1, marker="o", markersize=5)
@@ -77,18 +79,18 @@ class CurvePlotter(Plotter):
         ylabel: str,
         x_stride: int = 1,
     ):
-        """
+        """ Plot the curve of the given material.
 
         Args:
-            ax:
-            material:
-            fig_name:
-            xlabel:
-            ylabel:
-            x_stride:
+            ax (matplotlib.axes._subplots.AxesSubplot): the axis of the figure
+            material (List or Dict[str, List]): the material to be plotted
+            fig_name (str): the name of the figure
+            xlabel (str): the label of x-axis
+            ylabel (str): the label of y-axis
+            x_stride (int): the stride of the x-axis
 
         Returns:
-
+            None    
         """
         # set up the figure label of x and y axes
         ax.set_xlabel(xlabel if xlabel is not None else None)
@@ -100,7 +102,7 @@ class CurvePlotter(Plotter):
         # only one curve in the figure
         if isinstance(material, List):
             # for the stand-alone figure, only show up to 5 points at x-axis
-            x_axis = np.arange(0, len(material), dtype=np.int) * x_stride + 1
+            x_axis = np.arange(0, len(material), dtype=np.int_) * x_stride + 1
             interval = math.ceil(len(x_axis) / 5)
             ax.set_xticks(
                 x_axis,
@@ -117,7 +119,7 @@ class CurvePlotter(Plotter):
                 keys = list(material.keys())
                 # for the summary figure, only show up to 5 points at x-axis
                 x_axis = (
-                    np.arange(1, len(material[keys[0]]) + 1, dtype=np.int) * x_stride
+                    np.arange(1, len(material[keys[0]]) + 1, dtype=np.int_) * x_stride
                 )
                 interval = math.ceil(len(x_axis) / 5)
                 ax.set_xticks(
@@ -132,12 +134,12 @@ class CurvePlotter(Plotter):
                 plt.legend()
 
     def save(self, materials: Dict, save_path: str, x_stride: int = 1):
-        """
+        """ Save the given material into a specific .txt file for easy visualization.
 
         Args:
-            materials:
-            save_path:
-            x_stride:
+            materials (Dict): the material to be saved
+            save_path (str): the path to save the materials
+            x_stride (int): the stride of the x-axis
 
         Returns:
 
@@ -147,7 +149,7 @@ class CurvePlotter(Plotter):
             # only one file
             if isinstance(material, List):
                 # initialize the horizontal axis
-                x_axis = np.arange(1, len(material) + 1, dtype=np.int) * x_stride
+                x_axis = np.arange(1, len(material) + 1, dtype=np.int_) * x_stride
                 save_data = np.concatenate(
                     (x_axis.reshape(-1, 1), np.array(material).reshape(-1, 1)), axis=-1
                 )
@@ -157,7 +159,7 @@ class CurvePlotter(Plotter):
                 if len(material) > 0:
                     keys = list(material.keys())
                     x_axis = (
-                        np.arange(1, len(material[keys[0]]) + 1, dtype=np.int)
+                        np.arange(1, len(material[keys[0]]) + 1, dtype=np.int_)
                         * x_stride
                     )
                     for key in keys:
@@ -175,16 +177,17 @@ class CurvePlotter(Plotter):
 
 
 class MatrixPlotter(Plotter):
-    """ """
+    """ Plot the matrix of the given material.
+    """
 
     def __init__(self, **plot_conf):
-        """
+        """ Initialize the plotter.
 
         Args:
             **plot_conf:
 
         Returns:
-
+            None
         """
         # default arguments of the plot_conf
         self.plot_conf = dict(
@@ -233,28 +236,30 @@ class MatrixPlotter(Plotter):
         )
 
     def save(self, materials: Dict[str, np.ndarray], epoch: int, save_path: str):
-        """
+        """Save the materials into a .npz file on disk for future usage.
 
         Args:
-            materials:
-            epoch:
-            save_path:
+            materials (Dict[str, np.ndarray]): the materials to be saved
+            epoch (int): the epoch of the materials
+            save_path (str): the path to save the materials
 
         Returns:
-
+            None    
         """
         np.savez(os.path.join(save_path, f"epoch{epoch}.npz"), **materials)
 
 
 class HistPlotter(Plotter):
-    """ """
+    """HistPlotter does the job of plotting the histogram of the given material. 
+    """
 
     def __init__(self, plot_conf: Dict = None, grid_conf: Dict = None):
         """
+        Initialize the HistPlotter.
 
         Args:
-            plot_conf:
-            grid_conf:
+            plot_conf (Dict): the configuration of the plot
+            grid_conf (Dict): the configuration of the grid
         """
         # default arguments of the plot_conf
         self.plot_conf = dict(bins=50, edgecolor="k")
@@ -273,7 +278,7 @@ class HistPlotter(Plotter):
     def plot(
         self, ax, material: List, fig_name: str, xlabel: str, ylabel: str, **kwargs
     ):
-        """
+        """Plot the histogram of the given material.
 
         Args:
             ax:
@@ -327,7 +332,7 @@ class HistPlotter(Plotter):
 def snapshot_logs(
     logs_queue: Queue, event: Event, snapshooter_conf: Dict, wait_time: int = 10
 ):
-    """
+    """Snapshot the model during training or validation.
 
     Args:
         logs_queue:
@@ -353,8 +358,7 @@ def snapshot_logs(
 
 
 class SnapShooter:
-    """
-    SnapShooter does the job of recording snapshots of the model during training or validation.
+    """SnapShooter does the job of recording snapshots of the model during training or validation.
 
     """
 
@@ -368,8 +372,7 @@ class SnapShooter:
         matrix_plotter_conf: Dict = None,
         hist_plotter_conf: Dict = None,
     ):
-        """
-
+        """ Initialize the SnapShooter.
         Args:
             result_path:
             fig_width:
@@ -758,7 +761,7 @@ class SnapShooter:
             )
 
             if epoch is not None and data_save:
-                x_axis = np.arange(0, len(material), dtype=np.int) * x_stride + 1
+                x_axis = np.arange(0, len(material), dtype=np.int_) * x_stride + 1
                 save_data = np.concatenate(
                     (x_axis.reshape(-1, 1), np.array(material).reshape(-1, 1)), axis=-1
                 )
