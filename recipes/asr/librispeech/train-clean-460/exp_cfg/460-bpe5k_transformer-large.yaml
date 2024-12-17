@@ -180,7 +180,7 @@ train_cfg:
 
     module_conf:
       frontend:
-        type: mel_fbank
+        type: frontend.speech2mel.Speech2MelSpec #mel_fbank
         conf:
           sr: !ref <sample_rate>
           preemphasis: 0.97

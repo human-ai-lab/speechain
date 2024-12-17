@@ -70,7 +70,7 @@ class Speech2MelSpec(Module):
             window: str
                 The window type for STFT.
             center: bool
-                 whether to pad input on both sides so that the t-th frame is centered at time t × hop_length.
+                 whether to pad input on both sides so that the t-th frame is centered at time `t x hop_length`.
             normalized: bool
                 controls whether to return the normalized STFT results
             onesided: bool
@@ -97,10 +97,10 @@ class Speech2MelSpec(Module):
                 Whether perform the area normalization to the mel-fbank filters.
             delta_order: int
                 The delta order you want to add to the original log-mel spectrogram.
-                1 means original log-mel spectrogram + Δ Log-mel spectrogram
-                2 means original log-mel spectrogram + Δ Log-mel spectrogram + ΔΔ log-mel spectrogram
+                1 means original log-mel spectrogram + $\delta$ Log-mel spectrogram
+                2 means original log-mel spectrogram + $\delta$ Log-mel spectrogram + $\delta\delta$ log-mel spectrogram
             delta_N: int
-                The number of neighbouring points used for calculating the delta features.
+                The number of neighboring points used for calculating the delta features.
 
         """
         # if hop_length and win_length are given in the unit of seconds, turn them into the corresponding time steps
