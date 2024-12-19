@@ -3,10 +3,10 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'docs/**'
-      - 'mkdocs.yml'
-      - '.github/workflows/documentation.yml'
+    # paths:
+    #   - 'docs/**'
+    #   - 'mkdocs.yml'
+    #   - '.github/workflows/documentation.yml'
 
 jobs:
   build-docs:
