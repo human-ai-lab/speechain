@@ -3,21 +3,21 @@
 Our documentation is organized by different roles in this toolkit. 
 You can start the journey of SpeeChain by your current position.
 
-👆[Back to the home page](https://github.com/ahclab/SpeeChain#speechain-a-pytorch-based-speechlanguage-processing-toolkit-for-the-machine-speech-chain)
+👆[Back to the home page](https://github.com/bagustris/SpeeChain#speechain-a-pytorch-based-speechlanguage-processing-toolkit-for-the-machine-speech-chain)
 
 ## Table of Contents
-1. [**For those who just discovered SpeeChain**](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#for-those-who-just-discovered-speechain)
-   1. [How to dump a dataset to your machine](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#how-to-dump-a-dataset-to-your-machine)
-   2. [How to prepare a configuration file](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#how-to-prepare-configuration-files)
-   3. [How to train and evaluate a model](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#how-to-train-and-evaluate-a-model)
-   4. [How to interpret the files generated in the _exp_ folder](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#how-to-interpret-the-files-generated-in-the-exp-folder)
-2. [**For those who want to use SpeeChain for research**](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#for-those-who-want-to-use-speechain-for-research)
-   1. [SpeeChain file system](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#speechain-file-system)
-   2. [How to customize my own data loading and batching strategy](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#how-to-customize-my-own-data-loading-and-batching-strategy)
-   3. [How to customize my own model](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#how-to-customize-my-own-model)
-   4. [How to customize my own learning rate scheduling strategy](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#how-to-customize-my-own-learning-rate-scheduling-strategy)
-3. [**For those who want to contribute to SpeeChain**](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#for-those-who-want-to-contribute-to-speechain)
-   1. [Contribution specifications](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#contribution-specifications)
+1. [**For those who just discovered SpeeChain**](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#for-those-who-just-discovered-speechain)
+   1. [How to dump a dataset to your machine](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-dump-a-dataset-to-your-machine)
+   2. [How to prepare a configuration file](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-prepare-configuration-files)
+   3. [How to train and evaluate a model](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-train-and-evaluate-a-model)
+   4. [How to interpret the files generated in the _exp_ folder](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-interpret-the-files-generated-in-the-exp-folder)
+2. [**For those who want to use SpeeChain for research**](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#for-those-who-want-to-use-speechain-for-research)
+   1. [SpeeChain file system](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#speechain-file-system)
+   2. [How to customize my own data loading and batching strategy](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-customize-my-own-data-loading-and-batching-strategy)
+   3. [How to customize my own model](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-customize-my-own-model)
+   4. [How to customize my own learning rate scheduling strategy](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-customize-my-own-learning-rate-scheduling-strategy)
+3. [**For those who want to contribute to SpeeChain**](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#for-those-who-want-to-contribute-to-speechain)
+   1. [Contribution specifications](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#contribution-specifications)
 
 
 ## For those who just discovered SpeeChain
@@ -30,7 +30,7 @@ In SpeeChain toolkit, a basic research pipeline has 5 steps:
 
 The following subsections will explain how to execute the steps above one by one.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 ### How to dump a dataset to your machine
 In our toolkit, the datasets are grouped by their data types. 
@@ -39,17 +39,17 @@ Each available dataset corresponds a specific folder in `${SPEECHAIN_ROOT}/datas
 SpeeChain follows the all-in-one dumping style by a bash script named `data_dumping.sh` where the procedure of dataset dumping is divided into individual steps and each step is executed by a specific script.
 
 We provide an executable script named `run.sh` in each dataset folder under `${SPEECHAIN_ROOT}/datasets`. 
-Please refer to [**here**](https://github.com/ahclab/SpeeChain/tree/main/datasets#how-to-dump-a-dataset-on-your-machine) before starting the dumping pipeline.
+Please refer to [**here**](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-dump-a-dataset-on-your-machine) before starting the dumping pipeline.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 
 ### How to prepare configuration files
-Please refer to [**here**](https://github.com/ahclab/SpeeChain/tree/main/recipes#recipes-folder-of-the-speechain-toolkit) for some configuration templates in those `exp_cfg` folders.
+Please refer to [**here**](https://github.com/bagustris/SpeeChain/tree/main/recipes#recipes-folder-of-the-speechain-toolkit) for some configuration templates in those `exp_cfg` folders.
 
 
 In order to avoid messy and unreadable configuration setting in the terminal, SpeeChain provides some advanced services to simplify the configuration setting.  
-**PS:** The following contents are not urgent for you to learn. If you don't want to jump into details too much right now, please go to the [**next step**](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#how-to-train-and-evaluate-a-model)
+**PS:** The following contents are not urgent for you to learn. If you don't want to jump into details too much right now, please go to the [**next step**](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-train-and-evaluate-a-model)
 
 #### Flexible Path Parsing Services
 In SpeeChain, the path arguments can be given in 3 ways:
@@ -175,7 +175,7 @@ In SpeeChain, we wrap the conventional _.yaml_ file and provides some advanced !
           key_name2: !ref <key_name1>/mno
           ```
   
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 
 #### Inference Configuration for hyperparameter adjustment
@@ -246,7 +246,7 @@ There could be either one inference configuration or multiple configurations in 
         Their evaluation results will be saved to `beam_size=16_temperature=1.0` and `beam_size=16_temperature=1.5`.  
         If your configurations don't contain too many arguments and you only want to change one or two arguments for each of them, we recommend you to give your configurations in this way.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 
 ### How to train and evaluate a model
@@ -263,20 +263,20 @@ ${SPEECHAIN_ROOT}/recipes/{task_name}/{dataset_name}/{subset_name}/run.sh
         --->${SPEECHAIN_ROOT}/speechain/runner.py
 ```
 
-For the detailed instructions about how to launch the jobs for each model, please refer to [**here**](https://github.com/ahclab/SpeeChain/tree/main/recipes#table-of-contents) and click your target model.
+For the detailed instructions about how to launch the jobs for each model, please refer to [**here**](https://github.com/bagustris/SpeeChain/tree/main/recipes#table-of-contents) and click your target model.
 
 By the way, you can also directly use the command `${SPEECHAIN_PYTHON} ${SPEECHAIN_ROOT}/speechain/runn.py` in your terminal or your own bash script to run your experimental jobs. 
 Before doing so, we recommend you to first use the command `${SPEECHAIN_PYTHON} ${SPEECHAIN_ROOT}/speechain/runn.py --help` to familiarize yourself with the involved arguments.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 
 
 ### How to interpret the files generated in the _exp_ folder
 
-Please refer to [${SPEECHAIN_ROOT}/recipes/README.md](https://github.com/ahclab/SpeeChain/tree/main/recipes#experimental-file-system) for more details.
+Please refer to [${SPEECHAIN_ROOT}/recipes/README.md](https://github.com/bagustris/SpeeChain/tree/main/recipes#experimental-file-system) for more details.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 
 ## For those who want to use SpeeChain for research
@@ -299,11 +299,11 @@ Folder architecture is shown below:
         /tts        # Configuration files for TTS inference
             /...
 ```
-For more details about the configuration files in `${SPEECHAIN_ROOT}/config/feat/`, please refer to the docstring of [${SPEECHAIN_ROOT}/datasets/pyscripts/feat_extractor.py](https://github.com/ahclab/SpeeChain/blob/main/datasets/pyscripts/feat_extractor.py).
+For more details about the configuration files in `${SPEECHAIN_ROOT}/config/feat/`, please refer to the docstring of [${SPEECHAIN_ROOT}/datasets/pyscripts/feat_extractor.py](https://github.com/bagustris/SpeeChain/blob/main/datasets/pyscripts/feat_extractor.py).
 
-For more details about the configuration files in `${SPEECHAIN_ROOT}/config/infer/`, please refer to the docstring of the corresponding inference function in [${SPEECHAIN_ROOT}/speechain/infer_func/](https://github.com/ahclab/SpeeChain/tree/main/config/infer).
+For more details about the configuration files in `${SPEECHAIN_ROOT}/config/infer/`, please refer to the docstring of the corresponding inference function in [${SPEECHAIN_ROOT}/speechain/infer_func/](https://github.com/bagustris/SpeeChain/tree/main/config/infer).
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 
 #### Dataset Folder
@@ -322,9 +322,9 @@ Folder architecture is shown below:
             /...
         /data_dumping.sh    # all-in-one speech-text dataset dumping script
 ```
-For more details, please refer to the README.md of each type of dataset in [${SPEECHAIN_ROOT}/datasets/](https://github.com/ahclab/SpeeChain/tree/main/datasets).
+For more details, please refer to the README.md of each type of dataset in [${SPEECHAIN_ROOT}/datasets/](https://github.com/bagustris/SpeeChain/tree/main/datasets).
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 
 #### Recipe Folder
@@ -354,9 +354,9 @@ Folder architecture is shown below:
         /libritts                # Recipes for ASR and TTS trained on LibriTTS 
             ...                     # different ASR-to-TTS settings for LibriTTS
 ```
-For more details, please refer to [${SPEECHAIN_ROOT}/recipes/README.md](https://github.com/ahclab/SpeeChain/tree/main/recipes#recipes-folder-of-the-speechain-toolkit).
+For more details, please refer to [${SPEECHAIN_ROOT}/recipes/README.md](https://github.com/bagustris/SpeeChain/tree/main/recipes#recipes-folder-of-the-speechain-toolkit).
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
     
 #### Main Folder
@@ -391,39 +391,39 @@ Based on the abstract class, many implementation classes are included in the sam
     /snapshooter.py     # The figure snapshooter. Used to transform the input snapshotting materials into the visible figures.
 ```
 
-For more details about `/speechain/criterion`, please refer to [${SPEECHAIN_ROOT}/speechain/criterion/README.md](https://github.com/ahclab/SpeeChain/tree/main/speechain/criterion#criterion).  
-For more details about `/speechain/dataset`, please refer to [${SPEECHAIN_ROOT}/speechain/dataset/README.md](https://github.com/ahclab/SpeeChain/tree/main/speechain/dataset).  
-For more details about `/speechain/iterator`, please refer to [${SPEECHAIN_ROOT}/speechain/iterator/README.md](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#iterator).  
-For more details about `/speechain/model`, please refer to [${SPEECHAIN_ROOT}/speechain/model/README.md](https://github.com/ahclab/SpeeChain/tree/main/speechain/model#model).  
-For more details about `/speechain/module`, please refer to [${SPEECHAIN_ROOT}/speechain/module/README.md](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#module).  
-For more details about `/speechain/optim_sche`, please refer to [${SPEECHAIN_ROOT}/speechain/optim_sche/README.md](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#optimscheduler).  
-For more details about `/speechain/tokenizer`, please refer to [${SPEECHAIN_ROOT}/speechain/tokenizer/README.md](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#tokenizer).
+For more details about `/speechain/criterion`, please refer to [${SPEECHAIN_ROOT}/speechain/criterion/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/criterion#criterion).  
+For more details about `/speechain/dataset`, please refer to [${SPEECHAIN_ROOT}/speechain/dataset/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset).  
+For more details about `/speechain/iterator`, please refer to [${SPEECHAIN_ROOT}/speechain/iterator/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#iterator).  
+For more details about `/speechain/model`, please refer to [${SPEECHAIN_ROOT}/speechain/model/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#model).  
+For more details about `/speechain/module`, please refer to [${SPEECHAIN_ROOT}/speechain/module/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#module).  
+For more details about `/speechain/optim_sche`, please refer to [${SPEECHAIN_ROOT}/speechain/optim_sche/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#optimscheduler).  
+For more details about `/speechain/tokenizer`, please refer to [${SPEECHAIN_ROOT}/speechain/tokenizer/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#tokenizer).
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 
 ### How to customize my own data loading and batching strategy
-For how to customize your own data loading strategy, please refer to the [API document](https://github.com/ahclab/SpeeChain/tree/main/speechain/dataset#api-document) of `/speechain/dataset`.  
+For how to customize your own data loading strategy, please refer to the [API document](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#api-document) of `/speechain/dataset`.  
 
-For how to customize your own data batching, please refer to the [API document](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#api-document) of `/speechain/iterator`.  
+For how to customize your own data batching, please refer to the [API document](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#api-document) of `/speechain/iterator`.  
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 
 ### How to customize my own model
-For how to customize your own model, please refer to the [API document](https://github.com/ahclab/SpeeChain/tree/main/speechain/model#api-document) of `/speechain/model`.
+For how to customize your own model, please refer to the [API document](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#api-document) of `/speechain/model`.
 
-If the existing _Module_ implementations in `/speechain/module`, you can refer to the [API document](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#api-document) of `/speechain/module` for the instructions about how to customize your own modules.
+If the existing _Module_ implementations in `/speechain/module`, you can refer to the [API document](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#api-document) of `/speechain/module` for the instructions about how to customize your own modules.
 
-For the model involving text tokenization like ASR and TTS, if the existing _Tokenizer_ implementations cannot satisfy your needs, you can refer to the [API document](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#api-document) of `/speechain/tokenizer` for the instructions about how to customize your own tokenizers.
+For the model involving text tokenization like ASR and TTS, if the existing _Tokenizer_ implementations cannot satisfy your needs, you can refer to the [API document](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#api-document) of `/speechain/tokenizer` for the instructions about how to customize your own tokenizers.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 
 ### How to customize my own learning rate scheduling strategy
-For how to customize your own optimization strategy, please refer to the [API document](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#api-document) of `/speechain/optim_sche`.
+For how to customize your own optimization strategy, please refer to the [API document](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document) of `/speechain/optim_sche`.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 
 ## For those who want to contribute to SpeeChain
@@ -469,5 +469,5 @@ We have some specifications for you to standardize your contribution:
     * For the temporary variables only used to register data for a short period, please add an underline at the beginning of the name to notify other users.
     For example, '*_tmp_feat_dim*' means the temporary variable used to register the intermediate value of the feature dimension. 
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 

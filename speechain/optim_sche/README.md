@@ -1,18 +1,18 @@
 # OptimScheduler
-[*OptimScheduler*](https://github.com/ahclab/SpeeChain/blob/main/speechain/optim_sche/abs.py) is the base class of all _OptimScheduler_ objects that combine the roles of traditional optimizers and schedulers together. 
+[*OptimScheduler*](https://github.com/bagustris/SpeeChain/blob/main/speechain/optim_sche/abs.py) is the base class of all _OptimScheduler_ objects that combine the roles of traditional optimizers and schedulers together. 
 Its main job is optimizing the target model parameters and scheduling the learning rate during training.  
 In this toolkit, we combine traditional optimizers and schedulers into a single class: OptimScheduler. 
 Each _OptimScheduler_ object has one built-in member optimizer (`torch.optim.Optimizer`) which is initialized automatically by the `optim_type` and `optim_conf` given in your configuration.
 
-👆[Back to the handbook page](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#speechain-handbook)
+👆[Back to the handbook page](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#speechain-handbook)
 
 ## Table of Contents
-1. [**Configuration File Format**](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#configuration-file-format)
-2. [**OptimScheduler Library**](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#optimscheduler-library)
-3. [**API Document**](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#api-document)
-4. [**How to Construct Multiple Optimizers on Multiple Losses**](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#how-to-construct-multiple-optimizers-on-multiple-losses)
-5. [**How to Simulate Large Batch Training with Limited GPUs**](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#how-to-simulate-large-batch-training-with-limited-gpus)
-6. [**How to Perform Fine-tuning**](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#how-to-perform-fine-tuning)
+1. [**Configuration File Format**](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#configuration-file-format)
+2. [**OptimScheduler Library**](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#optimscheduler-library)
+3. [**API Document**](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
+4. [**How to Construct Multiple Optimizers on Multiple Losses**](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#how-to-construct-multiple-optimizers-on-multiple-losses)
+5. [**How to Simulate Large Batch Training with Limited GPUs**](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#how-to-simulate-large-batch-training-with-limited-gpus)
+6. [**How to Perform Fine-tuning**](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#how-to-perform-fine-tuning)
 
 ## Configuration File Format
 The configuration of *OptimScheduler* is given in the `optim_sches` tag of *train_cfg*. 
@@ -51,7 +51,7 @@ optim_sches:
       This part defines the scheduling strategy to adjust the learning rates during training.
       Please refer to the docstrings of your target *OptimScheduler* subclass for more details.
       
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
 
 ## OptimScheduler Library
 ```
@@ -61,23 +61,23 @@ optim_sches:
         /noam.py    # OptimScheduler implementation of the Noam scheduler. Mainly used for Transformer training.
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
 
 ## API Document
 _Non-overridable backbone functions:_
-   1. [speechain_optim_sche.abs.OptimScheduler.\_\_init__](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimscheduler__init__self-optim_type-optim_conf-model-distributed-optim_loss-updated_modules-step_per_update-use_amp-accum_grad-ft_factor-grad_clip-grad_norm_type-sche_conf)
-   2. [speechain.optim_sche.abs.OptimScheduler.step](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulersteplosses-time_func-optim_name-step_num)
-   3. [speechain.optim_sche.abs.OptimScheduler.get_lr](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulerget_lrself)
-   4. [speechain.optim_sche.abs.OptimScheduler.state_dict](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulerstate_dictself)
-   5. [speechain.optim_sche.abs.OptimScheduler.load_state_dict](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulerload_state_dictself-state_dict)
-   6. [speechain.optim_sche.abs.OptimScheduler.\_\_repr__](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimscheduler__repr__self)  
+   1. [speechain_optim_sche.abs.OptimScheduler.\_\_init__](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimscheduler__init__self-optim_type-optim_conf-model-distributed-optim_loss-updated_modules-step_per_update-use_amp-accum_grad-ft_factor-grad_clip-grad_norm_type-sche_conf)
+   2. [speechain.optim_sche.abs.OptimScheduler.step](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulersteplosses-time_func-optim_name-step_num)
+   3. [speechain.optim_sche.abs.OptimScheduler.get_lr](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulerget_lrself)
+   4. [speechain.optim_sche.abs.OptimScheduler.state_dict](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulerstate_dictself)
+   5. [speechain.optim_sche.abs.OptimScheduler.load_state_dict](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulerload_state_dictself-state_dict)
+   6. [speechain.optim_sche.abs.OptimScheduler.\_\_repr__](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimscheduler__repr__self)  
 
 _Overridable interface functions:_  
-   1. [speechain.optim_sche.abs.OptimScheduler.sche_init](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulersche_initsche_conf)
-   2. [speechain.optim_sche.abs.OptimScheduler.update_lr](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulerupdate_lrself-real_step)
-   3. [speechain.optim_sche.abs.OptimScheduler.extra_repr_fn](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulerextra_repr_fnself)
+   1. [speechain.optim_sche.abs.OptimScheduler.sche_init](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulersche_initsche_conf)
+   2. [speechain.optim_sche.abs.OptimScheduler.update_lr](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulerupdate_lrself-real_step)
+   3. [speechain.optim_sche.abs.OptimScheduler.extra_repr_fn](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulerextra_repr_fnself)
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
 
 ### speechain_optim_sche.abs.OptimScheduler.\_\_init__(self, optim_type, optim_conf, model, distributed, optim_loss, updated_modules, step_per_update, use_amp, accum_grad, ft_factor, grad_clip, grad_norm_type, **sche_conf)
 * **Description:**  
@@ -120,7 +120,7 @@ _Overridable interface functions:_
     The arguments used to initialize the customized part of this _OptimScheduler_.   
     Mainly used to decide the learning rate scheduling strategy.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
 
 ### speechain_optim_sche.abs.OptimScheduler.step(losses, time_func, optim_name, step_num)
 * **Description:**  
@@ -137,7 +137,7 @@ _Overridable interface functions:_
     The number of the current training step. 
     This argument is used to update the learning rate for the current step by `self.update_lr()`.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
 
 ### speechain_optim_sche.abs.OptimScheduler.get_lr(self)
 * **Description:**  
@@ -145,7 +145,7 @@ _Overridable interface functions:_
 * **Return:** float  
   The value of the learning rates obtained from `self.optimizer.param_groups`.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
 
 ### speechain_optim_sche.abs.OptimScheduler.state_dict(self)
 * **Description:**  
@@ -153,7 +153,7 @@ _Overridable interface functions:_
 * **Return:** Dict  
   The status Dict containing the current status of the built-in `torch.optim.Optimizer` and the built-in `torch.cuda.amp.GradScaler` (if had).
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
 
 ### speechain_optim_sche.abs.OptimScheduler.load_state_dict(self, state_dict)
 * **Description:**  
@@ -162,7 +162,7 @@ _Overridable interface functions:_
   * _**state_dict:**_ Dict  
     The status information loaded from the existing checkpoint.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
 
 ### speechain_optim_sche.abs.OptimScheduler.\_\_repr__(self)
 * **Description:**  
@@ -172,7 +172,7 @@ _Overridable interface functions:_
 * **Return:** str  
     The description string for the OptimScheduler object.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
 
 ### speechain_optim_sche.abs.OptimScheduler.sche_init(**sche_conf)
 * **Description:**  
@@ -183,7 +183,7 @@ _Overridable interface functions:_
     The arguments used to initialize the customized part of this OptimScheduler.
     For more details about the learning rate scheduling strategy, please refer to the docstring of `sche_init()` of your target OptimScheduler subclass.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
 
 ### speechain_optim_sche.abs.OptimScheduler.update_lr(self, real_step)
 * **Description:**  
@@ -196,7 +196,7 @@ _Overridable interface functions:_
 * **Return:** float  
     The learning rate used for parameter optimization in the current training step.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
 
 ### speechain_optim_sche.abs.OptimScheduler.extra_repr_fn(self)
 * **Description:**  
@@ -207,9 +207,9 @@ _Overridable interface functions:_
 * **Return:** str  
     The specific part of the description string of the _OptimScheduler_ object. 
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
 
 ## How to Construct Multiple Optimizers on Multiple Losses
 The cooperation of multiple optimizers is handled by 3 arguments: _optim_losses_, _updated_modules_, and _step_per_update_. 
@@ -242,7 +242,7 @@ optim_sches:
             updated_modules: decoder
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
 
 ## How to Simulate Large Batch Training with Limited GPUs
 We provide a method called gradient accumulation (implemented by the argument `accum_grad` in _exp_cfg_) to train your model with large batches that are beyond the memory of your GPUs. 
@@ -269,11 +269,11 @@ Unfortunately, gradient accumulation is not identical to large batch training.
 Since small batches are used to calculate the gradients of each step, some calculations of large batch training cannot be simulated (e.g. _BatchNorm_ and _FeatureNormalization_). 
 Therefore, the performance of the model trained by gradient accumulation may be slightly different from the one trained by the actual large batches. 
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
 
 ## How to Perform Fine-tuning
 In the normal setting, we need to scale down the learning rates by a factor of 10 to 100 for fine-tuning a pretrained model. 
 In this toolkit, the learning rates can be easily scaled down by the input argument `ft_factor` in _exp_cfg_ without changing the scheduling configuration of your optimscheduler. 
 It's no longer necessary for you to redesign the scheduler configuration for fine-tuning!
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)

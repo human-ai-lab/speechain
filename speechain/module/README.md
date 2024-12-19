@@ -1,6 +1,6 @@
 # Module
 
-[*Module*](https://github.com/ahclab/SpeeChain/blob/main/speechain/module/abs.py) inherits `torch.nn.Module` and it is the base class for all _Module_ objects in this toolkit. 
+[*Module*](https://github.com/bagustris/SpeeChain/blob/main/speechain/module/abs.py) inherits `torch.nn.Module` and it is the base class for all _Module_ objects in this toolkit. 
 The neural network parts of all the _Model_ objects in this toolkit are constructed by multiple _Module_ objects in a nested structure.  
 Below is the nested _Module_ tree of an encoder-decoder ASR model:
 ```
@@ -25,11 +25,11 @@ ASR (Model)
 ```
 This base class has two required abstract interface functions that must be overriden by all _Module_ subclasses: `module_init()` for module initialization and `forward()` for output calculation.
 
-👆[Back to the handbook page](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#speechain-handbook)
+👆[Back to the handbook page](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#speechain-handbook)
 
 ## Table of Contents
-1. [**Module Library**](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#module-library)
-2. [**API Document**](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#api-document)
+1. [**Module Library**](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#module-library)
+2. [**API Document**](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#api-document)
 
 ## Module Library
 ```
@@ -68,19 +68,19 @@ This base class has two required abstract interface functions that must be overr
             /feed_forward.py    # Module implementation of point-wise feed-forward layers.
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#table-of-contents)
 
 
 ## API Document
 _Non-overridable backbone functions:_
-   1. [speechain.module.abs.Module.\_\_init__](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodule__init__self-input_size-distributed-module_conf)  
+   1. [speechain.module.abs.Module.\_\_init__](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodule__init__self-input_size-distributed-module_conf)  
 
 _Overridable interface functions:_  
-   2. [speechain.module.abs.Module.module_init](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodulemodule_initself-module_conf)
-   3. [speechain.module.abs.Module.forward](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#speechainmoduleabsmoduleforwardself-kwargs)
-   4. [speechain.module.abs.Module.recover](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodulerecoverself-kwargs)
-   5. [speechain.module.abs.Module.reset_parameters](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodulereset_parametersself)
-   6. [speechain.module.abs.Module.get_recordable_para](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#speechainmoduleabsmoduleget_recordable_paraself)
+   2. [speechain.module.abs.Module.module_init](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodulemodule_initself-module_conf)
+   3. [speechain.module.abs.Module.forward](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmoduleforwardself-kwargs)
+   4. [speechain.module.abs.Module.recover](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodulerecoverself-kwargs)
+   5. [speechain.module.abs.Module.reset_parameters](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodulereset_parametersself)
+   6. [speechain.module.abs.Module.get_recordable_para](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmoduleget_recordable_paraself)
 
 ### speechain.module.abs.Module.\_\_init__(self, input_size, distributed, **module_conf)
 * **Description:**  
@@ -98,7 +98,7 @@ _Overridable interface functions:_
   * _****module_conf:**_  
     The arguments used by `module_init()` for your customized _Module_ initialization.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#api-document)
 
 ### speechain.module.abs.Module.module_init(self, **module_conf)
 * **Description:**  
@@ -109,7 +109,7 @@ _Overridable interface functions:_
     The arguments used for customized Module initialization.
     For more details, please refer to the docstring of your target Module subclass.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#api-document)
 
 ### speechain.module.abs.Module.forward(self, **kwargs)
 * **Description:**  
@@ -123,7 +123,7 @@ _Overridable interface functions:_
   Module forward calculation results.  
   For more details, please refer to the docstring of `forward()` of your target _Module_ subclass.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#api-document)
 
 ### speechain.module.abs.Module.recover(self, **kwargs)
 * **Description:**  
@@ -138,7 +138,7 @@ _Overridable interface functions:_
   The recovered data or closely-recovered data (sometimes `forward()` may not be totally recoverable).  
   For more details, please refer to the docstring of `recover()` of your target _Module_ subclass.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#api-document)
 
 ### speechain.module.abs.Module.reset_parameters(self)
 * **Description:**  
@@ -149,7 +149,7 @@ _Overridable interface functions:_
   This interface function is not mandatory to be overridden.  
   **Note:** Don't forget to add `self.default_init_modules.append(YourModule)` in `model_init()` of your _Model_.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#api-document)
 
 ### speechain.module.abs.Module.get_recordable_para(self)
 * **Description:**  
@@ -172,6 +172,6 @@ _Overridable interface functions:_
   For the leaf module, the default implementation returns None;  
   For the non-leaf module, the default implementation returns a Dict containing names and recordable parameters of its member modules.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#api-document)
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/module#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#table-of-contents)

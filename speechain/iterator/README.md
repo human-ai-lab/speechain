@@ -1,19 +1,19 @@
 # Iterator
 
-[*Iterator*](https://github.com/ahclab/SpeeChain/blob/main/speechain/iterator/abs.py) is the base class that takes charge of grouping data instances into batches for training or testing models.
+[*Iterator*](https://github.com/bagustris/SpeeChain/blob/main/speechain/iterator/abs.py) is the base class that takes charge of grouping data instances into batches for training or testing models.
 Each iterator object has a built-in _speechain.dataset.Dataset_ object as a member variable. 
 Actually, an _Iterator_ object cannot directly access the data instances in the built-in _Dataset_ object but maintains a batching view of the indices of the data instances used for model training or testing.
 
 The iterators are divided into 3 groups: *train*, *valid*, and *test*. 
 In each group, 2 or more iterator objects can be constructed so that there could be multiple data-label pairs in a single batch.
 
-👆[Back to the handbook page](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#speechain-handbook)
+👆[Back to the handbook page](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#speechain-handbook)
 
 ## Table of Contents
-1. [**Configuration File Format**](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#configuration-file-format)
-2. [**Iterator Library**](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#iterator-library)
-3. [**API Document**](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#api-document)
-4. [**How to Construct Multiple Dataloaders for a Batch**](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#how-to-construct-multiple-dataloaders)
+1. [**Configuration File Format**](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#configuration-file-format)
+2. [**Iterator Library**](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#iterator-library)
+3. [**API Document**](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#api-document)
+4. [**How to Construct Multiple Dataloaders for a Batch**](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#how-to-construct-multiple-dataloaders)
 
 ## Configuration File Format
 The configuration of *Iterator* is given in *data_cfg*. 
@@ -75,10 +75,10 @@ The combination of your first-level keys must be one of **train & valid & test**
          For example, `speech_text.SpeechTextDataset` means the subclass `SpeechTextDataset` in `./speechain/dataset/speech_text.py`.
          2. **dataset_conf:**  
          The value of this key contains all the configuration used to initialize the built-in *Dataset* object. 
-         Please refer to [Dataset API Document](https://github.com/ahclab/SpeeChain/tree/main/speechain/dataset#api-document) for more details.
+         Please refer to [Dataset API Document](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#api-document) for more details.
          3. **General Iterator Configuration:**  
          These configurations are used to initialize the general part shared by all iterator subclasses. 
-         There are 6 general arguments that can be set manually in _data_cfg:_ (please refer to [speechain.iterator.abs.Iterator.\_\_init__](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#__init__self-dataset_type-dataset_conf-batches_per_epoch-data_len-group_info-data_selection-is_descending-shuffle-seed-ngpu-num_workers-pin_memory-distributed-iter_conf) for more details)  
+         There are 6 general arguments that can be set manually in _data_cfg:_ (please refer to [speechain.iterator.abs.Iterator.\_\_init__](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#__init__self-dataset_type-dataset_conf-batches_per_epoch-data_len-group_info-data_selection-is_descending-shuffle-seed-ngpu-num_workers-pin_memory-distributed-iter_conf) for more details)  
             1. batches_per_epoch
             2. is_descending
             3. shuffle
@@ -88,7 +88,7 @@ The combination of your first-level keys must be one of **train & valid & test**
          The arguments of the customized configuration are used by each *Iterator* subclass to generate the batching view. 
          Please refer to your target *Iterator* subclass for more details.
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#table-of-contents)
 
 ## Iterator Library
 ```
@@ -99,20 +99,20 @@ The combination of your first-level keys must be one of **train & valid & test**
         /piece.py       # Iterator implementation of the piece strategy (fixed utterances per batch). Mainly used for ASR and TTS evaluation.
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#table-of-contents)
 
 ## API Document
-[**speechain.iterator.abs.Iterator**](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#speechainiteratorabsiterator)  
+[**speechain.iterator.abs.Iterator**](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#speechainiteratorabsiterator)  
 1. _Non-overridable backbone functions:_
-   1. [\_\_init\_\_](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#__init__self-dataset_type-dataset_conf-batches_per_epoch-data_len-group_info-data_selection-is_descending-shuffle-seed-ngpu-num_workers-pin_memory-distributed-iter_conf)
-   2. [\_\_len\_\_](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#__len__self)
-   3. [get_batch_indices](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#get_batch_indicesself)
-   4. [get_group_info](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#get_group_infoself)
-   5. [build_loader](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#build_loaderself-epoch-start_step)
+   1. [\_\_init\_\_](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#__init__self-dataset_type-dataset_conf-batches_per_epoch-data_len-group_info-data_selection-is_descending-shuffle-seed-ngpu-num_workers-pin_memory-distributed-iter_conf)
+   2. [\_\_len\_\_](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#__len__self)
+   3. [get_batch_indices](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#get_batch_indicesself)
+   4. [get_group_info](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#get_group_infoself)
+   5. [build_loader](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#build_loaderself-epoch-start_step)
 2. _Overridable interface functions:_  
-   1. [batches_generate_fn](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#batches_generate_fnself-data_index-data_len-batch_size)
+   1. [batches_generate_fn](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#batches_generate_fnself-data_index-data_len-batch_size)
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#table-of-contents)
 
 ### speechain.iterator.abs.Iterator
 The initialization of the built-in _Dataset_ object is done automatically during the initialization of the iterator.
@@ -156,7 +156,7 @@ Each iterator subclass should override a static hook function `batches_generate_
   * **_iter_conf:_** Dict  
     Iterator configuration for customized batch generation
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#api-document)
 
 #### \_\_len\_\_(self)
 * **Description:**  
@@ -164,7 +164,7 @@ Each iterator subclass should override a static hook function `batches_generate_
 * **Return:**  
     If _batches_per_epoch_ is given, its value will be returned; otherwise, the total number of all the batches in the built-in _Dataset_ object will be returned.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#api-document)
 
 #### get_batch_indices(self)
 * **Description:**  
@@ -173,7 +173,7 @@ Each iterator subclass should override a static hook function `batches_generate_
     The batching view generated by the customized hook interface `batches_generate_fn()`. 
     Each element of the returned batching view list is a sub-list of data indices where each index corresponds to a data instance in the built-in _Dataset_ object.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#api-document)
 
 #### get_group_info(self)
 * **Description:**  
@@ -183,7 +183,7 @@ Each iterator subclass should override a static hook function `batches_generate_
     If metadata information is not initialized in the built-in _Dataset_ object, None will be returned.
     Otherwise, the meta_info member of the built-in _Dataset_ object will be returned which is a dictionary.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#api-document)
 
 #### build_loader(self, epoch, start_step)
 * **Description:**  
@@ -203,7 +203,7 @@ Each iterator subclass should override a static hook function `batches_generate_
     A DataLoader built on the batch clip of the current epoch. 
     If `batches_per_epoch` is not given, the batch clip is `self.batches`.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#api-document)
 
 #### batches_generate_fn(self, data_index, data_len, batch_size)
 * **Description:**  
@@ -226,9 +226,9 @@ Each iterator subclass should override a static hook function `batches_generate_
   A list of batches generated by your batching strategy. This List[List[str]] is called the batching view of the iterator object.
   Each batch in the returned list is a sub-list whose elements are the indices of data instances in the corresponding batch.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#api-document)
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#table-of-contents)
 
 
 ## How to Construct Multiple Dataloaders
@@ -342,4 +342,4 @@ Each iterator subclass should override a static hook function `batches_generate_
 
 [//]: # (```)
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/iterator#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#table-of-contents)

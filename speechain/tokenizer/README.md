@@ -1,16 +1,16 @@
 # Tokenizer
-[_Tokenizer_](https://github.com/ahclab/SpeeChain/blob/main/speechain/tokenizer/abs.py#L14) is the base class of all the _Tokenizer_ objects in this toolkit. 
+[_Tokenizer_](https://github.com/bagustris/SpeeChain/blob/main/speechain/tokenizer/abs.py#L14) is the base class of all the _Tokenizer_ objects in this toolkit. 
 It on-the-fly transforms text data between strings and tensors.  
 
 For data storage and visualization, the text data should be in the form of strings which is not friendly for model forward calculation. 
 For model forward calculation, the text data is better to be in the form of vectors (`torch.tensor` or `numpy.ndarray`).
 
 
-👆[Back to the handbook page](https://github.com/ahclab/SpeeChain/blob/main/handbook.md#speechain-handbook)
+👆[Back to the handbook page](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#speechain-handbook)
 
 ## Table of Contents
-1. [**Tokenizer Library**](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#tokenizer-library)
-2. [**API Documents**](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#api-document)
+1. [**Tokenizer Library**](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#tokenizer-library)
+2. [**API Documents**](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#api-document)
 
 
 ## Tokenizer Library
@@ -23,16 +23,16 @@ For model forward calculation, the text data is better to be in the form of vect
         /g2p.py         # Tokenizer implementation of the phoneme tokenizer by G2P package.
 ```
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#table-of-contents)
 
 ## API Document
 _Non-overridable backbone functions:_
-1. [speechain.tokenizer.abs.Tokenizer.\_\_init__](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#speechaintokenizerabstokenizer__init__self-token_vocab-tokenizer_conf)
+1. [speechain.tokenizer.abs.Tokenizer.\_\_init__](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#speechaintokenizerabstokenizer__init__self-token_vocab-tokenizer_conf)
 
 _Overridable interface functions:_  
-1. [speechain.tokenizer.abs.Tokenizer.tokenizer_init_fn](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#speechaintokenizerabstokenizertokenizer_init_fnself-tokenizer_conf)
-2. [speechain.tokenizer.abs.Tokenizer.tensor2text](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#speechaintokenizerabstokenizertensor2textself-tensor)
-3. [speechain.tokenizer.abs.Tokenizer.text2tensor](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#speechaintokenizerabstokenizertext2tensorself-text)
+1. [speechain.tokenizer.abs.Tokenizer.tokenizer_init_fn](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#speechaintokenizerabstokenizertokenizer_init_fnself-tokenizer_conf)
+2. [speechain.tokenizer.abs.Tokenizer.tensor2text](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#speechaintokenizerabstokenizertensor2textself-tensor)
+3. [speechain.tokenizer.abs.Tokenizer.text2tensor](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#speechaintokenizerabstokenizertext2tensorself-text)
 
 
 ### speechain.tokenizer.abs.Tokenizer.\_\_init__(self, token_vocab, **tokenizer_conf)
@@ -50,7 +50,7 @@ _Overridable interface functions:_
   * _****tokenizer_conf:**_  
     The arguments used by `tokenizer_init_fn()` for your customized _Tokenizer_ initialization.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#api-document)
 
 ### speechain.tokenizer.abs.Tokenizer.tokenizer_init_fn(self, **tokenizer_conf)
 * **Description:**  
@@ -61,7 +61,7 @@ _Overridable interface functions:_
     The arguments used by `tokenizer_init_fn()` for your customized _Tokenizer_ initialization.  
     For more details, please refer to the docstring of your target _Tokenizer_ subclass.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#api-document)
 
 ### speechain.tokenizer.abs.Tokenizer.tensor2text(self, tensor)
 * **Description:**  
@@ -76,7 +76,7 @@ _Overridable interface functions:_
 * **Return:**  
     The string of the decoded sentence.
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#api-document)
 
 ### speechain.tokenizer.abs.Tokenizer.text2tensor(self, text)
 * **Description:**  
@@ -93,6 +93,6 @@ _Overridable interface functions:_
 * **Return:** torch.LongTensor  
     The tensor of the encoded sentence
 
-👆[Back to the API list](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#api-document)
+👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#api-document)
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/speechain/tokenizer#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#table-of-contents)
