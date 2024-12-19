@@ -28,11 +28,7 @@ token_type: sentencepiece
 token_num: bpe5k
 
 # batch-related values
-<<<<<<< HEAD
 batch_len: 4.5e3 #4
-=======
-batch_len: 4.5e3 # 4.5e4
->>>>>>> 6716bb38aadce2c94bc523e8142a738b25b93d3a
 
 # model-related
 label_smoothing: 0.0

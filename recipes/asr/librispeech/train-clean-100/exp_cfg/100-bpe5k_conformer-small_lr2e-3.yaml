@@ -19,7 +19,7 @@
 # Experiment Parameters and setup #
 ###################################
 # dataset-related
-# if your dumped dataset is outside the toolkit folder, please change dataset_path. There should be a folder named 'libritts' in dataset_path
+# if your dumped dataset is outside the toolkit folder, please change dataset_path. There should be a folder named <dataset> in <dataset_path>
 dataset_path: datasets/
 dataset: librispeech
 train_set: train-clean-100

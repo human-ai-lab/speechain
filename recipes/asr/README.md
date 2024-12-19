@@ -1,4 +1,6 @@
-# Automatic Speech Recognition (ASR)
+# ASR
+
+ASR (Automatic Speech Recognition) is a technology that converts spoken language into text. ASR is widely used in various applications such as voice assistants, dictation software, and transcription services. SpeeChain provides a collection of ASR recipes that allow users to train and evaluate ASR models on various datasets. The recipes include configurations for different backbones, such as transformer and conformer, and provide pretrained models for reproducibility. Users can also create their own ASR models by following the instructions in the recipes.
 
 👆[Back to the recipe README.md](https://github.com/ahclab/SpeeChain/tree/main/recipes#recipes-folder-of-the-speechain-toolkit)
 
@@ -8,31 +10,33 @@
 3. [Training an ASR model](https://github.com/ahclab/SpeeChain/tree/main/recipes/asr#training-an-asr-model)
 4. [Creating your own ASR model](https://github.com/ahclab/SpeeChain/tree/main/recipes/asr#creating-your-own-asr-model)
 
-## Available Backbones
+## Available Backbones (WER with/without LM)
 <table>
 	<tr>
 	    <th>Dataset</th>
 	    <th>Subset</th>
 	    <th>Configuration</th>
-	    <th>WER w/o. LM</th>  
-	    <th>WER w. LM</th>  
+	    <th>Test Clean</th>  
+	    <th>Test Other</th>  
 	</tr>
-	<tr>
-	    <td rowspan="8">librispeech</td>
-       <td>train-clean-5</td>
-       <td>5-bpe1k_transformer-wide_lr2e-3</td>
-       <td> 42.08% / 22.03% </td>
-       <td> % / % </td>
    <tr>
+      <td rowspan="8">librispeech</td>
+      <td rowspan="1">train-clean-5</td>
+      <td>5-bpe5k_conformer-small_lr2e-3</td>
+      <td>15.2% / 35.8%</td>
+      <td>35.8% / 42.3%</td>
+   </tr>
+	<tr>
+	    <!-- <td rowspan="8">librispeech</td> -->
 	    <td rowspan="4">train-clean-100</td>
 	    <td>100-bpe5k_transformer-wide_lr2e-3</td>
 	    <td> 8.40% / 21.92% </td>
 	    <td> 5.50% / 15.56% </td>
 	</tr>
     <tr>
-       <td>100-bpe5k_conformer-small_lr2e-3</td>
-	    <td> 8.50% / 23.50% </td>
-	    <td> 5.45% / 16.74% </td>
+        <td>100-bpe5k_conformer-small_lr2e-3</td>
+	    <td> 6.3% / 9.3% </td>
+	    <td> 19.14% / 25.2% </td>
     </tr>
     <tr>
         <td>100-bpe5k_conformer-medium_lr2e-3</td>
@@ -75,7 +79,7 @@
 	</tr>
 </table>
 
-👆[Back to the table of contents](https://github.com/ahclab/SpeeChain/tree/main/recipes/asr#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#table-of-contents)
 
 
 ## Pretrained Models for Reproducibility
