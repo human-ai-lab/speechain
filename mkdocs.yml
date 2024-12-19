@@ -34,8 +34,16 @@ markdown_extensions:
 nav:
   - index.md
   - datasets.md
+    - ljspeech.md
   - recipes.md
   - asr.md
   - tts.md
+  - criterion.md
+  - dataset.md
+  - iterator.md
+  - model.md
+  - module.md
+  - optim_sche.md
+  - tokenizer.md
   - handbook.md
   - Reference: reference/ 

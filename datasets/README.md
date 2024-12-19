@@ -1,4 +1,4 @@
-# Datasets
+# Datasets (Directory)
 
 The `dataset` folder contains all the available datasets in this toolkit. 
 Each dataset corresponds to a sub-folder and has a uniform file system. 

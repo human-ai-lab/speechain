@@ -1,4 +1,4 @@
-# Dataset
+# Dataset (Module)
 
 [*Dataset*](https://github.com/bagustris/SpeeChain/blob/main/speechain/dataset/abs.py) is the base class that takes charge of reading the data instances from the disk into the memory and packaging them into a batch for model training or testing.
 
