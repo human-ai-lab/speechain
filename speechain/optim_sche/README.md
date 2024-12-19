@@ -1,4 +1,5 @@
-# OptimScheduler
+# OptimScheduler 
+
 [*OptimScheduler*](https://github.com/bagustris/SpeeChain/blob/main/speechain/optim_sche/abs.py) is the base class of all _OptimScheduler_ objects that combine the roles of traditional optimizers and schedulers together. 
 Its main job is optimizing the target model parameters and scheduling the learning rate during training.  
 In this toolkit, we combine traditional optimizers and schedulers into a single class: OptimScheduler. 

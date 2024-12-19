@@ -1,4 +1,5 @@
-# Model
+# Model  
+
 [*Model*](https://github.com/bagustris/SpeeChain/blob/main/speechain/model/abs.py) is the hub of this part where different *Module* and *Criterion* objects can be freely assembled to create a model.
 _Model_ encapsulates the general model-related services and provides sufficient interface functions for you to override to customize your own models. 
 

@@ -34,7 +34,6 @@ markdown_extensions:
 nav:
   - index.md
   - datasets.md
-    - ljspeech.md
   - recipes.md
   - asr.md
   - tts.md
