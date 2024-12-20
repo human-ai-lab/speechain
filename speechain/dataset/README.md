@@ -17,7 +17,7 @@ Some post-processing steps need to be done in the _Model_ object later.
 
 
 ## Configuration File Format
-```
+```yaml
 dataset_conf:
     main_data:
         {data_name1}: {data_file_path1}
@@ -43,7 +43,7 @@ dataset_conf:
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#table-of-contents)
 
 ## Dataset Library
-```
+```bash
 /speechain
     /dataset
         /abs.py             # Abstract class of Dataset. Base of all Dataset implementations.
@@ -105,7 +105,7 @@ If you want to make your own _Dataset_ implementation, please follow the instruc
        1. 'min': Select the data instances who have smaller metadata.
        2. 'max': Select the data instances who have larger  metadata.
        3. 'middle': Remove the data instances whose metadata is the largest and smallest.
-  * _****dataset_conf:**_  
+  * _\****dataset_conf:**_  
   The configuration arguments for customized Dataset initialization.
 
 👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#api-document)

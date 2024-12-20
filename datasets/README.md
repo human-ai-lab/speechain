@@ -243,16 +243,17 @@ For dumping an existing dataset,
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
 
 ## How to Extract Speaker Embedding by my own model
-If you want to use the pretrained speaker embedding model on your machine, please
+If you want to use the pretrained speaker embedding model on your machine, please:  
 1. Don't give the argument `--spk_emb_model` when running the command `bash run.sh`  
-2. Write your own extraction script. You can use the metadata files `idx2wav` and `idx2wav_len` to read and organize the audio files. 
+2. Write your own extraction script. You can use the metadata files `idx2wav` and `idx2wav_len` to read and organize the audio files.  
 Please save all the speaker embedding vectors to a specific folder in the same directory of `idx2wav` and give a metadata file named `idx2spk_feat` for data reference.  
+
 **Note:** 
    1. For the file format of `idx2spk_feat`, please click [here](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2spk_feat) for reference.
    2. Please keep the same data index with `idx2wav` in your `idx2spk_feat`.
    3. Each speaker embedding vector should be in the shape of `[1, spk_feat_dim]`.
-   4. Speaker embedding vectors could be saved in two ways:
-      1. save each vector to an individual `.npy` file
+   4. Speaker embedding vectors could be saved in two ways:  
+      1. save each vector to an individual `.npy` file  
       2. save all vectors to a `.npz` file where the index of each vector is exactly the one in `idx2spk_feat`.
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)

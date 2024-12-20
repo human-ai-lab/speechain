@@ -84,12 +84,13 @@ ASR (Automatic Speech Recognition) is a technology that converts spoken language
 
 ## Pretrained Models for Reproducibility
 For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/recipes/asr/`, we provide the following pretrained models to ensure consistent performance:  
-1. SentencePiece tokenizer models ([GoogleDrive](https://drive.google.com/drive/u/0/folders/1ZrnodlK2Ta6wnvhpXf79W27omSUVOaG0)). 
+
+1. SentencePiece tokenizer models  
    * Please download tokenizer model and vocabulary to where your dataset is dumped. The default path is `${SPEECHAIN_ROOT}/datasets`.   
      **Note:** If your dataset is dumped outside SpeeChain, please replace `${SPEECHAIN_ROOT}/datasets` in the following commands by your place.
    * **LibriSpeech:**
      1. **train-clean-100:** 
-          ```
+          ```bash
           # Download BPE model
           gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc https://drive.google.com/uc?id=1OQGKJqpEykl6hQwx-3xuWeaEdU7kDVTS
 
@@ -97,7 +98,7 @@ For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/r
           gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc https://drive.google.com/uc?id=1lGhDi2NI_ukI5Z9Z-MjOHoUEz5YGcJX9
           ```
      2. **train-clean-460:** 
-          ```
+          ```bash
           # Download BPE model
           gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc https://drive.google.com/uc?id=1WAmcHvilnzB7r0kgND91LLReeX_NW7A4
 
@@ -105,7 +106,7 @@ For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/r
           gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc https://drive.google.com/uc?id=1isfQn75l-Szu0WPGBr1ZaR3pb20SDa2F
           ```
      3. **train-960:** 
-          ```
+          ```bash
           # Download BPE model
           gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc https://drive.google.com/uc?id=1uFRm1DcPivFqjo1Kiy-uVSFTf3e9y1S4
 
@@ -117,7 +118,7 @@ For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/r
      **Note:** If you want to store model files outside SpeeChain, please replace `${SPEECHAIN_ROOT}/recipes/lm` in the following commands by your place. Also, change the `lm_cfg_path` and `lm_model_path` arguments in each ASR configuration file.
    * **LibriSpeech:**
      1. **train-clean-100:** 
-          ```
+          ```bash
           # Download LM model
           gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/lm_text/exp/100-bpe5k_transformer_gelu/models https://drive.google.com/uc?id=1ZsFKRb8UBpzDjWcjpQcxt4rT4J6CuKAm
 
@@ -125,7 +126,7 @@ For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/r
           gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/lm_text/exp/100-bpe5k_transformer_gelu https://drive.google.com/uc?id=1TRtIOu2ptXTKphY77cF3fne9b-i-vNJD
           ```
      2. **train-960:**
-          ```
+          ```bash
           # Download LM model
           gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/train-960_lm_text/exp/960-bpe5k_transformer_gelu/models https://drive.google.com/uc?id=1hMFlaJVojonyBiwaXmC_I7iLxI-kSWit
 
