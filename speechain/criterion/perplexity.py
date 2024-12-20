@@ -5,7 +5,7 @@ from speechain.utilbox.train_util import make_mask_from_len
 
 
 class Perplexity(Criterion):
-    """ """
+    """"""
 
     def __call__(
         self, logits: torch.Tensor, text: torch.Tensor, text_len: torch.Tensor

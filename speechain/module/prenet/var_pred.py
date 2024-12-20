@@ -24,6 +24,7 @@ class LayerNorm(torch.nn.LayerNorm):
 
     def forward(self, x):
         """Apply layer normalization.
+
         Args:
             x (torch.Tensor): Input tensor.
         Returns:

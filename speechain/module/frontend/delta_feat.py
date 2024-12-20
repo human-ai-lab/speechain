@@ -10,7 +10,7 @@ from speechain.module.abs import Module
 
 
 class DeltaFeature(Module):
-    """ """
+    """"""
 
     def module_init(self, delta_order: int = 1, delta_N: int = 2):
         """

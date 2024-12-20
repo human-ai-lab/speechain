@@ -13,12 +13,12 @@ from speechain.module.frontend.speech2linear import Speech2LinearSpec
 
 
 class Speech2MelSpec(Module):
-    """
-    The acoustic frontend where the input is raw speech waveforms and the output is log-mel spectrogram.
+    """The acoustic frontend where the input is raw speech waveforms and the output is
+    log-mel spectrogram.
 
-    The waveform is first converted into linear spectrogram by STFT. Then, the linear spectrogram is converted into
-    log-mel spectrogram by mel-fbank filters. Finally, the delta features of log-mel spectrogram are calculated if specified.
-
+    The waveform is first converted into linear spectrogram by STFT. Then, the linear
+    spectrogram is converted into log-mel spectrogram by mel-fbank filters. Finally, the
+    delta features of log-mel spectrogram are calculated if specified.
     """
 
     def module_init(

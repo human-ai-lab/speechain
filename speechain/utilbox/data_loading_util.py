@@ -21,8 +21,8 @@ from speechain.utilbox.import_util import parse_path_args
 def read_data_by_path(
     data_path: str, return_tensor: bool = False, return_sample_rate: bool = False
 ) -> np.ndarray or torch.Tensor:
-    """
-    This function reads data from the file in the specified path, considering the file format and extension.
+    """This function reads data from the file in the specified path, considering the
+    file format and extension.
 
     Args:
         data_path (str):
@@ -39,7 +39,6 @@ def read_data_by_path(
 
     Raises:
         NotImplementedError: If the file format is not supported, this error is raised.
-
     """
     # get the folder directory and data file name
     folder_path, data_file = os.path.dirname(data_path), os.path.basename(data_path)
@@ -95,8 +94,7 @@ def load_idx2data_file(
     separator: str = " ",
     do_separate: bool = True,
 ) -> Dict[str, Any]:
-    """
-    Load a dictionary from a file or a list of files containing key-value pairs,
+    """Load a dictionary from a file or a list of files containing key-value pairs,
     where the key is the index of a data instance and the value is the target data.
 
     Args:
@@ -245,8 +243,8 @@ def search_file_in_subfolder(
     return_name: bool = False,
     return_sorted: bool = True,
 ):
-    """
-    Search for files in a directory and its subdirectories that satisfy a certain condition.
+    """Search for files in a directory and its subdirectories that satisfy a certain
+    condition.
 
     Args:
         curr_query (str):
@@ -306,8 +304,7 @@ def search_file_in_subfolder(
 
 
 def get_file_birthtime(file_path: str, readable_time: bool = False):
-    """
-    Get the creation time of a file.
+    """Get the creation time of a file.
 
     Args:
         file_path (str):

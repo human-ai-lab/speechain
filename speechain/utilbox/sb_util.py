@@ -17,7 +17,6 @@ class SpeechBrainWrapper(object):
         feat -> vocoder -> wav
     After wrapping:
         feat, feat_len -> SpeechBrainWrapper(vocoder) -> wav, wav_len
-
     """
 
     def __init__(self, vocoder: HIFIGAN):

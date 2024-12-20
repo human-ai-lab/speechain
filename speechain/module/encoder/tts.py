@@ -18,7 +18,7 @@ from speechain.utilbox.train_util import make_mask_from_len
 
 
 class TTSEncoder(Module):
-    """ """
+    """"""
 
     def module_init(
         self,

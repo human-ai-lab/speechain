@@ -12,8 +12,9 @@ from speechain.module.abs import Module
 
 
 class EmbedPrenet(Module):
-    """
-    Create new embeddings for the vocabulary. Use scaling for the Transformer.
+    """Create new embeddings for the vocabulary.
+
+    Use scaling for the Transformer.
     """
 
     def module_init(
@@ -50,8 +51,7 @@ class EmbedPrenet(Module):
         )
 
     def forward(self, text: torch.Tensor):
-        """
-        Perform lookup for input `x` in the embedding table.
+        """Perform lookup for input `x` in the embedding table.
 
         Args:
             text: (batch, seq_len)

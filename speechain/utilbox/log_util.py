@@ -19,13 +19,13 @@ from speechain.model.abs import Model
 
 @contextmanager
 def distributed_zero_first(distributed: bool, rank: int):
-    """
-    Decorator to make all other processes in distributed training wait for the master process to do something.
-    Have no influence on the single-GPU training case.
+    """Decorator to make all other processes in distributed training wait for the master
+    process to do something. Have no influence on the single-GPU training case.
 
-    However, this ContextManager function will cause an extra GPU memory consumption for each process in the
-    multi-GPU training setting. These memory occupations are neither allocated memory nor reserved memory,
-    which may be the CUDA context memory. I haven't found any effective solutions to release them so far.
+    However, this ContextManager function will cause an extra GPU memory consumption for
+    each process in the multi-GPU training setting. These memory occupations are neither
+    allocated memory nor reserved memory, which may be the CUDA context memory. I
+    haven't found any effective solutions to release them so far.
     """
     if distributed and rank != 0:
         torch.distributed.barrier()
@@ -95,8 +95,7 @@ def logger_stdout_file(
 
 
 def model_summary(model: Model) -> str:
-    """
-    Return the information summary of the model for logging.
+    """Return the information summary of the model for logging.
 
     Codes borrowed from
     https://github.com/espnet/espnet/blob/a2abaf11c81e58653263d6cc8f957c0dfd9677e7/espnet2/torch_utils/model_summary.py#L48
@@ -105,7 +104,6 @@ def model_summary(model: Model) -> str:
         model:
 
     Returns:
-
     """
 
     def get_human_readable_count(number: int) -> str:

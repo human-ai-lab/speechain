@@ -14,10 +14,7 @@ from speechain.utilbox.train_util import make_mask_from_len
 
 
 class LM(Model):
-    """
-    Auto-Regressive Attention-based Language Model.
-
-    """
+    """Auto-Regressive Attention-based Language Model."""
 
     def module_init(
         self,

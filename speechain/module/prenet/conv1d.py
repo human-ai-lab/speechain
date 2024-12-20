@@ -19,8 +19,7 @@ from speechain.module.prenet.linear import LinearPrenet
 
 
 class Conv1dEv(torch.nn.Module):
-    """
-    A 1D convolutional layer with support for different padding modes.
+    """A 1D convolutional layer with support for different padding modes.
 
     Attributes:
         cutoff (bool):
@@ -31,7 +30,6 @@ class Conv1dEv(torch.nn.Module):
             The dilation rate of the convolutional layer.
         conv_lyr (torch.nn.Conv1d):
             The 1D convolutional layer.
-
     """
 
     def __init__(
@@ -46,8 +44,7 @@ class Conv1dEv(torch.nn.Module):
         use_weight_norm: bool = False,
         groups: int = 1,
     ):
-        """
-        Initializes the Conv1dEv module with the specified parameters.
+        """Initializes the Conv1dEv module with the specified parameters.
 
         Args:
             in_channels (int):
@@ -111,8 +108,7 @@ class Conv1dEv(torch.nn.Module):
             self.conv_lyr = weight_norm(self.conv_lyr)
 
     def forward(self, feat: torch.Tensor):
-        """
-        Performs a forward pass through the convolutional layer.
+        """Performs a forward pass through the convolutional layer.
 
         Args:
             feat (torch.Tensor):
@@ -121,7 +117,6 @@ class Conv1dEv(torch.nn.Module):
         Returns:
             torch.Tensor:
                 The output tensor. Shape: (batch, out_channels, output_len).
-
         """
         # attach additional paddings at the end for the 'causal' padding mode
         if self.causal_padding > 0:

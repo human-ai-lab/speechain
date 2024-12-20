@@ -42,9 +42,8 @@ from speechain.utilbox.md_util import get_list_strings, get_table_strings
 
 
 class Monitor(ABC):
-    """
-    Abstract Base Class (ABC) for a Monitor that keeps track of various aspects of training and evaluatio.
-    """
+    """Abstract Base Class (ABC) for a Monitor that keeps track of various aspects of
+    training and evaluatio."""
 
     def __init__(
         self, logger, args: argparse.Namespace, result_path: str = None, **kwargs
@@ -101,8 +100,7 @@ class Monitor(ABC):
         ).start()
 
     def enqueue(self, logs: Dict or List[Dict]) -> None:
-        """
-        Enqueues logs into the logs_queue.
+        """Enqueues logs into the logs_queue.
 
         Args:
             logs:
@@ -117,8 +115,7 @@ class Monitor(ABC):
             raise RuntimeError("Expected logs to be a Dict or a List[Dict].")
 
     def empty_queue(self) -> None:
-        """
-        Checks if the logs queue is empty.
+        """Checks if the logs queue is empty.
 
         Returns:
             Boolean value indicating whether the logs queue is empty or not.
@@ -128,8 +125,7 @@ class Monitor(ABC):
 
     @contextmanager
     def measure_time(self, names: str or List[str]) -> None:
-        """
-        Context manager for measuring time of execution.
+        """Context manager for measuring time of execution.
 
         Args:
             names (str or List[str]):
@@ -152,8 +148,7 @@ class Monitor(ABC):
         dict_pointer.append(t)
 
     def refresh_step_records(self, records: Dict = None) -> None:
-        """
-        Refreshes the step records by resetting the values.
+        """Refreshes the step records by resetting the values.
 
         Args:
             records (Dict, optional):
@@ -175,8 +170,7 @@ class Monitor(ABC):
             raise RuntimeError("Expected records to be of type Dict.")
 
     def record_step_info(self, key: str, step_info: Dict) -> None:
-        """
-        Records information at each step during training or evaluation.
+        """Records information at each step during training or evaluation.
 
         Args:
             key (str):
@@ -197,8 +191,7 @@ class Monitor(ABC):
             self.step_records[key][name].append(info)
 
     def record_consumed_time(self, epoch_message: str) -> str:
-        """
-        Records time consumed in each epoch during training or evaluation.
+        """Records time consumed in each epoch during training or evaluation.
 
         Args:
             epoch_message (str):
@@ -223,8 +216,7 @@ class Monitor(ABC):
         return epoch_message
 
     def record_consumed_memory(self, epoch_message: str) -> str:
-        """
-        Records memory consumed in each epoch during training or evaluation.
+        """Records memory consumed in each epoch during training or evaluation.
 
         Args:
             epoch_message (str):
@@ -295,8 +287,7 @@ class Monitor(ABC):
         return epoch_message
 
     def record_criteria(self, epoch_message: str) -> str:
-        """
-        Records criteria in each epoch during training or evaluation.
+        """Records criteria in each epoch during training or evaluation.
 
         Args:
             epoch_message (str):
@@ -324,8 +315,7 @@ class Monitor(ABC):
 
     @abstractmethod
     def monitor_init(self, args: argparse.Namespace, **kwargs) -> None:
-        """
-        Abstract method for initializing the monitor.
+        """Abstract method for initializing the monitor.
 
         Args:
             args (str):
@@ -337,29 +327,22 @@ class Monitor(ABC):
 
     @abstractmethod
     def start_epoch(self, **kwargs) -> None:
-        """
-        Abstract method to be called at the start of each epoch.
-        """
+        """Abstract method to be called at the start of each epoch."""
         raise NotImplementedError
 
     @abstractmethod
     def step(self, **kwargs) -> None:
-        """
-        Abstract method to be called at each step in an epoch.
-        """
+        """Abstract method to be called at each step in an epoch."""
         raise NotImplementedError
 
     @abstractmethod
     def finish_epoch(self, **kwargs):
-        """
-        Abstract method to be called at the end of each epoch.
-        """
+        """Abstract method to be called at the end of each epoch."""
         raise NotImplementedError
 
     @abstractmethod
     def state_dict(self) -> Dict:
-        """
-        This method currently performs no operation and always returns None.
+        """This method currently performs no operation and always returns None.
 
         The intention is for subclasses to override this method to return a dictionary
         containing the state of the Monitor. However, in the base Monitor class,
@@ -371,8 +354,7 @@ class Monitor(ABC):
         return None
 
     def load_state_dict(self, state_dict: Dict = None) -> None:
-        """
-        Loads the Monitor state.
+        """Loads the Monitor state.
 
         Args:
             state_dict (Dict):
@@ -384,16 +366,17 @@ class Monitor(ABC):
 
 
 class TrainMonitor(Monitor):
-    """
-    The TrainMonitor class extends the Monitor class by adding functionality to track training progress and
-    performance. It provides methods to initialize monitoring, record metrics at each step and epoch, and store the
-    state of the training process.
+    """The TrainMonitor class extends the Monitor class by adding functionality to track
+    training progress and performance.
+
+    It provides methods to initialize monitoring, record metrics at each step and epoch,
+    and store the state of the training process.
     """
 
     def monitor_init(self, args: argparse.Namespace, **kwargs):
-        """
-        Initializes the training monitor with the given arguments.
-        This method is responsible for setting up the general members and tracking optimizer information.
+        """Initializes the training monitor with the given arguments. This method is
+        responsible for setting up the general members and tracking optimizer
+        information.
 
         Args:
             args (argparse.Namespace):
@@ -418,8 +401,7 @@ class TrainMonitor(Monitor):
         self.step_records.update(optim_lr=dict())
 
     def start_epoch(self, epoch: int):
-        """
-        Prepares the monitor for a new epoch of training.
+        """Prepares the monitor for a new epoch of training.
 
         Args:
             epoch (int):
@@ -441,8 +423,7 @@ class TrainMonitor(Monitor):
         optim_lr: Dict[str, float],
         train_metrics: Dict[str, torch.Tensor],
     ):
-        """
-        Records information for a single training step.
+        """Records information for a single training step.
 
         Args:
             step_num (int):
@@ -524,9 +505,8 @@ class TrainMonitor(Monitor):
             self.logger.info(step_message)
 
     def finish_epoch(self):
-        """
-        Finishes monitoring for the current epoch, logging information and preparing for the next epoch.
-        """
+        """Finishes monitoring for the current epoch, logging information and preparing
+        for the next epoch."""
         # ---- The Information Logging Part ---- #
         # report the overall consuming time of the current epoch
         epoch_message = (
@@ -624,8 +604,7 @@ class TrainMonitor(Monitor):
         self.event.set()
 
     def state_dict(self):
-        """
-        Returns the current state of the monitor as a dictionary.
+        """Returns the current state of the monitor as a dictionary.
 
         Returns:
             dict: The current state of the monitor.
@@ -634,16 +613,17 @@ class TrainMonitor(Monitor):
 
 
 class ValidMonitor(Monitor):
-    """
-    The ValidMonitor class extends the Monitor class by adding functionality to track validation progress and
-    performance. It provides methods to initialize monitoring, record metrics at each validation step, and snapshot
-    the model at each epoch.
+    """The ValidMonitor class extends the Monitor class by adding functionality to track
+    validation progress and performance.
+
+    It provides methods to initialize monitoring, record metrics at each validation
+    step, and snapshot the model at each epoch.
     """
 
     def monitor_init(self, args: argparse.Namespace, model: Model = None):
-        """
-        Initializes the validation monitor with the given arguments and the model.
-        This method is responsible for setting up the general members, tracking best models, early stopping, and last models.
+        """Initializes the validation monitor with the given arguments and the model.
+        This method is responsible for setting up the general members, tracking best
+        models, early stopping, and last models.
 
         Args:
             args (argparse.Namespace):
@@ -727,8 +707,7 @@ class ValidMonitor(Monitor):
         self.visual_snapshot_interval = args.visual_snapshot_interval
 
     def start_epoch(self, epoch: int):
-        """
-        Prepares the monitor for a new epoch of validation.
+        """Prepares the monitor for a new epoch of validation.
 
         Args:
             epoch (int): The current epoch number.
@@ -749,8 +728,7 @@ class ValidMonitor(Monitor):
         self.logger.info(f"The validation part of epoch no.{epoch} starts.")
 
     def step(self, valid_metrics: Dict[str, torch.Tensor]):
-        """
-        Records information for a single validation step.
+        """Records information for a single validation step.
 
         Args:
             valid_metrics (Dict[str, torch.Tensor]):
@@ -763,8 +741,7 @@ class ValidMonitor(Monitor):
     def model_snapshot(
         self, epoch: int, domain: str, sample_index: str, used_sample: Dict
     ):
-        """
-        Takes a snapshot of the model at the given epoch for a given sample.
+        """Takes a snapshot of the model at the given epoch for a given sample.
 
         Args:
             epoch (int):
@@ -797,8 +774,8 @@ class ValidMonitor(Monitor):
     def is_better(
         query: int or float, target: int or float, mode: str, threshold: float = 0.0
     ):
-        """
-        Compares a query value with a target value under a specified mode, optionally considering a threshold.
+        """Compares a query value with a target value under a specified mode, optionally
+        considering a threshold.
 
         Parameters:
             query (int, float):
@@ -826,9 +803,8 @@ class ValidMonitor(Monitor):
         return query > _target if mode == "max" else query < _target
 
     def model_insert(self, train_records: Dict, valid_flag: bool):
-        """
-        Inserts the model into the ensemble if it's better than the existing models. The model is evaluated using
-        the training records and the validation flag.
+        """Inserts the model into the ensemble if it's better than the existing models.
+        The model is evaluated using the training records and the validation flag.
 
         Parameters:
             train_records (Dict):
@@ -885,9 +861,9 @@ class ValidMonitor(Monitor):
         self.saved_model_epoch.append(self.epoch)
 
     def update_best_and_pop_worst(self, epoch_message: str):
-        """
-        Updates the best model in the ensemble and removes the worst model. The best and worst are determined
-        based on the performance metrics. The function also handles logging related to model performance.
+        """Updates the best model in the ensemble and removes the worst model. The best
+        and worst are determined based on the performance metrics. The function also
+        handles logging related to model performance.
 
         Parameters:
             epoch_message (str):
@@ -1053,8 +1029,8 @@ class ValidMonitor(Monitor):
         return epoch_message, early_stopping_flag, metric_pop_flags
 
     def save_aver_model(self, epoch_message: str, metric_pop_flags: Dict[str, bool]):
-        """
-        Stores the average model in the ensemble and updates the epoch message based on the model performance metrics.
+        """Stores the average model in the ensemble and updates the epoch message based
+        on the model performance metrics.
 
         Parameters:
             epoch_message (str):
@@ -1147,9 +1123,9 @@ class ValidMonitor(Monitor):
     def finish_epoch(
         self, train_records: Dict, valid_flag: bool, valid_per_epochs: int
     ):
-        """
-        Completes the current epoch by evaluating the model on the training records and potentially performing
-        validation based on the validation flag and number of validation epochs.
+        """Completes the current epoch by evaluating the model on the training records
+        and potentially performing validation based on the validation flag and number of
+        validation epochs.
 
         Parameters:
             train_records (Dict):
@@ -1230,8 +1206,7 @@ class ValidMonitor(Monitor):
         return early_stopping_flag
 
     def state_dict(self):
-        """
-        Retrieves the state of the ensemble in dictionary form.
+        """Retrieves the state of the ensemble in dictionary form.
 
         Returns:
             Dict: The current state of the ensemble, typically including model parameters and other related information.
@@ -1259,8 +1234,7 @@ class TrainValidMonitor(object):
     """
 
     def __init__(self, logger, args: argparse.Namespace, model: Model):
-        """
-        Initializes the TrainValidMonitor with a logger, arguments, and a model.
+        """Initializes the TrainValidMonitor with a logger, arguments, and a model.
 
         Args:
             logger:
@@ -1276,8 +1250,7 @@ class TrainValidMonitor(object):
         self.valid_monitor = ValidMonitor(logger=logger, args=args, model=model)
 
     def start_train_epoch(self, epoch: int):
-        """
-        Starts a new training epoch.
+        """Starts a new training epoch.
 
         Args:
             epoch: The epoch number.
@@ -1290,8 +1263,7 @@ class TrainValidMonitor(object):
         optim_lr: Dict[str, float],
         train_metrics: Dict[str, torch.Tensor],
     ):
-        """
-        Executes a training step.
+        """Executes a training step.
 
         Args:
             step_num: The step number.
@@ -1303,14 +1275,11 @@ class TrainValidMonitor(object):
         )
 
     def finish_train_epoch(self):
-        """
-        Finishes a training epoch.
-        """
+        """Finishes a training epoch."""
         self.train_monitor.finish_epoch()
 
     def start_valid_epoch(self, epoch: int):
-        """
-        Starts a new validation epoch.
+        """Starts a new validation epoch.
 
         Args:
             epoch: The epoch number.
@@ -1318,8 +1287,7 @@ class TrainValidMonitor(object):
         self.valid_monitor.start_epoch(epoch)
 
     def valid_step(self, valid_metrics: Dict[str, torch.Tensor]):
-        """
-        Executes a validation step.
+        """Executes a validation step.
 
         Args:
             valid_metrics: The validation metrics.
@@ -1329,8 +1297,7 @@ class TrainValidMonitor(object):
     def valid_model_snapshot(
         self, epoch: int, domain: str, sample_index: str, used_sample: Dict
     ):
-        """
-        Creates a snapshot of the validation model.
+        """Creates a snapshot of the validation model.
 
         Args:
             epoch: The epoch number.
@@ -1346,8 +1313,7 @@ class TrainValidMonitor(object):
         )
 
     def finish_valid_epoch(self, valid_flag: bool, valid_per_epochs: int):
-        """
-        Finishes a validation epoch.
+        """Finishes a validation epoch.
 
         Args:
             valid_flag: The validation flag.
@@ -1363,9 +1329,9 @@ class TrainValidMonitor(object):
         )
 
     def wait_empty_queues(self, sleep_time: int = 10, max_wait_round: int = 60):
-        """
-        Check whether the snapshot creator processes of train_monitor and valid_monitor are still working.
-        Wait until the material queues of the snapshot creators become empty.
+        """Check whether the snapshot creator processes of train_monitor and
+        valid_monitor are still working. Wait until the material queues of the snapshot
+        creators become empty.
 
         Args:
             sleep_time: The sleep time in seconds between each check. Default is 10 seconds.
@@ -1386,8 +1352,7 @@ class TrainValidMonitor(object):
             )
 
     def state_dict(self):
-        """
-        Retrieves the state of the TrainMonitor and ValidMonitor in dictionary form.
+        """Retrieves the state of the TrainMonitor and ValidMonitor in dictionary form.
 
         Returns:
             Dict:
@@ -1400,8 +1365,7 @@ class TrainValidMonitor(object):
         )
 
     def load_state_dict(self, state_dict):
-        """
-        Loads the state of the TrainMonitor and ValidMonitor from a dictionary.
+        """Loads the state of the TrainMonitor and ValidMonitor from a dictionary.
 
         Args:
             state_dict:
@@ -1412,11 +1376,11 @@ class TrainValidMonitor(object):
 
 
 def data_saving_logs(proc_id: int, logs_queue: Queue, wait_time: int = 1):
-    """
-    Continuously monitors a queue for log data to save. If logs are available,
-    they are retrieved from the queue and saved in the appropriate format.
-    If the queue is empty, the function pauses for a specified wait time before checking again.
-    In case of any exceptions during this process, a warning is issued and the function continues.
+    """Continuously monitors a queue for log data to save. If logs are available, they
+    are retrieved from the queue and saved in the appropriate format. If the queue is
+    empty, the function pauses for a specified wait time before checking again. In case
+    of any exceptions during this process, a warning is issued and the function
+    continues.
 
     Args:
         proc_id (int):
@@ -1445,9 +1409,8 @@ def data_saving_logs(proc_id: int, logs_queue: Queue, wait_time: int = 1):
 
 
 class TestMonitor(Monitor):
-    """
-    Class responsible for monitoring the testing process and logging real-time information.
-    It extends the base Monitor class.
+    """Class responsible for monitoring the testing process and logging real- time
+    information. It extends the base Monitor class.
 
     Attributes:
         distributed (bool):
@@ -1469,8 +1432,7 @@ class TestMonitor(Monitor):
     """
 
     def monitor_init(self, args: argparse.Namespace, **kwargs):
-        """
-        Initializes the TestMonitor with the given arguments.
+        """Initializes the TestMonitor with the given arguments.
 
         Args:
             args (argparse.Namespace):
@@ -1499,8 +1461,7 @@ class TestMonitor(Monitor):
             ).start()
 
     def start_epoch(self, total_step_num: int):
-        """
-        Starts a new testing epoch.
+        """Starts a new testing epoch.
 
         Args:
             total_step_num (int): Total number of steps in the epoch.
@@ -1515,8 +1476,7 @@ class TestMonitor(Monitor):
             self.finished_group_num = 0
 
     def step(self, step_num: int, test_results: Dict[str, Dict], test_index: List[str]):
-        """
-        Executes a single test step and logs the results.
+        """Executes a single test step and logs the results.
 
         Args:
             step_num (int): Current step number.
@@ -1638,8 +1598,7 @@ class TestMonitor(Monitor):
             self.logger.info(test_step_message)
 
     def wait_empty_queues(self, sleep_time: int = 60):
-        """
-        Waits until the log queue is empty before continuing.
+        """Waits until the log queue is empty before continuing.
 
         Args:
             sleep_time (int, optional): Time to wait in seconds when the queue is not empty. Defaults to 60.
@@ -1660,8 +1619,9 @@ class TestMonitor(Monitor):
             torch.distributed.barrier()
 
     def finish_epoch(self, meta_info: Dict = None):
-        """
-        This method completes various tasks at the end of each epoch, such as:
+        """This method completes various tasks at the end of each epoch, such
+        as:
+
         - Gathering checkpoint information from all GPU processes
         - Generating data path files
         - Producing evaluation reports for overall and group-level performance
@@ -1901,8 +1861,8 @@ class TestMonitor(Monitor):
                     time.sleep(10)
 
     def state_dict(self):
-        """
-        Returns the state of the TestMonitor instance. This is useful for checkpointing or logging purposes.
+        """Returns the state of the TestMonitor instance. This is useful for
+        checkpointing or logging purposes.
 
         Returns:
         - A dictionary that includes:

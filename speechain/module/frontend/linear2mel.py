@@ -13,11 +13,9 @@ from speechain.module.abs import Module
 
 
 class LinearSpec2MelSpec(Module):
-    """
-    The input is linear spectrogram extracted by STFT and the output is (log-)mel spectrogram
-    The mel-fbank is implemented by a linear layer without the bias vector.
-
-    """
+    """The input is linear spectrogram extracted by STFT and the output is (log-)mel
+    spectrogram The mel-fbank is implemented by a linear layer without the bias
+    vector."""
 
     def module_init(
         self,
@@ -33,10 +31,10 @@ class LinearSpec2MelSpec(Module):
         mel_norm: bool = True,
         mag_spec: bool = False,
     ):
-        """
+        """The difference between two different options of mel_scale, i.e., 'htk' and
+        'slaney', is the relationship between the linear frequency (Hz) and mel
+        frequency.
 
-        The difference between two different options of mel_scale, i.e., 'htk' and 'slaney', is the relationship between
-        the linear frequency (Hz) and mel frequency.
             1. For 'htk', the mel frequency is always logarithmic to the linear frequency by the following formula:
                 mel = 2595.0 * np.log10(1.0 + hz / 700.0)
             2. For 'slaney', the mel frequency is linear to the linear frequency below 1K Hz and logarithmic above 1K Hz
@@ -114,7 +112,6 @@ class LinearSpec2MelSpec(Module):
             mag_spec: bool
                 Whether the input linear spectrogram is the magnitude. Used for decibel calculation.
                 This argument is effective when mel_norm=False (SpeechBrain style)
-
         """
         # fundamental arguments
         self.sr = sr

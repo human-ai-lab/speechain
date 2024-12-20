@@ -18,8 +18,7 @@ def save_data_by_format(
     group_ids: List[str] or str = None,
     sample_rate: int = None,
 ):
-    """
-    Save data in the specified format to disk.
+    """Save data in the specified format to disk.
 
     Args:
         file_format (str):

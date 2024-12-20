@@ -8,18 +8,16 @@ from speechain.optim_sche.abs import OptimScheduler
 
 
 class Noamlr(OptimScheduler):
-    """
-    The OptimScheduler where the scheduling contains a LR warmup stage and a LR decay stage.
-    In the warmup stage, the learning rate increases linearly to the peak.
-    In the decay stage, the learning rate decreases in the level of square root.
+    """The OptimScheduler where the scheduling contains a LR warmup stage and a LR decay
+    stage. In the warmup stage, the learning rate increases linearly to the peak. In the
+    decay stage, the learning rate decreases in the level of square root.
 
     This OptimScheduler is mainly used for Transformer-based models.
-
     """
 
     def sche_init(self, d_model: int = None, warmup_steps: int = 4000):
-        """
-        The learning rate calculation is different depending on whether d_model is given or not.
+        """The learning rate calculation is different depending on whether d_model is
+        given or not.
 
         If d_model is given, the learning rate would be:
             (d_model ** -0.5) * min(step ** -0.5, real_step * warmup_steps ** -1.5)
@@ -38,7 +36,6 @@ class Noamlr(OptimScheduler):
 
         Returns:
             A list of names of your customized member variables.
-
         """
         # para recording
         self.d_model = d_model

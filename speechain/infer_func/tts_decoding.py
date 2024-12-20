@@ -23,8 +23,7 @@ def auto_regression(
     continual_steps: int = 0,
     use_before: bool = False,
 ):
-    """
-    Auto-regressive acoustic feature generation using a transformer-based TTS model.
+    """Auto-regressive acoustic feature generation using a transformer-based TTS model.
 
     Args:
         enc_text (torch.Tensor):

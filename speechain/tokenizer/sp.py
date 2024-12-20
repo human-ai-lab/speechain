@@ -16,17 +16,14 @@ from speechain.utilbox.import_util import parse_path_args
 
 
 class SentencePieceTokenizer(Tokenizer):
-    """
-    Tokenizer implementation that converts the input sentence string into subword tokens, i.e., combinations of
-    graphemes, by the sentencepiece package.
+    """Tokenizer implementation that converts the input sentence string into subword
+    tokens, i.e., combinations of graphemes, by the sentencepiece package.
 
     References: https://github.com/google/sentencepiece
-
     """
 
     def tokenizer_init_fn(self, token_path: str, copy_path: str = None, **kwargs):
-        """
-        Initialize the sentencepiece tokenizer model.
+        """Initialize the sentencepiece tokenizer model.
 
         Args:
             copy_path: str = None
@@ -35,7 +32,6 @@ class SentencePieceTokenizer(Tokenizer):
             token_path: str
                 The path of your specified sentencepiece tokenizer model file.
                 If not given, the model will automatically selected in the same folder as the given token_vocab
-
         """
         # The model in token_path token_model has the highest priority for token_model initialization
         if token_path is not None:

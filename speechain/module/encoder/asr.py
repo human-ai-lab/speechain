@@ -17,7 +17,7 @@ from speechain.utilbox.train_util import make_mask_from_len
 
 
 class ASREncoder(Module):
-    """ """
+    """"""
 
     def module_init(
         self,

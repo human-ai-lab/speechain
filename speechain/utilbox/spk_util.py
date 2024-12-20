@@ -21,8 +21,7 @@ def extract_spk_feat(
     save_path: str = None,
     batch_size: int = 10,
 ) -> Tuple[Dict, Dict]:
-    """
-    Extract speaker features using a specified speaker embedding model and save them.
+    """Extract speaker features using a specified speaker embedding model and save them.
 
     Args:
         spk2wav_dict (Dict):
@@ -44,9 +43,7 @@ def extract_spk_feat(
     """
 
     def proc_curr_batch():
-        """
-        Process the current batch of waveforms and extract speaker features.
-        """
+        """Process the current batch of waveforms and extract speaker features."""
         idx_list, wav_list = [i[0] for i in curr_batch], [i[1] for i in curr_batch]
         wav_len = torch.LongTensor([w.size(0) for w in wav_list]).to(device)
         max_wav_len = wav_len.max().item()

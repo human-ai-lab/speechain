@@ -23,11 +23,10 @@ from speechain.utilbox.train_util import get_min_indices_by_freq
 
 
 class SpeechTextDataset(Dataset):
-    """
-    This Dataset subclass is mainly used by ASR and TTS models.
-    In this subclass, each data instance is made up of an utterance and a sentence as well as the speaker information
-    (speaker ID + speaker embedding feature).
+    """This Dataset subclass is mainly used by ASR and TTS models.
 
+    In this subclass, each data instance is made up of an utterance and a sentence as
+    well as the speaker information (speaker ID + speaker embedding feature).
     """
 
     def dataset_init_fn(
@@ -123,9 +122,8 @@ class SpeechTextDataset(Dataset):
     def collate_main_data_fn(
         self, batch_dict: Dict[str, List]
     ) -> Dict[str, torch.Tensor or List]:
-        """
-        The utterances used for training ASR and TTS models may have different lengths, so we need to do the
-        padding operations to make them equal in length.
+        """The utterances used for training ASR and TTS models may have different
+        lengths, so we need to do the padding operations to make them equal in length.
 
         The loaded speech feature vectors will be arranged into a single matrix with 0 padding at the end of short
         vectors. Text data remains unprocessed strings and the tokenization will be done later in the model.
@@ -142,7 +140,6 @@ class SpeechTextDataset(Dataset):
             A dictionary mapping strings to either torch.Tensor or List, where:
                 - feat and spk_feat are three-dimensional torch.Tensor
                 - text and spk_ids are lists of raw strings whose discretization is done in the Model object
-
         """
 
         # --- 1. Pad Speech Data and Stack them together --- #
@@ -230,9 +227,9 @@ class SpeechTextDataset(Dataset):
         return batch_dict
 
     def extract_main_data_fn(self, main_data: Dict) -> Dict[str, Any] or None:
-        """
-        The function that loads speech-text data from the disk. If the speech is in the form of raw waveforms,
-        the last dimension should be expanded to 1 of raw speech for compatibility with acoustic feature.
+        """The function that loads speech-text data from the disk. If the speech is in
+        the form of raw waveforms, the last dimension should be expanded to 1 of raw
+        speech for compatibility with acoustic feature.
 
         Args:
             main_data: Dict[str, str]
@@ -252,7 +249,6 @@ class SpeechTextDataset(Dataset):
         Returns:
             `feat` and `spk_feat` are in the form of two-dimensional `torch.Tensor`;
             `text` and `spk_ids` are in the form of raw strings whose discretization is done in the Model object.
-
         """
         assert (
             "feat" in main_data.keys() or "text" in main_data.keys()
@@ -531,7 +527,7 @@ class SpeechTextDataset(Dataset):
 
 
 class RandomSpkFeatDataset(SpeechTextDataset):
-    """ """
+    """"""
 
     def dataset_init_fn(
         self,
@@ -586,10 +582,10 @@ class RandomSpkFeatDataset(SpeechTextDataset):
             )
 
     def extract_main_data_fn(self, main_data: Dict[str, str]) -> Dict[str, Any] or None:
-        """
-        This hook function randomly pick up a speaker embedding feature from the given spk_feat file as the reference.
-        The randomness is controlled by the `seed` you give in the exp_cfg.
+        """This hook function randomly pick up a speaker embedding feature from the
+        given spk_feat file as the reference.
 
+        The randomness is controlled by the `seed` you give in the exp_cfg.
         """
         assert "spk_ids" not in main_data.keys(), (
             f"Please don't give spk_ids to main_data of {self.__class__.__name__}. "

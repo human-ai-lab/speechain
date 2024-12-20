@@ -10,10 +10,8 @@ from speechain.tokenizer.abs import Tokenizer
 
 
 class CharTokenizer(Tokenizer):
-    """
-    Tokenizer implementation that converts the input sentence string into a list of graphemes (characters).
-
-    """
+    """Tokenizer implementation that converts the input sentence string into a list of
+    graphemes (characters)."""
 
     def text2tensor(
         self,

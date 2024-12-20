@@ -6,15 +6,14 @@ from speechain.module.abs import Module
 
 
 class SpecAugment(Module):
-    """
-    Batch-level SpecAugment.
+    """Batch-level SpecAugment.
+
     Implemented based on
         'SpecAugment: A Simple Data Augmentation Method for Automatic Speech Recognition'
         reference: https://arxiv.org/pdf/1904.08779.pdf
     This implementation is inspired by
         https://github.com/espnet/espnet/blob/36e824be58ea6c6844e3d87b11e382f90ba4fb22/espnet2/layers/time_warp.py#L9
         https://github.com/speechbrain/speechbrain/blob/develop/speechbrain/lobes/augment.py#L116
-
     """
 
     def module_init(
@@ -72,8 +71,8 @@ class SpecAugment(Module):
         self.feat_norm = feat_norm
 
     def forward(self, feat: torch.Tensor, feat_len: torch.Tensor):
-        """
-        Both the time warping and time masking are done within the minimum length of all the utterance in the input batch.
+        """Both the time warping and time masking are done within the minimum length of
+        all the utterance in the input batch.
 
         This practice is to make sure that the time warping and masking are done in the effective area of the input data
         and the feature length information are still valid after augmentation.
@@ -83,7 +82,6 @@ class SpecAugment(Module):
             feat_len:
 
         Returns:
-
         """
         batch_size, feat_dim = feat.size(0), feat.size(-1)
         time_maxlen, time_minlen = feat_len.max().item(), feat_len.min().item()

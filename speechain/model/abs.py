@@ -1,8 +1,9 @@
-""" Abstract base class for all models.
+"""Abstract base class for all models.
 
 Author: Heli Qi
-Affiliation: NAIST  
-Date: 2022.07"""
+Affiliation: NAIST
+Date: 2022.07
+"""
 
 import copy
 import os
@@ -74,9 +75,9 @@ class Model(torch.nn.Module, ABC):
         non_blocking: bool = False,
         distributed: bool = False,
     ):
-        """
-        In this initialization function, there are two parts of initialization: model-specific customized initialization
-        and model-independent general initialization.
+        """In this initialization function, there are two parts of
+        initialization: model-specific customized initialization and model-
+        independent general initialization.
 
         Model-specific customized initialization is done by two interface functions: module_init() and criterion_init().
         module_init() initializes the neural network structure of the model while criterion_init() initializes the
@@ -284,17 +285,16 @@ class Model(torch.nn.Module, ABC):
 
     @abstractmethod
     def module_init(self, **kwargs) -> None:
-        """
-        The interface function that initializes the Module members of the model. These Module members make up the
-        neural network structure of the model. Some models have their customized part that also needs to be
-        initialization in this function, e.g. the tokenizer of ASR and TTS models.
+        """The interface function that initializes the Module members of the model.
+        These Module members make up the neural network structure of the model. Some
+        models have their customized part that also needs to be initialization in this
+        function, e.g. the tokenizer of ASR and TTS models.
 
         Note: This interface function must be overridden for each Model subclass.
 
         Args:
             **kwargs:
                 The combination of the arguments in your given `module_conf` and `model_conf['customize_conf']`.
-
         """
         pass  # raise NotImplementedError
 
@@ -313,9 +313,9 @@ class Model(torch.nn.Module, ABC):
 
     @staticmethod
     def bad_cases_selection_init_fn() -> List[List[str or int]] or None:
-        """
-        This hook function returns the default bad case selection method of each Model object. This default value will
-        be referred by the _Runner_ to present the top-N bad cases.
+        """This hook function returns the default bad case selection method of each
+        Model object. This default value will be referred by the _Runner_ to present the
+        top-N bad cases.
 
         The original hook implementation in the base Model class returns None which means no default value.
 
@@ -323,15 +323,14 @@ class Model(torch.nn.Module, ABC):
             The returned default value should be a list of tri-list where each tri-list is in the form of
             [`selection_metric`, `selection_mode`, `case_number`]. For example, ['wer', 'max', 50] means 50 testing
             waveforms with the largest WER will be selected.
-
         """
         return None
 
     def batch_to_cuda(
         self, data: Dict[str, torch.Tensor] or torch.Tensor
     ) -> Dict[str, torch.Tensor] or torch.Tensor:
-        """
-        The recursive function that transfers the batch data to the specified device in the current process.
+        """The recursive function that transfers the batch data to the specified device
+        in the current process.
 
         Args:
             data: Dict or torch.Tensor
@@ -341,7 +340,6 @@ class Model(torch.nn.Module, ABC):
         Returns: Dict or torch.Tensor
             If the input is a Dict, the returned output will also be a Dict of Tensors transferred to the target device;
             If the input is a Tensor, the returned output will be its copy on the target device.
-
         """
         # if the data is in the form of Dict, recursively process each key-value pair
         if isinstance(data, Dict):
@@ -497,10 +495,11 @@ class Model(torch.nn.Module, ABC):
             return metrics
 
     def batch_preprocess_fn(self, batch_data: Dict) -> Dict:
-        """
-        This hook function does the preprocessing for the input batch data before using them in self.model_forward().
-        This function is not mandatory to be overridden and the original implementation in the base Model class does
-        the tensor transformation for the string-like data in batch_data (i.e., text and spk_ids).
+        """This hook function does the preprocessing for the input batch data before
+        using them in self.model_forward(). This function is not mandatory to be
+        overridden and the original implementation in the base Model class does the
+        tensor transformation for the string-like data in batch_data (i.e., text and
+        spk_ids).
 
         Note: the key names in the returned Dict should match the argument names in self.model_forward().
 
@@ -510,14 +509,10 @@ class Model(torch.nn.Module, ABC):
 
         Returns: Dict
             The processed data of the input batch that is ready to be used in `self.model_forward()`.
-
         """
 
         def process_strings(data_dict: Dict):
-            """
-            turn the text and speaker strings into tensors and get their lengths
-
-            """
+            """Turn the text and speaker strings into tensors and get their lengths."""
             # --- Process the Text String and its Length --- #
             if "text" in data_dict.keys():
                 if isinstance(data_dict["text"], List):
@@ -553,8 +548,8 @@ class Model(torch.nn.Module, ABC):
     def aver_metrics_across_procs(
         self, metrics: Dict[str, torch.Tensor], batch_data: Dict
     ) -> Dict[str, torch.Tensor]:
-        """
-        This function averages the evaluation metrics across all GPU processes in the DDP mode for model distribution.
+        """This function averages the evaluation metrics across all GPU processes in the
+        DDP mode for model distribution.
 
         Args:
             metrics: Dict[str, torch.Tensor]
@@ -564,7 +559,6 @@ class Model(torch.nn.Module, ABC):
 
         Returns: Dict[str, torch.Tensor]
             The evaluation metrics _Dict_ after averaging. The key names remain the same.
-
         """
 
         def get_batch_size(input_dict: Dict):
@@ -641,9 +635,9 @@ class Model(torch.nn.Module, ABC):
     def criterion_forward(
         self, **kwargs
     ) -> (Dict[str, torch.Tensor], Dict[str, torch.Tensor]) or Dict[str, torch.Tensor]:
-        """
-        This interface function is activated after `self.model_forward()`. It receives the model prediction results
-        from `self.model_forward()` and input batch data from `self.batch_preprocess_fn()`.
+        """This interface function is activated after `self.model_forward()`. It
+        receives the model prediction results from `self.model_forward()` and input
+        batch data from `self.batch_preprocess_fn()`.
 
         Args:
             **kwargs:
@@ -656,19 +650,15 @@ class Model(torch.nn.Module, ABC):
             metrics used to record the training status.
             2. For validation, only one Dict[str, torch.Tensor] should be returned which contains all the non-trainable
             evaluation metrics used to record the validation status.
-
         """
         pass  # raise NotImplementedError
 
     def get_recordable_para(self) -> Dict[str, torch.Tensor]:
-        """
-        Recursively retrieves the recordable parameters from the module's
-        sub-modules.
+        """Recursively retrieves the recordable parameters from the module's sub-
+        modules.
 
         Returns:
             Dict[str, torch.Tensor]: A dictionary mapping the parameter names to their corresponding tensor values.
-
-
         """
 
         def recur_get_module_recordable_para(curr_node, prefix_list: List[str] = None):
@@ -704,11 +694,8 @@ class Model(torch.nn.Module, ABC):
         subfolder_names: List[str] or str,
         epoch: int,
     ):
-        """
-
-        Used by the abstract function visualize() to make the snapshot materials for attention matrices.
-
-        """
+        """Used by the abstract function visualize() to make the snapshot materials for
+        attention matrices."""
         if isinstance(subfolder_names, str):
             subfolder_names = [subfolder_names]
         keys = list(hypo_attention.keys())
@@ -737,11 +724,8 @@ class Model(torch.nn.Module, ABC):
             )
 
     def attention_reshape(self, hypo_attention: Dict, prefix_list: List = None) -> Dict:
-        """
-
-        Used by the abstract function visualize() to reshape the attention matrices before matrix_snapshot().
-
-        """
+        """Used by the abstract function visualize() to reshape the attention matrices
+        before matrix_snapshot()."""
         if prefix_list is None:
             prefix_list = []
 
@@ -841,13 +825,11 @@ class Model(torch.nn.Module, ABC):
     def inference(
         self, infer_conf: Dict, **kwargs
     ) -> Dict[str, Dict[str, str or List]]:
-        """
-        This function receives the test data and test configuration. The inference results will be packaged into a
-        Dict[str, Dict] which is passed to TestMonitor for disk storage. The returned Dict should be in the form of
-        ```
-        dict(
-            {file_name}=dict(
-                format={file_format},
+        """This function receives the test data and test configuration. The inference
+        results will be packaged into a Dict[str, Dict] which is passed to TestMonitor
+        for disk storage. The returned Dict should be in the form of ``` dict(
+        {file_name}=dict( format={file_format},
+
                 content={file_content}
             )
         )
@@ -900,7 +882,6 @@ class Model(torch.nn.Module, ABC):
             {test_index3} /x/xx/feat/{test_index3}.npy
             ```
             where `/x/xx/` is your result path given in your `exp_cfg`.
-
         """
         pass  # raise NotImplementedError
 

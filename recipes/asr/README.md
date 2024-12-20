@@ -92,46 +92,46 @@ For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/r
      1. **train-clean-100:** 
           ```bash
           # Download BPE model
-          gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc https://drive.google.com/uc?id=1OQGKJqpEykl6hQwx-3xuWeaEdU7kDVTS
+          gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc 
 
           # Download BPE vocabulary
-          gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc https://drive.google.com/uc?id=1lGhDi2NI_ukI5Z9Z-MjOHoUEz5YGcJX9
+          gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc 
           ```
      2. **train-clean-460:** 
           ```bash
           # Download BPE model
-          gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc https://drive.google.com/uc?id=1WAmcHvilnzB7r0kgND91LLReeX_NW7A4
+          gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc 
 
           # Download BPE vocabulary
-          gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc https://drive.google.com/uc?id=1isfQn75l-Szu0WPGBr1ZaR3pb20SDa2F
+          gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc 
           ```
      3. **train-960:** 
           ```bash
           # Download BPE model
-          gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc https://drive.google.com/uc?id=1uFRm1DcPivFqjo1Kiy-uVSFTf3e9y1S4
+          gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc 
 
           # Download BPE vocabulary by 
-          gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc https://drive.google.com/uc?id=13ERNAA_5glzjvJkmUW7edf94IPfAejiL
+          gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc 
           ```
-3. Transformer-based language models ([GoogleDrive](https://drive.google.com/drive/u/0/folders/1yviJZLGyGKiQ_ldtRjEaX-rZjWt7R4eS)).
+3. Transformer-based language models  
    * Please download both LM model and configuration file. The default path is `${SPEECHAIN_ROOT}/recipes/lm`.   
      **Note:** If you want to store model files outside SpeeChain, please replace `${SPEECHAIN_ROOT}/recipes/lm` in the following commands by your place. Also, change the `lm_cfg_path` and `lm_model_path` arguments in each ASR configuration file.
    * **LibriSpeech:**
      1. **train-clean-100:** 
           ```bash
           # Download LM model
-          gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/lm_text/exp/100-bpe5k_transformer_gelu/models https://drive.google.com/uc?id=1ZsFKRb8UBpzDjWcjpQcxt4rT4J6CuKAm
+          gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/lm_text/exp/100-bpe5k_transformer_gelu/models 
 
           # Download LM configuration
-          gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/lm_text/exp/100-bpe5k_transformer_gelu https://drive.google.com/uc?id=1TRtIOu2ptXTKphY77cF3fne9b-i-vNJD
+          gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/lm_text/exp/100-bpe5k_transformer_gelu 
           ```
      2. **train-960:**
           ```bash
           # Download LM model
-          gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/train-960_lm_text/exp/960-bpe5k_transformer_gelu/models https://drive.google.com/uc?id=1hMFlaJVojonyBiwaXmC_I7iLxI-kSWit
+          gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/train-960_lm_text/exp/960-bpe5k_transformer_gelu/models 
 
           # Download LM configuration
-          gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/train-960_lm_text/exp/960-bpe5k_transformer_gelu https://drive.google.com/uc?id=1fAMDjPxBDnTp2tiUNTNIMtqGl-vQ2gzz
+          gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/train-960_lm_text/exp/960-bpe5k_transformer_gelu 
           ```
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#table-of-contents)

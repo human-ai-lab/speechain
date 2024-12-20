@@ -100,7 +100,7 @@ class SpeakerEncoder(nn.Module):
 
     @classmethod
     def from_hparams(cls, source, savedir=None, run_opts=None):
-        """Load pretrained model"""
+        """Load pretrained model."""
         model = cls(model_type="ecapa" if "ecapa" in source else "xvector")
 
         if run_opts and "device" in run_opts:

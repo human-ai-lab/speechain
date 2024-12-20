@@ -110,11 +110,10 @@ cmu_phn_list = [
 
 
 class GraphemeToPhonemeTokenizer(Tokenizer):
-    """
-    Tokenizer implementation that converts the input sentence string into phoneme tokens by the g2p package.
+    """Tokenizer implementation that converts the input sentence string into phoneme
+    tokens by the g2p package.
 
     References: https://github.com/Kyubyong/g2p
-
     """
 
     def text2tensor(

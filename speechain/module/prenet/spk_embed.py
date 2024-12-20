@@ -5,10 +5,11 @@ from speechain.module.prenet.embed import EmbedPrenet
 
 
 class SpeakerEmbedPrenet(Module):
-    """
-    SpeakerEmbedPrenet is a module for integrating speaker embeddings into a TTS model.
-    It supports both open-set and close-set multi-speaker TTS and can combine speaker embeddings with encoder
-    and/or decoder inputs.
+    """SpeakerEmbedPrenet is a module for integrating speaker embeddings into a TTS
+    model.
+
+    It supports both open-set and close-set multi-speaker TTS and can combine speaker
+    embeddings with encoder and/or decoder inputs.
     """
 
     def module_init(
@@ -21,8 +22,7 @@ class SpeakerEmbedPrenet(Module):
         dec_comb: bool = False,
         encdec_same_proj: bool = True,
     ):
-        """
-        Initialize the SpeakerEmbedPrenet module with the given configuration.
+        """Initialize the SpeakerEmbedPrenet module with the given configuration.
 
         Args:
             d_model: int
@@ -98,8 +98,7 @@ class SpeakerEmbedPrenet(Module):
             self.final_proj_dec = torch.nn.Linear(proj_in_size, d_model)
 
     def forward(self, spk_ids: torch.Tensor = None, spk_feat: torch.Tensor = None):
-        """
-        Forward pass of the SpeakerEmbedPrenet module to obtain speaker features.
+        """Forward pass of the SpeakerEmbedPrenet module to obtain speaker features.
 
         Args:
             spk_ids: torch.Tensor
@@ -155,8 +154,7 @@ class SpeakerEmbedPrenet(Module):
         enc_output: torch.Tensor,
         dec_input: torch.Tensor = None,
     ):
-        """
-        Combine speaker features with TTS model's encoder and/or decoder inputs.
+        """Combine speaker features with TTS model's encoder and/or decoder inputs.
 
         Args:
             spk_feat: torch.Tensor

@@ -11,7 +11,7 @@ from speechain.utilbox.train_util import make_mask_from_len
 
 
 class FBetaScore(Criterion):
-    """ """
+    """"""
 
     def criterion_init(self, beta: int = 1):
         """

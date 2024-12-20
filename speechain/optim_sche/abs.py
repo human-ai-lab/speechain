@@ -17,15 +17,13 @@ from speechain.utilbox.import_util import import_class
 
 
 class OptimScheduler(ABC):
-    """
-    OptimScheduler is the base class of all OptimScheduler objects that combine the roles of traditional optimizers and
-    schedulers together. Its main job is optimizing the target model parameters and scheduling the learning rate during
-    training.
+    """OptimScheduler is the base class of all OptimScheduler objects that combine the
+    roles of traditional optimizers and schedulers together. Its main job is optimizing
+    the target model parameters and scheduling the learning rate during training.
 
     In this toolkit, we combine traditional optimizers and schedulers into a single class: OptimScheduler. Each
     OptimScheduler object has one built-in member optimizer (torch.optim.Optimizer) which is initialized automatically
     by `optim_type` and `optim_conf` given in your configuration.
-
     """
 
     def __init__(
@@ -44,10 +42,10 @@ class OptimScheduler(ABC):
         grad_norm_type: float = 2.0,
         **sche_conf,
     ):
-        """
-        This initialization function initializes the general part shared by all OptimScheduler subclasses.
-        At the end of this function, an interface function `sche_init()` is called to initialize the customized part of
-        each OptimScheduler subclass.
+        """This initialization function initializes the general part shared by all
+        OptimScheduler subclasses. At the end of this function, an interface function
+        `sche_init()` is called to initialize the customized part of each OptimScheduler
+        subclass.
 
         Args:
             # --- Arguments received from exp_cfg --- #
@@ -139,17 +137,15 @@ class OptimScheduler(ABC):
 
     @abstractmethod
     def sche_init(self, **sche_conf):
-        """
-        This abstract interface function is the customized initialization function which decides how the learning rate
-        is scheduled as the training goes.
-        This interface is mandatory to be overridden.
+        """This abstract interface function is the customized initialization function
+        which decides how the learning rate is scheduled as the training goes. This
+        interface is mandatory to be overridden.
 
         Args:
             **sche_conf: Dict
                 The arguments used to initialize the customized part of this OptimScheduler.
                 For more details about the learning rate scheduling strategy, please refer to the docstring of
                 `sche_init()` of your target OptimScheduler subclass.
-
         """
         raise NotImplementedError
 
@@ -162,8 +158,8 @@ class OptimScheduler(ABC):
         epoch_num: int,
         logger=None,
     ):
-        """
-        This function optimizes the target parameters of the built-in model pointer with the input training losses.
+        """This function optimizes the target parameters of the built-in model pointer
+        with the input training losses.
 
         Args:
             losses: Dict[str, torch.Tensor]
@@ -179,7 +175,6 @@ class OptimScheduler(ABC):
                 This argument is used to update the learning rate for the current step by `self.update_lr()`.
             logger:
                 Lazily passed logger object. Used to record logging information during optimization.
-
         """
         # --- 0. Initial Preparation Part --- #
         # get the real step number based on accum_grad
@@ -262,8 +257,8 @@ class OptimScheduler(ABC):
 
     @abstractmethod
     def update_lr(self, real_step: int, epoch_num: int) -> float:
-        """
-        This abstract interface function generates the learning rate by the input step number.
+        """This abstract interface function generates the learning rate by the input
+        step number.
 
         Args:
             real_step: int
@@ -273,28 +268,25 @@ class OptimScheduler(ABC):
 
         Returns: float
             The learning rate used for parameter optimization in the current training step.
-
         """
         raise NotImplementedError
 
     def get_lr(self):
-        """
-        This function returns the current learning rate of the built-in `torch.optim.Optimizer` member.
+        """This function returns the current learning rate of the built-in
+        `torch.optim.Optimizer` member.
 
         Returns: float
             The value of the learning rates obtained from `self.optimizer.param_groups`.
-
         """
         return self.optimizer.param_groups[0]["lr"]
 
     def state_dict(self) -> Dict:
-        """
-        This function returns the current status of the OptimScheduler object for checkpoint storage.
+        """This function returns the current status of the OptimScheduler object for
+        checkpoint storage.
 
         Returns: Dict
             The status Dict containing the current status of the built-in `torch.optim.Optimizer` and the built-in
             `torch.cuda.amp.GradScaler` (if had).
-
         """
         return dict(
             optimizer=self.optimizer.state_dict(),
@@ -302,13 +294,12 @@ class OptimScheduler(ABC):
         )
 
     def load_state_dict(self, state_dict: Dict[str, Any]):
-        """
-        This function loads the existing checkpoint information into the _OptimScheduler_ object as the starting status.
+        """This function loads the existing checkpoint information into the
+        _OptimScheduler_ object as the starting status.
 
         Args:
             state_dict: Dict
                 The status information loaded from the existing checkpoint.
-
         """
         # load the optimizer
         self.optimizer.load_state_dict(state_dict["optimizer"])
@@ -317,16 +308,15 @@ class OptimScheduler(ABC):
             self.scaler.load_state_dict(state_dict["scaler"])
 
     def __repr__(self):
-        """
-        This function returns the description string of the _OptimScheduler_ object.
-        There is a general description part shared by all the _OptimScheduler_ subclasses.
+        """This function returns the description string of the _OptimScheduler_ object.
+        There is a general description part shared by all the _OptimScheduler_
+        subclasses.
 
         In this function, an interface hook function `extra_repr_fn()` will be called to generate the specific
         description part of each _OptimScheduler_ subclass.
 
         Returns: str
             The description string for the OptimScheduler object.
-
         """
         return (
             f"{self.__class__.__name__}("
@@ -336,16 +326,14 @@ class OptimScheduler(ABC):
         )
 
     def extra_repr_fn(self) -> str:
-        """
-        This interface hook function returns the specific part of the description string of the OptimScheduler object.
-        The original implementation in the base class returns an empty string.
+        """This interface hook function returns the specific part of the description
+        string of the OptimScheduler object. The original implementation in the base
+        class returns an empty string.
 
         In principle, this interface hook function must be overridden by each _OptimScheduler_ subclass.
         But there won't be any errors if you don't override it in your implementation.
 
         Returns: str
             The specific part of the description string of the OptimScheduler object.
-
-
         """
         return ""

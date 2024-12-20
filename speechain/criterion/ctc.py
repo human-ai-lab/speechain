@@ -4,10 +4,7 @@ from speechain.criterion.abs import Criterion
 
 
 class CTCLoss(Criterion):
-    """
-    The wrapper class for torch.nn.functional.ctc_loss
-
-    """
+    """The wrapper class for torch.nn.functional.ctc_loss."""
 
     def criterion_init(self, blank: int = 0, zero_infinity: bool = True):
         """

@@ -35,8 +35,8 @@ from speechain.utilbox.yaml_util import load_yaml
 
 
 class ARASR(Model):
-    """
-    Auto-Regressive Attention-based Automatic Speech Recognition (AR-ASR) implementation.
+    """Auto-Regressive Attention-based Automatic Speech Recognition (AR-ASR)
+    implementation.
 
     The neural network structure of an `ASR` Model object is made up of 3 Module members:
 
@@ -55,7 +55,6 @@ class ARASR(Model):
         3. `postnet` predicts the probability of the next tokens by the decoder hidden representations.
 
     3. (optional) a CTC layer made up of a 'TokenPostnet'
-
     """
 
     def module_init(
@@ -1043,10 +1042,7 @@ class ARASR(Model):
 
 
 class MultiDataLoaderARASR(ARASR):
-    """
-    Auto-Regressive ASR model trained by multiple dataloaders.
-
-    """
+    """Auto-Regressive ASR model trained by multiple dataloaders."""
 
     def criterion_init(
         self,

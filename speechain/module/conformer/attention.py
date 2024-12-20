@@ -5,7 +5,7 @@ from speechain.module.transformer.attention import MultiHeadedAttention
 
 
 class RelPosMultiHeadedAttention(MultiHeadedAttention):
-    """ """
+    """"""
 
     def module_init(
         self,

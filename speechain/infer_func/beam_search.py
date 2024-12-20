@@ -19,14 +19,10 @@ minus_inf = -1e20
 
 
 class BeamHypotheses(object):
-    """
-    Beam Hypothesis Container.
-
-    """
+    """Beam Hypothesis Container."""
 
     def __init__(self, beam_size: int, max_length: int, length_penalty: float):
-        """
-        Initialize n-best list of hypotheses.
+        """Initialize n-best list of hypotheses.
 
         Args:
             beam_size: int
@@ -50,21 +46,17 @@ class BeamHypotheses(object):
         self.worst_score = 1e9
 
     def __len__(self):
-        """
-        Number of hypotheses generated so far.
-        """
+        """Number of hypotheses generated so far."""
         return len(self.beams)
 
     def add(self, hyp: torch.Tensor, sum_logprobs: float):
-        """
-        Add a new hypothesis to the container.
+        """Add a new hypothesis to the container.
 
         Args:
             hyp: (hypo_len,)
                 The generated hypothesis transcript.
             sum_logprobs: float
                 The sum of log probability of each token prediction in the hypothesis.
-
         """
         # normalize the sum of log probability by the hypothesis length
         score = sum_logprobs / ((len(hyp) + eps) ** self.length_penalty)
@@ -85,8 +77,7 @@ class BeamHypotheses(object):
                 self.worst_score = min(score, self.worst_score)
 
     def is_done(self, best_sum_logprobs: float, curr_len: int = None):
-        """
-        whether the beam searching of this container is done or not
+        """Whether the beam searching of this container is done or not.
 
         Args:
             best_sum_logprobs: float
@@ -98,7 +89,6 @@ class BeamHypotheses(object):
             A flag that indicates whether the beam searching of this container is done.
             True means the container already has 'beam_size' hypotheses and the current hypothesis is not better than anyone of them.
             False means either the container has some empty beams or the current input hypothesis is better than the worst hypothesis.
-
         """
         # some beams are empty
         if len(self) < self.beam_size:
@@ -136,9 +126,8 @@ def beam_searching(
     ilm_sub_weight: float = 0.0,
     sent_per_beam: int = 1,
 ):
-    """
-    Batch version of beam searching to enable parallel computation. The basic idea is reshaping batch_size sentences
-    into (batch_size * beam_size) sentences.
+    """Batch version of beam searching to enable parallel computation. The basic idea is
+    reshaping batch_size sentences into (batch_size * beam_size) sentences.
 
     However, the hypothesis text probabilities calculated by a batch of inputs and a single input are slightly
     different due to the model accuracy. in rare cases, the best hypothesis with the highest probability may be different
@@ -205,7 +194,6 @@ def beam_searching(
         sent_per_beam: int
             The number of sentences in each beam that are returned in this function.
             sent_per_beam > 1 is mainly used for data augmentation (under development).
-
     """
     # --- 0. Arguments Checking --- #
     if sent_per_beam > 1:

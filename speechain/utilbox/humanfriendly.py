@@ -4,7 +4,6 @@
 # Last Change: September 17, 2021
 # URL: https://humanfriendly.readthedocs.io
 # https://github.com/xolox/python-humanfriendly/blob/master/humanfriendly/__init__.py
-
 """Copied from the main module of the `humanfriendly` package."""
 
 # Standard library modules.
@@ -45,8 +44,7 @@ disk_size_units = (
 
 
 def round_number(count, keep_width=False):
-    """
-    Round a floating point number to two decimal places in a human friendly format.
+    """Round a floating point number to two decimal places in a human friendly format.
 
     :param count: The number to format.
     :param keep_width: :data:`True` if trailing zeros should not be stripped,
@@ -76,8 +74,7 @@ def round_number(count, keep_width=False):
 
 
 def pluralize_raw(count, singular, plural=None):
-    """
-    Select the singular or plural form of a word based on a count.
+    """Select the singular or plural form of a word based on a count.
 
     :param count: The count (a number).
     :param singular: The singular form of the word (a string).
@@ -98,8 +95,7 @@ def pluralize_raw(count, singular, plural=None):
 
 
 def pluralize(count, singular, plural=None):
-    """
-    Combine a count with the singular or plural form of a word.
+    """Combine a count with the singular or plural form of a word.
 
     :param count: The count (a number).
     :param singular: The singular form of the word (a string).
@@ -112,8 +108,7 @@ def pluralize(count, singular, plural=None):
 
 
 def format_size(num_bytes, keep_width=False, binary=False):
-    """
-    Format a byte count as a human readable file size.
+    """Format a byte count as a human readable file size.
 
     :param num_bytes: The size to format in bytes (an integer).
     :param keep_width: :data:`True` if trailing zeros should not be stripped,

@@ -10,24 +10,24 @@ from speechain.iterator.abs import Iterator
 
 
 class BlockIterator(Iterator):
-    """
-    The strategy of this iterator is to generate batches with the same amount of data lengths. For sequence-to-sequence
-    tasks, the data instances are usually different in data length. If there is a fixed number of data instances in each
-    batch, the data volume of a single batch may constantly change during training. This may either cause a CUDA memory
-    error (out of GPU memory) or large idle GPU memories.
+    """The strategy of this iterator is to generate batches with the same amount of data
+    lengths. For sequence-to-sequence tasks, the data instances are usually different in
+    data length. If there is a fixed number of data instances in each batch, the data
+    volume of a single batch may constantly change during training. This may either
+    cause a CUDA memory error (out of GPU memory) or large idle GPU memories.
 
-    It can be considered as the strategy that always gives 'rectangles' with similar 'areas' if we treat the number of
-    data instances in a batch as the rectangle length and the maximal data length as the rectangle width.
-
+    It can be considered as the strategy that always gives 'rectangles' with similar
+    'areas' if we treat the number of data instances in a batch as the rectangle length
+    and the maximal data length as the rectangle width.
     """
 
     def batches_generate_fn(
         self, data_index: List[str], data_len: Dict[str, int], batch_len: int = None
     ) -> List[List[str]]:
-        """
-        All the data instances in the built-in Dataset object will be grouped into batches with the same total lengths.
-        The lengths used for grouping is given in data_len. The customized argument batch_len specifies the total length
-        that each batch should have.
+        """All the data instances in the built-in Dataset object will be grouped into
+        batches with the same total lengths. The lengths used for grouping is given in
+        data_len. The customized argument batch_len specifies the total length that each
+        batch should have.
 
         Args:
             data_index
@@ -36,7 +36,6 @@ class BlockIterator(Iterator):
                 The total data length of all the data instances in a batch.
                 If the data is in the format of audio waveforms, batch_len is the amount of sampling points.
                 If the data is in the format of acoustic features, batch_len is the amount of time frames.
-
         """
         assert batch_len is not None, "batch_len cannot be None and must be specified!"
         if not isinstance(batch_len, int):

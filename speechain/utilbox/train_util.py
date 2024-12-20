@@ -149,11 +149,8 @@ def spk2tensor(spk_list: List[str], spk2idx_dict: Dict) -> torch.LongTensor:
 
 
 def float_near_round(input_float: float):
-    """
-
-    Round the float number in [X.0, X.5) to X and the float number in (X.5, {X+1}.0] to X+1
-
-    """
+    """Round the float number in [X.0, X.5) to X and the float number in (X.5, {X+1}.0]
+    to X+1."""
     int_part = int(input_float)
     frac_part = input_float - int_part
     if frac_part < 0.5:
@@ -172,9 +169,9 @@ def get_min_indices_by_freq(
     chosen_idx_num: int = 1,
     freq_weights: Union[int, float] or List[Union[int, float]] = None,
 ) -> Tuple[List, Dict[Any, Union[int, float]]]:
-    """
-    Get the specified number of indices with minimum values from the input frequency dictionary,
-    optionally applying frequency weights, and return the updated frequency dictionary.
+    """Get the specified number of indices with minimum values from the input frequency
+    dictionary, optionally applying frequency weights, and return the updated frequency
+    dictionary.
 
     Args:
         freq_dict (Dict[Any, Union[int, float]]):

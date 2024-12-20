@@ -121,8 +121,7 @@ class ConformerEncoderLayer(Module):
         self.dropout = nn.Dropout(res_dropout)
 
     def forward(self, src: torch.Tensor, mask: torch.Tensor, posenc: torch.Tensor):
-        """
-        Forward pass for a single transformer encoder layer.
+        """Forward pass for a single transformer encoder layer.
 
         Args:
             src: (batch, src_maxlen, d_model)
@@ -132,7 +131,6 @@ class ConformerEncoderLayer(Module):
 
         Returns:
             The output of this Transformer encoder layer and the attention matrix
-
         """
         "Front Positional FeedForward Layer part"
         # go through the LayerNorm layer before the feedforward layer or not
@@ -148,7 +146,6 @@ class ConformerEncoderLayer(Module):
             if not self.layernorm_first
             else front_fdfwd_output
         )
-
         "Relative Positional Multi-head Attention Layer part"
         # go through the LayerNorm layer before the multi-head attention layer or not
         front_fdfwd_output_norm = (
@@ -173,7 +170,6 @@ class ConformerEncoderLayer(Module):
             if not self.layernorm_first
             else relpos_mha_output
         )
-
         "Convolutional Module part"
         # go through the LayerNorm layer before the feedforward layer or not
         relpos_mha_output_norm = (
@@ -192,7 +188,6 @@ class ConformerEncoderLayer(Module):
             if not self.layernorm_first
             else conv_output
         )
-
         "Rear Positional FeedForward Layer part"
         # go through the LayerNorm layer before the feedforward layer or not
         conv_output_norm = (
@@ -216,7 +211,7 @@ class ConformerEncoderLayer(Module):
 
 
 class ConformerEncoder(Module):
-    """ """
+    """"""
 
     def module_init(
         self,
@@ -285,8 +280,7 @@ class ConformerEncoder(Module):
 
     @staticmethod
     def subsequent_mask(batch_size, maxlen: int) -> torch.Tensor:
-        """
-        Mask out subsequent positions (to prevent attending to future positions)
+        """Mask out subsequent positions (to prevent attending to future positions)
         Transformer helper function.
 
         Args:
@@ -295,7 +289,6 @@ class ConformerEncoder(Module):
                 size of mask (2nd and 3rd dim)
 
         Returns:
-
         """
         return ~torch.triu(
             torch.ones(batch_size, maxlen, maxlen, dtype=torch.bool), diagonal=1

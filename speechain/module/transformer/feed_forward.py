@@ -15,10 +15,8 @@ from speechain.module.prenet.conv1d import Conv1dEv
 
 
 class PositionwiseFeedForward(Module):
-    """
-    Position-wise Feed-forward layer
-    Projects the output vectors of multi-head attention layer to fdfwd_dim and then back to d_model.
-    """
+    """Position-wise Feed-forward layer Projects the output vectors of multi- head
+    attention layer to fdfwd_dim and then back to d_model."""
 
     def module_init(
         self,
@@ -29,8 +27,7 @@ class PositionwiseFeedForward(Module):
         fdfwd_args: Dict[str, Any] = {},
         dropout=0.1,
     ):
-        """
-        Initializes position-wise feed-forward layer.
+        """Initializes position-wise feed-forward layer.
 
         Args:
             d_model: int

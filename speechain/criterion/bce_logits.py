@@ -15,7 +15,7 @@ from speechain.utilbox.train_util import make_mask_from_len
 
 
 class BCELogits(Criterion):
-    """ """
+    """"""
 
     def criterion_init(self, pos_weight: float = 1.0, is_normalized: bool = True):
         """

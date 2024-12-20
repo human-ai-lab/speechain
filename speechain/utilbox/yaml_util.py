@@ -18,8 +18,8 @@ from speechain.utilbox.regex_util import (
 
 
 def reform_config_dict(input_config):
-    """
-    Recursively reformat a configuration dictionary to convert rumel.yaml data types into normal Python data types.
+    """Recursively reformat a configuration dictionary to convert rumel.yaml data types
+    into normal Python data types.
 
     Args:
         input_config (Dict or List or ScalarFloat or PlainScalarString):
@@ -27,7 +27,6 @@ def reform_config_dict(input_config):
 
     Returns:
         Dict or List or float or str: The reformatted configuration dictionary with normal Python data types.
-
     """
     if isinstance(input_config, Dict):
         return {
@@ -45,8 +44,7 @@ def reform_config_dict(input_config):
 
 
 def remove_representer(parent_node, reference, curr_key=None):
-    """
-    Recursively removes representers from a configuration dictionary.
+    """Recursively removes representers from a configuration dictionary.
 
     Args:
         parent_node (Dict or List):
@@ -58,7 +56,6 @@ def remove_representer(parent_node, reference, curr_key=None):
 
     Returns:
         Dict or List or any: The updated configuration dictionary with removed representers.
-
     """
 
     def get_reference_value(_ref: str):
@@ -161,8 +158,7 @@ def remove_representer(parent_node, reference, curr_key=None):
 
 
 def load_yaml(yaml_file) -> Dict:
-    """
-    Loads a YAML file and returns its content as a dictionary.
+    """Loads a YAML file and returns its content as a dictionary.
 
     Args:
         yaml_file (str or IO): The path to the YAML file or a file-like object.
@@ -172,7 +168,6 @@ def load_yaml(yaml_file) -> Dict:
 
     Raises:
         AssertionError: If the input YAML file does not exist.
-
     """
     # turn the input file path into file IO stream
     if isinstance(yaml_file, str):

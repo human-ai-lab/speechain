@@ -14,10 +14,11 @@ from speechain.module.abs import Module
 
 
 class PositionalEncoding(Module):
-    """
-    Pre-compute position encodings (PE). In forward pass, this module adds the positional encodings to the embedded
-    feature vectors to make the Transformer aware of the positional information of the sequences.
+    """Pre-compute position encodings (PE).
 
+    In forward pass, this module adds the positional encodings to the embedded feature
+    vectors to make the Transformer aware of the positional information of the
+    sequences.
     """
 
     def module_init(
@@ -31,8 +32,7 @@ class PositionalEncoding(Module):
         max_len: int = 5000,
         dropout: float = 0.0,
     ):
-        """
-        Positional Encoding with maximum length max_len.
+        """Positional Encoding with maximum length max_len.
 
         Args:
             posenc_type: str
@@ -107,9 +107,8 @@ class PositionalEncoding(Module):
         self.dropout = torch.nn.Dropout(p=dropout)
 
     def reset_parameters(self):
-        """
-        Make sure that the scalar value is not influenced by different model initialization methods.
-        """
+        """Make sure that the scalar value is not influenced by different model
+        initialization methods."""
         if hasattr(self, "alpha"):
             self.alpha.data = torch.tensor(self.init_alpha)
 
@@ -147,8 +146,8 @@ class PositionalEncoding(Module):
         self.register_buffer("posenc", posenc.unsqueeze(0))
 
     def forward(self, emb_feat: torch.Tensor):
-        """
-        Embedded feature
+        """Embedded feature.
+
             -> LayerNorm(Embedded feature)
                 -> LayerNorm(Embedded feature) * sqrt(d_model)
                     -> LayerNorm(Embedded feature) * sqrt(d_model) + Positional Encoding * learnable scalar
@@ -160,7 +159,6 @@ class PositionalEncoding(Module):
 
         Returns:
             Embedded input feature sequences with positional encoding
-
         """
         # in case that the input sequence is longer than the preset max_len
         if emb_feat.size(1) > self.posenc.size(1):

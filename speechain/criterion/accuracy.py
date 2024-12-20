@@ -11,10 +11,10 @@ from speechain.utilbox.train_util import make_mask_from_len
 
 
 class Accuracy(Criterion):
-    """
-    This criterion calculates the accuracy rate (0.0~1.0) between model predictions and target labels.
-    This criterion doesn't have initialization function.
+    """This criterion calculates the accuracy rate (0.0~1.0) between model predictions
+    and target labels.
 
+    This criterion doesn't have initialization function.
     """
 
     def __call__(

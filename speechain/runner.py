@@ -55,8 +55,7 @@ class Runner(object):
 
     @classmethod
     def add_parse(cls, parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
-        """
-        The interface where users can add their own arguments.
+        """The interface where users can add their own arguments.
 
         Args:
             parser: argparse.ArgumentParser
@@ -65,18 +64,15 @@ class Runner(object):
         Returns:
             parser: argparse.ArgumentParser
                 The name space containing your arguments.
-
         """
         return parser
 
     @classmethod
     def parse(cls):
-        """
-        The static function that outputs all the default arguments for the runner.
+        """The static function that outputs all the default arguments for the runner.
 
         Returns:
             a Dict containing the key-value pairs of all arguments
-
         """
         parser = argparse.ArgumentParser()
 
@@ -553,9 +549,8 @@ class Runner(object):
     def build_iterators(
         cls, data_cfg: Dict[str, Dict], args: argparse.Namespace
     ) -> Dict[str, Dict[str, Iterator] or Iterator]:
-        """
-        This static function builds all iterators used in the experiment. The configuration of iterators is given in
-        your specified 'data_cfg'.
+        """This static function builds all iterators used in the experiment. The
+        configuration of iterators is given in your specified 'data_cfg'.
 
         The iterators are returned as a dictionary where the first-level keys indicate different iterator groups:
         'train', 'valid', and 'test'. The second-level keys in each group indicates the iterators belonging to the
@@ -571,7 +566,6 @@ class Runner(object):
 
         Returns:
             The dictionary of the iterators of all groups (train, valid, test).
-
         """
 
         def recur_iterator_init(_data_cfg: Dict, _dset: str):
@@ -668,9 +662,9 @@ class Runner(object):
     def build_model(
         cls, model_cfg: Dict[str, Any], args: argparse.Namespace, device: torch.device
     ) -> Model:
-        """
-        This static function builds the model used in the experiment. The configuration of the model is given in
-        the value of the 'model' key in your specified 'model_cfg'.
+        """This static function builds the model used in the experiment. The
+        configuration of the model is given in the value of the 'model' key in your
+        specified 'model_cfg'.
 
         Args:
             model_cfg: Dict
@@ -680,7 +674,6 @@ class Runner(object):
 
         Returns:
             The target Model object initialized by your given configuration
-
         """
         assert "model_type" in model_cfg.keys(), "Please specify the model_type!"
         assert "module_conf" in model_cfg.keys(), "Please specify the module_conf!"
@@ -704,9 +697,9 @@ class Runner(object):
     def build_optim_sches(
         cls, model: Model, optim_sche_cfg: Dict[str, Any], args: argparse.Namespace
     ) -> Dict[str, OptimScheduler] or OptimScheduler:
-        """
-        This static function builds the OptimSchedulers used in the pipeline. The configuration of the
-        OptimSchedulers is given in the value of 'optim_sches' key in your specified 'train_cfg'.
+        """This static function builds the OptimSchedulers used in the pipeline. The
+        configuration of the OptimSchedulers is given in the value of 'optim_sches' key
+        in your specified 'train_cfg'.
 
         This function must be done after DDP wrapping because we need to make sure that the model parameters received
         by the optimizer in each process are identical. With the identical model parameters, it's safe to consider that
@@ -722,7 +715,6 @@ class Runner(object):
 
         Returns:
             The Dict of the initialized OptimSchedulers.
-
         """
         # single-optimizer scenario
         if len(optim_sche_cfg) == 2 and (
@@ -783,9 +775,9 @@ class Runner(object):
     def resume(
         cls, args: argparse.Namespace, model: Model, monitor: TrainValidMonitor
     ) -> int:
-        """
-        load the model parameters to the current process. This operation is necessary in our toolkit because we need to
-        make sure that the models in all the processes have the same buffer and parameter tensors.
+        """Load the model parameters to the current process. This operation is necessary
+        in our toolkit because we need to make sure that the models in all the processes
+        have the same buffer and parameter tensors.
 
         Args:
             args: argparse.Namespace
@@ -798,7 +790,6 @@ class Runner(object):
         Returns:
             The number of the starting epoch. If the training resumes from an existing checkpoint, then the starting
             epoch will be loaded from the checkpoint; otherwise, 1 will be returned.
-
         """
         # start the training from the existing checkpoint
         if args.resume:
@@ -1582,15 +1573,14 @@ class Runner(object):
 
     @classmethod
     def set_random_seeds(cls, seed: int):
-        """
-        Set random seeds for python environment, numpy environment and torch environment
+        """Set random seeds for python environment, numpy environment and torch
+        environment.
 
         Note:
             1. torch.random.manual_seed(seed) is the same with torch.manual_seed(seed),
                 so it is not necessary to be included here.
             2. torch.cuda.manual_seed_all(seed) is also not included here because we initialize the processes on
                 different GPUs with different random seeds depending on the GPU number to avoid the process homogeneity.
-
         """
         random.seed(seed)
         np.random.seed(seed)
@@ -1640,13 +1630,11 @@ class Runner(object):
 
     @classmethod
     def main_worker(cls, gpu: int, args: argparse.Namespace):
-        """
-        The main body of a process on one GPU.
+        """The main body of a process on one GPU.
 
         Args:
             gpu:
             args:
-
         """
         # --- 0. Random Seed Preparation --- #
         # set different random seeds for the different GPU processes in DDP mode to avoid the process homogeneity
@@ -1937,14 +1925,12 @@ class Runner(object):
 
     @classmethod
     def main(cls, args: argparse.Namespace):
-        """
-        The beginning of a experiment branch (training or testing).
-        This function decides the single-GPU or multi-GPU training sub-branch.
+        """The beginning of a experiment branch (training or testing). This function
+        decides the single-GPU or multi-GPU training sub-branch.
 
         Args:
             args: argparse.Namespace
                 The input arguments for the experiment.
-
         """
         # This block is for safely calling torch.cuda API in the main process
         try:
@@ -2051,10 +2037,8 @@ class Runner(object):
 
     @classmethod
     def run(cls):
-        """
-        The preparation area of Runner where the configuration is parsed and converted into code-friendly format.
-
-        """
+        """The preparation area of Runner where the configuration is parsed and
+        converted into code-friendly format."""
         # --- 0. Get the Command Line Arguments --- #
         args = cls.parse()
 

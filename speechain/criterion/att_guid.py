@@ -4,12 +4,10 @@ from speechain.criterion.abs import Criterion
 
 
 class AttentionGuidance(Criterion):
-    """
-    This criterion is the attention guidance loss function.
+    """This criterion is the attention guidance loss function.
 
     References: Efficiently trainable text-to-speech system based on deep convolutional networks with guided attention
         https://arxiv.org/pdf/1710.08969
-
     """
 
     def criterion_init(self, sigma: float = 0.2):

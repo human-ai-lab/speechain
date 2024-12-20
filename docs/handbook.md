@@ -69,7 +69,8 @@ In SpeeChain, our framework provides a convenient way to convert your entered st
 1. For the _List_ variables, your entered string should be surrounded by a pair of square brackets and each element inside the brackets should be split by a comma.
    The structure can be nested to initialize sub-_List_ in the return _List_ variable.  
    For example, the string `[a,[1,2,[1.1,2.2,3.3],[h,i,j,k]],c,[d,e,[f,g,[h,i,j,k]]]]` will be parsed to
-   ```
+
+   ```bash
    - 'a'
    - - 1
      - 2
@@ -90,11 +91,13 @@ In SpeeChain, our framework provides a convenient way to convert your entered st
          - 'j'
          - 'k'
    ```
+
 2. For the _Dict_ variables, the key and its value should be split by a colon. 
    The value should be surrounded by a pair of braces if it's a sub-_Dict_. 
    The structure can be nested to initialize sub-_Dict_ in the return _Dict_ variable.  
    For example, the string `a:{b:12.3,c:{d:123,e:{g:xyz}}},g:xyz` will be parsed to
-    ```
+
+    ```bash
     a:
         b: 12.3
         c:
@@ -103,8 +106,10 @@ In SpeeChain, our framework provides a convenient way to convert your entered st
                 g:xyz
     g: xyz
     ```
+
    Moreover, the _List_ string can also be nested into the _Dict_ string like `a:[1,2,3]` will be parsed as
-   ```
+
+   ```bash
    a:
    - 1
    - 2
@@ -115,11 +120,12 @@ In SpeeChain, our framework provides a convenient way to convert your entered st
 As the number of arguments increases, it would be hard for us to given all the arguments one by one in the terminal. 
 As a frequently-used file format for configuration, _.yaml_ has been popular in many well-known toolkits. 
 
-In SpeeChain, we wrap the conventional _.yaml_ file and provides some advanced !-suffixed _.yaml_ representers to further simplify its layout and improve the readability:
+In SpeeChain, we wrap the conventional _.yaml_ file and provides some advanced !-suffixed _.yaml_ representers to further simplify its layout and improve the readability:  
   1. **!str** allows you to cast a numerical value into a string by replacing `key_name: 10` with `key_name: !str 10`. 
      In this scenario, the value of `key_name` will be a string '10' instead of an integer 10.
   2. **!list** allows you to compress the configuration of a list into one line from  
-      ```
+
+      ```yaml
       key_name: 
       - - a
         - b
@@ -129,7 +135,7 @@ In SpeeChain, we wrap the conventional _.yaml_ file and provides some advanced !
         - f
       ```
       to
-      ```
+      ```yaml
       key_name:
       - !list [a,b,c]
       - !list [d,e,f]
@@ -139,7 +145,7 @@ In SpeeChain, we wrap the conventional _.yaml_ file and provides some advanced !
       2. Nested structures like `key_name: !list [!list [a,b,c],!list [d,e,f]]` are not supported yet.
   3. **!tuple** allows you to create tuples in your configuration. 
       The statement
-      ```
+      ```yaml
       key_name: 
       - a
       - b
@@ -148,28 +154,33 @@ In SpeeChain, we wrap the conventional _.yaml_ file and provides some advanced !
       can only give us a list, but sometimes we may need to create a tuple. Instead, we can use `key_name: !tuple (a,b,c)` to create a tuple.  
       **Note:** The elements should be separated by commas ',' and surrounded by a pair of brackets '()'. 
   4. **!ref** allows you to reuse the values you have already created by replacing
-      ```
+
+      ```yaml
       key_name1: abc/def/ghi/jkl
       key_name2: abc/def/ghi/jkl/mno
       key_name3: abc/def/ghi/jkl/mno/pqr
       ```
+      
       with
-      ```
+
+      ```yaml
       key_name1: abc/def/ghi/jkl
       key_name2: !ref <key_name1>/mno
       key_name3: !ref <key_name2>/pqr
       ```
+
       In this scenario, the value of `key_name1` will be reused to create `key_name2` which will be further reused to create `key_name3`.  
       **Note:** 
-      1. Nested structures like
-          ```
+      1. Nested structures like  
+          ```yaml
           key_name1: abc/def/ghi/jkl
           key_name2: !ref <key_name1>/mno
           key_name3: !list [!ref <key_name1>,!ref <key_name2>]
           ```
           are not supported yet.
-      2. Different !ref representers must be used in order. The following usage is invalid:
-          ```
+      2. Different !ref representers must be used in order. The following usage is invalid:  
+
+          ```yaml
           key_name1: abc/def/ghi/jkl
           key_name3: !ref <key_name2>/pqr
           key_name2: !ref <key_name1>/mno
@@ -188,7 +199,7 @@ There could be either one inference configuration or multiple configurations in 
         In this example, the evaluation results will be saved to a folder named `greedy_decoding`.  
         If there are many arguments you need to give in the configuration, we recommend you to give them by a configuration file for concision. 
      2. **Dict:** The _Dict_ indicates the content of your inference configuration. For example.
-        ```
+        ```yaml
         infer_cfg:
             beam_size: 1
             temperature: 1.0
@@ -196,17 +207,19 @@ There could be either one inference configuration or multiple configurations in 
         means that `beam_size=1` and `temperature=1.0` will be used for ASR decoding. 
         In this example, the evaluation results will be saved to a folder named `beam_size=1_temperature=1.0` which is decided by the keys and values in your given _Dict_.  
         If there are not so many arguments in your configuration, we recommend you to give them by a _Dict_ to avoid messy configuration files on your disk.
-  3. If you want to give multiple inference configuration in *infer_cfg*, please give them by either a _List_ or a _Dict_.
+
+  3. If you want to give multiple inference configuration in *infer_cfg*, please give them by either a _List_ or a _Dict_.  
      1. **List:** Each element in the _List_ could be either a string or a _Dict_.  
         * The string indicates the file paths of a given inference configuration. For example,
-          ```
+
+          ```yaml
           infer_cfg:
             - config/infer/asr/greedy_decoding.yaml
             - config/infer/asr/beam_size=16.yaml
           ```
           means that both `greedy_decoding.yaml` and `beam_size=16.yaml` in `${SPEECHAIN_ROOT}/config/infer/asr/` will be used for ASR decoding.  
         * The _Dict_ indicates the content of a given inference configuration. For example,
-          ```
+          ```yaml
           infer_cfg:
             - beam_size: 1
               temperature: 1.0
@@ -215,7 +228,7 @@ There could be either one inference configuration or multiple configurations in 
           ```
           could be used and two folders `beam_size=1_temperature=1.0` and `beam_size=16_temperature=1.0` will be created to place their evaluation results.  
         * Of course, strings and *Dict*s can be mixed in _infer_cfg_ like
-          ```
+          ```yaml
           infer_cfg:
             - config/infer/asr/greedy_decoding.yaml
             - beam_size: 16
@@ -225,7 +238,7 @@ There could be either one inference configuration or multiple configurations in 
         `shared_args` (short of 'shared arguments') is a _Dict_ which contains the arguments shared by all the configurations in the _Dict_.  
         `exclu_args` (short of 'exclusive arguments') is a _List[Dict]_ where each element contains the exclusive arguments for each configuration.  
         For example,
-        ```
+        ```yaml
           infer_cfg:
             shared_args:
                 beam_size: 16
@@ -234,12 +247,12 @@ There could be either one inference configuration or multiple configurations in 
                 - temperature: 1.5
         ```
         means that there will be two configurations used for model inference:
-        ```
+        ```yaml
         beam_size: 16
         temperature: 1.0
         ```
         and
-        ```
+        ```yaml
         beam_size: 16
         temperature: 1.5
         ```
@@ -257,7 +270,7 @@ We provide two levels of executable bash scripts:
    For more details, please go to the target sub-folder and run `bash run.sh --help` for the message about involved arguments.
 
 The execution hierarchy of the scripts is:
-```
+```bash
 ${SPEECHAIN_ROOT}/recipes/{task_name}/{dataset_name}/{subset_name}/run.sh
     --->${SPEECHAIN_ROOT}/recipes/run.sh
         --->${SPEECHAIN_ROOT}/speechain/runner.py
@@ -286,7 +299,7 @@ This folder contains off-the-shelf configuration files that can be shared across
 Each type of configuration corresponds to a specific sub-folder where each category of configuration corresponds to a specific sub-sub-folder.
 
 Folder architecture is shown below:
-```
+```bash
 /config
     /feat       # Configuration for acoustic feature extraction
         /log_mel    # Configuration files for log-Mel spectrogram extraction
@@ -311,7 +324,7 @@ This folder contains off-the-shelf processing scripts to dump datasets into your
 Each type of datasets corresponds to a specific sub-folder where each dataset corresponds a specific sub-sub-folder.
 
 Folder architecture is shown below:
-```
+```bash
 /datasets
     /speech_text        # Datasets that are made up of speech and text data
         /librispeech        # Processing scripts for the LibriSpeech dataset
@@ -333,7 +346,7 @@ Each task corresponds to a specific sub-folder where each dataset corresponds a 
 In the dataset folder, there may be some sub-folders corresponding to different settings of model training where a sub-sub-folder `/data_cfg` contains all the configuration files of data loading that are shared by all the model sub-sub-folders.
 
 Folder architecture is shown below:
-```
+```bash
 /recipes
     /asr                    # Recipes for the ASR task
         /librispeech            # Recipes for ASR models on the LibriSpeech dataset
@@ -364,7 +377,7 @@ The folder `/speechain` is the core part of our toolkit where each sub-folder co
 In each sub-folder, there is a .py file named `abs.py` that declares the abstract class of the corresponding pipeline part. 
 Based on the abstract class, many implementation classes are included in the same sub-folder with the name like `xxx.py`.
 
-```
+```bash
 /speechain
     # Sub-folders for all specific parts of an experimental pipeline
     /criterion
@@ -435,20 +448,20 @@ We have some specifications for you to standardize your contribution:
     If you are using PyCharm, you can set the docstring style in File→Setting→Tools→Python Integrated Tools→Docstrings→Docstring format.
     
         As for argument explanation in the docstring, we recommend you to write the argument type after the colon and give its description below with a tab retract as follows.
-        ```
+        ```python3
             Args:
                 d_model: int
                     The dimension of the input feature sequences.
         ```
         If the argument type is `torch.Tensor` or `numpy.array`, please replace the type with its shape as follows.
-        ```
+        ```python3
             Args:
                 emb_feat: (batch_size, seq_len, d_model)
                     Embedded input feature sequences
         ```
     * For in-line comments, we recommend you start a new line every time you want to comment (it's better not to type a long comment after the code). 
     The codes are better to be divided into several code blocks by their roles with an in-line comment right above the block as follows.
-      ```
+      ```python3
         # member registration
         self.d_model = d_model
         self.num_layers = num_layers
@@ -456,6 +469,10 @@ We have some specifications for you to standardize your contribution:
         self.layernorm_first = layernorm_first
       ```
     
+    Note you can format the docstring using [docformatter](https://github.com/PyCQA/docformatter) with the following command.
+    ```bash
+    docformatter --in-place -s google -r speechain --black
+    ```
 2. **Naming**: We have several recommendations for class names and variable names.
     * For class names, we recommend you to name your class in the CamelCase style. The names are better to be in the form of "What is it made up of" + "What is it". 
     

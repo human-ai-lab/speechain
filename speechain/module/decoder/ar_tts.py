@@ -22,9 +22,7 @@ from speechain.utilbox.train_util import make_mask_from_len
 
 
 class ARTTSDecoder(Module):
-    """
-    Decoder Module for Autoregressive TTS model.
-    """
+    """Decoder Module for Autoregressive TTS model."""
 
     def module_init(
         self,
@@ -202,12 +200,11 @@ class ARTTSDecoder(Module):
         )
 
     def turn_on_dropout(self):
-        """
-        turn on the dropout layers of the decoder prenet during inference.
+        """Turn on the dropout layers of the decoder prenet during inference.
+
         Reference: the second paragraph from the bottom in Sec 2.2 of
             'Natural TTS Synthesis by Conditioning WaveNet on Mel Spectrogram Predictions'
             https://arxiv.org/pdf/1712.05884.pdf
-
         """
         assert hasattr(
             self, "prenet"

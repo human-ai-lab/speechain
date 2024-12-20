@@ -17,13 +17,12 @@ from speechain.utilbox.data_loading_util import (
 
 
 class Dataset(torch.utils.data.Dataset, ABC):
-    """
+    """Base class for reading and packaging data instances from disk into memory for
+    model training or testing.
 
-    Base class for reading and packaging data instances from disk into memory for model training or testing.
-
-    The Dataset receives indices of selected data instances from a Dataloader object, created by a high-level Iterator.
-    Post-processing steps may need to be executed in the Model object later as the output batches might not be fully processed.
-
+    The Dataset receives indices of selected data instances from a Dataloader object,
+    created by a high-level Iterator. Post-processing steps may need to be executed in
+    the Model object later as the output batches might not be fully processed.
     """
 
     def __init__(
@@ -32,9 +31,9 @@ class Dataset(torch.utils.data.Dataset, ABC):
         data_selection: Optional[List[Union[List[str], str]]] = None,
         **dataset_conf,
     ):
-        """
-        This initialization function reads the main body of the data instances into the memory. The main body is used to
-        extract individual data instances from the disk to form a batch during model training or testing.
+        """This initialization function reads the main body of the data instances into
+        the memory. The main body is used to extract individual data instances from the
+        disk to form a batch during model training or testing.
 
         The hook dataset_init_fn() is executed here after reading the main body of data instances.
 
@@ -161,8 +160,8 @@ class Dataset(torch.utils.data.Dataset, ABC):
     def data_len_register_fn(
         main_data: Dict[str, Dict[str, str]]
     ) -> Union[Dict[str, Union[int, float]], None]:
-        """
-        Static hook function that registers default information about the length of each data instance.
+        """Static hook function that registers default information about the length of
+        each data instance.
 
         By default, this function does nothing. If you need to decide the data length on-the-fly, override this function
         with your own implementation.
@@ -176,8 +175,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         return None
 
     def dataset_init_fn(self, **dataset_conf):
-        """
-        Hook function that initializes the custom parts of dataset implementations.
+        """Hook function that initializes the custom parts of dataset implementations.
 
         By default, this function does nothing. If your Dataset subclass has custom parts, override this function
         with your own implementation.
@@ -194,8 +192,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         selection_num: Union[float, int, str],
         meta_info: Union[List[str], str, None] = None,
     ) -> List:
-        """
-        Selects data instances based on the provided selection strategy.
+        """Selects data instances based on the provided selection strategy.
 
         Returns a new list of selected data instances.
 
@@ -228,7 +225,6 @@ class Dataset(torch.utils.data.Dataset, ABC):
 
         Returns: List[str]
             List[str]: A list of selected data instance indices.
-
         """
         # Convert data_index to numpy.array for easier manipulation
         sorted_data = np.array(data_index, dtype=str)
@@ -351,21 +347,20 @@ class Dataset(torch.utils.data.Dataset, ABC):
         return sorted_data.tolist()
 
     def get_data_index(self) -> List[str]:
-        """
-        This function is designed to make users know the data indices of this Dataset object without accessing its
-        members for lower coupling.
+        """This function is designed to make users know the data indices of this Dataset
+        object without accessing its members for lower coupling.
 
         Returns: List[str]
             The list of the indices of all data instances in this dataset.
-
         """
         return self.data_index
 
     def remove_data_by_index(self, index: str):
-        """
-        This function removes the corresponding data instance from this Dataset object by the given index. It's mainly
-        used for solving the index mismatch of data instances with the high-level Iterator object.
+        """This function removes the corresponding data instance from this Dataset
+        object by the given index.
 
+        It's mainly used for solving the index mismatch of data instances with the high-
+        level Iterator object.
         """
         # remove the data instances with the given index from self.main_data
         for data_type in self.main_data.keys():
@@ -373,9 +368,9 @@ class Dataset(torch.utils.data.Dataset, ABC):
                 self.main_data[data_type].pop(index)
 
     def __getitem__(self, index: str) -> Dict[str, Any]:
-        """
-        This function is the implementation of the one in the parent class `torch.utils.data.Dataset`.  This function
-        is activated by the _Dataloader_ object one data instance a time. In each time, this function receives an index
+        """This function is the implementation of the one in the parent class
+        `torch.utils.data.Dataset`.  This function is activated by the _Dataloader_
+        object one data instance a time. In each time, this function receives an index
         and returns the selected data instance.
 
         The hook `proc_main_data_fn()` is executed here after extracting the main body of the selected data instance.
@@ -395,9 +390,9 @@ class Dataset(torch.utils.data.Dataset, ABC):
         return outputs
 
     def extract_main_data_fn(self, main_data: Dict) -> Dict[str, Any] or None:
-        """
-        This hook function extracts the selected data instance from the disk to the memory. If you want to implement
-        your own data instance extraction, please override this hook function and give your logic here.
+        """This hook function extracts the selected data instance from the disk to the
+        memory. If you want to implement your own data instance extraction, please
+        override this hook function and give your logic here.
 
         Args:
             main_data: Dict[str, str]
@@ -407,15 +402,14 @@ class Dataset(torch.utils.data.Dataset, ABC):
 
         Returns: Dict[str, Any]
             The dictionary containing the extracted data instance.
-
         """
         return main_data
 
     def collate_fn(self, batch: List[Dict]) -> Dict[str, Any]:
-        """
-        This hook function decides how to preprocess a list of extracted data instance dictionary before giving them to
-        the model. This hook function is used as the value of the argument collate_fn for initializing Dataloader object
-        at the beginning of each epoch.
+        """This hook function decides how to preprocess a list of extracted data
+        instance dictionary before giving them to the model. This hook function is used
+        as the value of the argument collate_fn for initializing Dataloader object at
+        the beginning of each epoch.
 
         If you have your own batch collating strategy, we don't recommend you to override this hook but another hook
         named `collate_main_data_fn()`.
@@ -428,7 +422,6 @@ class Dataset(torch.utils.data.Dataset, ABC):
 
         Returns: Dict[str, Any]
             The batch dictionary that will be passed to the model.
-
         """
         # preprocess List[Dict[str, Any]] to Dict[str, List[Any]]
         outputs = dict()
@@ -448,11 +441,11 @@ class Dataset(torch.utils.data.Dataset, ABC):
     def collate_main_data_fn(
         self, batch_dict: Dict[str, List]
     ) -> Dict[str, torch.Tensor or List]:
-        """
-        This hook function decides how to preprocess a dictionary of the extracted batch of data instances before giving
-        them to the model. The original hook in the base class packages all the elements other than strings of the batch
-        into a `torch.Tensor`. Therefore, the `torch.Tensor` elements must have the same shape. The string elements will
-        remain a list.
+        """This hook function decides how to preprocess a dictionary of the extracted
+        batch of data instances before giving them to the model. The original hook in
+        the base class packages all the elements other than strings of the batch into a
+        `torch.Tensor`. Therefore, the `torch.Tensor` elements must have the same shape.
+        The string elements will remain a list.
 
         If you have your own batch collating strategy, please override this hook function and give your logic here.
 
@@ -464,7 +457,6 @@ class Dataset(torch.utils.data.Dataset, ABC):
 
         Returns: Dict[str, torch.Tensor or List]
             The dictionary containing the collated batch of data instances.
-
         """
         # extract the main body of data instances by the hook interface implementation
         for key in batch_dict.keys():

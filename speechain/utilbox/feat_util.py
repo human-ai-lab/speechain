@@ -50,11 +50,8 @@ def convert_wav_to_stft(
     logging: bool = False,
     log_base: float or None = None,
 ) -> np.ndarray:
-    """
-    For the details about the arguments and returns,
-        please refer to ${SPEECHAIN_ROOT}/speechain/module/frontend/speech2linear.py
-
-    """
+    """For the details about the arguments and returns, please refer to
+    ${SPEECHAIN_ROOT}/speechain/module/frontend/speech2linear.py."""
     # if hop_length and win_length are given in the unit of seconds, turn them into the corresponding time steps
     hop_length = int(hop_length * sr) if isinstance(hop_length, float) else hop_length
     win_length = int(win_length * sr) if isinstance(win_length, float) else win_length
@@ -129,12 +126,8 @@ def convert_wav_to_logmel(
     delta_order: int = 0,
     delta_N: int = 2,
 ) -> np.ndarray:
-    """
-
-    For the details about the arguments and returns,
-        please refer to ${SPEECHAIN_ROOT}/speechain/module/frontend/speech2mel.py
-
-    """
+    """For the details about the arguments and returns, please refer to
+    ${SPEECHAIN_ROOT}/speechain/module/frontend/speech2mel.py."""
     # if hop_length and win_length are given in the unit of seconds, turn them into the corresponding time steps
     hop_length = int(hop_length * sr) if isinstance(hop_length, float) else hop_length
     win_length = int(win_length * sr) if isinstance(win_length, float) else win_length
@@ -211,12 +204,9 @@ def convert_wav_to_mfcc(
     delta_order: int = 0,
     delta_N: int = 2,
 ) -> np.ndarray:
-    """
-
-    For the details about the arguments and returns,
-        please refer to ${SPEECHAIN_ROOT}/speechain/utilbox/feat_util.convert_wav_to_logmel() and librosa.feature.mfcc
-
-    """
+    """For the details about the arguments and returns, please refer to
+    ${SPEECHAIN_ROOT}/speechain/utilbox/feat_util.convert_wav_to_logmel() and
+    librosa.feature.mfcc."""
     # if hop_length and win_length are given in the unit of seconds, turn them into the corresponding time steps
     hop_length = int(hop_length * sr) if isinstance(hop_length, float) else hop_length
     win_length = int(win_length * sr) if isinstance(win_length, float) else win_length
@@ -272,9 +262,8 @@ def convert_wav_to_pitch(
     continuous_f0: bool = True,
     return_tensor: bool = False,
 ) -> np.ndarray or torch.Tensor:
-    """
-
-    The function that converts a waveform to a pitch contour by dio & stonemask of pyworld.
+    """The function that converts a waveform to a pitch contour by dio & stonemask of
+    pyworld.
 
     Args:
         wav: (n_sample, 1) or (n_sample,)
@@ -294,7 +283,6 @@ def convert_wav_to_pitch(
 
     Returns:
         f0: (n_frame,)
-
     """
     if isinstance(hop_length, float):
         hop_length = int(hop_length * sr)

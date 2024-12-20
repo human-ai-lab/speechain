@@ -38,9 +38,8 @@ class TransformerDecoderLayer(Module):
         res_dropout: float = 0.1,
         layernorm_first: bool = True,
     ):
-        """
-        Represents a single Transformer decoder layer.
-        It attends to the source representation and the previous decoder states.
+        """Represents a single Transformer decoder layer. It attends to the source
+        representation and the previous decoder states.
 
         Args:
             d_model: int
@@ -102,8 +101,7 @@ class TransformerDecoderLayer(Module):
         tgt_mask: torch.Tensor,
         src_mask: torch.Tensor,
     ):
-        """
-        Forward pass of a single Transformer decoder layer.
+        """Forward pass of a single Transformer decoder layer.
 
         Args:
             tgt: (batch, tgt_maxlen, d_model)
@@ -117,7 +115,6 @@ class TransformerDecoderLayer(Module):
 
         Returns:
             The output of this Transformer decoder layer and the attention matrix (self and enc-dec)
-
         """
 
         # --- 1. Self Attention Layer part --- #
@@ -293,8 +290,7 @@ class TransformerDecoder(Module):
 
     @staticmethod
     def subsequent_mask(batch_size, maxlen: int) -> torch.Tensor:
-        """
-        Mask out subsequent positions (to prevent attending to future positions)
+        """Mask out subsequent positions (to prevent attending to future positions)
         Transformer helper function.
 
         Args:
@@ -303,7 +299,6 @@ class TransformerDecoder(Module):
                 size of mask (2nd and 3rd dim)
 
         Returns:
-
         """
         return ~torch.triu(
             torch.ones(batch_size, maxlen, maxlen, dtype=torch.bool), diagonal=1
@@ -318,8 +313,7 @@ class TransformerDecoder(Module):
         return_att: bool = False,
         return_hidden: bool = False,
     ):
-        """
-        Transformer decoder forward pass.
+        """Transformer decoder forward pass.
 
         Args:
             tgt: (batch, tgt_maxlen, d_model)
@@ -338,7 +332,6 @@ class TransformerDecoder(Module):
             The output of the Transformer decoder.
             The outputs of each Transformer decoder layer will be returned as a List.
             The attention matrix (self and enc-dec) of each Transformer decoder layer will also be returned as a List.
-
         """
         assert tgt_mask is not None, "tgt_mask is required for Transformer!"
 

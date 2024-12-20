@@ -6,7 +6,7 @@ from speechain.module.abs import Module
 
 
 class RelPositionalEncoding(Module):
-    """ """
+    """"""
 
     def module_init(
         self,

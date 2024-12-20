@@ -17,8 +17,7 @@ def get_table_strings(
     headers: List = None,
     header_bold: bool = True,
 ):
-    """
-    Return the .md string for making a table.
+    """Return the .md string for making a table.
 
     Args:
         contents: List[List] or List
@@ -34,7 +33,6 @@ def get_table_strings(
 
     Returns:
         The well-structured .md table string.
-
     """
     if not isinstance(contents[0], List):
         contents = [contents]
@@ -77,8 +75,7 @@ def get_table_strings(
 
 
 def get_list_strings(content_dict: Dict, header_bold: bool = True):
-    """
-    Return the .md string for making a list.
+    """Return the .md string for making a list.
 
     Args:
         content_dict: Dict
@@ -89,7 +86,6 @@ def get_list_strings(content_dict: Dict, header_bold: bool = True):
 
     Returns:
         The well-structured .md list string.
-
     """
 
     list_strings = ""

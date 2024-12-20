@@ -10,11 +10,11 @@ from speechain.utilbox.train_util import make_mask_from_len
 
 
 class LanguageModel(Module):
-    """
-    Stand-Alone module of the autoregressive language model. This module has two usages:
-        1. language model training by speechain.model.lm.LM
-        2. ASR-LM joint decoding by speechain.model.ar_asr.ARASR
+    """Stand-Alone module of the autoregressive language model.
 
+    This module has two usages:
+    1. language model training by speechain.model.lm.LM
+    2. ASR-LM joint decoding by speechain.model.ar_asr.ARASR
     """
 
     embedding_class_dict = dict(embed=EmbedPrenet)

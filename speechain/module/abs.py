@@ -44,8 +44,7 @@ class Module(torch.nn.Module, ABC):
     def __init__(
         self, input_size: int = None, distributed: bool = False, **module_conf
     ):
-        """
-        This initialization function is shared by all _Module_ subclasses.
+        """This initialization function is shared by all _Module_ subclasses.
 
         There are two built-in variable members: `input_size` and `output_size`. `input_size` is the last dimension of
         the input tensor while `output_size` is the last dimension of the output tensor.
@@ -81,23 +80,22 @@ class Module(torch.nn.Module, ABC):
 
     @abstractmethod
     def module_init(self, **module_conf):
-        """
-        Abstract interface function for customized initialization of each _Module_ subclass.
-        This interface function is mandatory to be overridden by your implementation.
+        """Abstract interface function for customized initialization of each _Module_
+        subclass. This interface function is mandatory to be overridden by your
+        implementation.
 
         Args:
             **module_conf:
                 The arguments used for customized Module initialization.
                 For more details, please refer to the docstring of your target Module subclass.
-
         """
         raise NotImplementedError
 
     @abstractmethod
     def forward(self, **kwargs):
-        """
-        This abstract interface function is the customized implementation of `torch.nn.Module.forward()` used during
-        model forward calculation. This interface function is mandatory to be overridden by your implementation.
+        """This abstract interface function is the customized implementation of
+        `torch.nn.Module.forward()` used during model forward calculation. This
+        interface function is mandatory to be overridden by your implementation.
 
         Args:
             **kwargs:
@@ -107,15 +105,13 @@ class Module(torch.nn.Module, ABC):
         Returns:
             Module forward calculation results.
             For more details, please refer to the docstring of `forward()` of your target _Module_ subclass.
-
         """
         raise NotImplementedError
 
     def recover(self, **kwargs):
-        """
-        This interface function is used to recover the module forward calculation results back to the input data.
-        It can be considered as the reverse process of `forward()`.
-        This interface function is not mandatory to be overridden.
+        """This interface function is used to recover the module forward calculation
+        results back to the input data. It can be considered as the reverse process of
+        `forward()`. This interface function is not mandatory to be overridden.
 
         Args:
             **kwargs:
@@ -125,26 +121,25 @@ class Module(torch.nn.Module, ABC):
         Returns:
             The recovered data or closely-recovered data (sometimes `forward()` may not be totally recoverable).
             For more details, please refer to the docstring of `recover()` of your target _Module_ subclass.
-
         """
         raise NotImplementedError
 
     def reset_parameters(self):
-        """
-        This abstract interface function is used to initialize the customized parameters in the _Module_ subclass if
-        had. Some _Module_ subclasses have their customized parameters with specific initialization functions.
+        """This abstract interface function is used to initialize the customized
+        parameters in the _Module_ subclass if had. Some _Module_ subclasses have their
+        customized parameters with specific initialization functions.
 
         If your _Module_ implementation has some customized parameters and you want to initialize them by yourself,
         please give the initialization logic in this interface function.
 
         This interface function is not mandatory to be overridden.
         Note: Don't forget to add `self.default_init_modules.append(YourModule)` in `model_init()` of your _Model_.
-
         """
         raise NotImplementedError
 
     def get_recordable_para(self) -> Dict or None:
-        """This function returns the parameters of the module that you want to record as part of step information.
+        """This function returns the parameters of the module that you want to record as
+        part of step information.
 
         If you want to record the value of the customized parameters of your module:
 

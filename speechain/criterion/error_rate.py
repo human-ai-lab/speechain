@@ -34,7 +34,7 @@ def text_preprocess(text, tokenizer: Tokenizer):
 
 
 class ErrorRate(Criterion):
-    """ """
+    """"""
 
     def criterion_init(self, tokenizer: Tokenizer = None, do_aver: bool = False):
         """

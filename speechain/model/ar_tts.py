@@ -34,9 +34,9 @@ from speechain.utilbox.train_util import make_mask_from_len
 
 
 class ARTTS(Model):
-    """
-    Auto-Regressive Attention-based Text-To-Speech Synthesis Model. (single-speaker or multi-speaker)
+    """Auto-Regressive Attention-based Text-To-Speech Synthesis Model.
 
+    (single-speaker or multi-speaker)
     """
 
     def module_init(
@@ -975,10 +975,8 @@ class ARTTS(Model):
 
 
 class MultiDomainARTTS(ARTTS):
-    """
-    Auto-Regressive TTS model trained by multiple dataloaders on different domains.
-
-    """
+    """Auto-Regressive TTS model trained by multiple dataloaders on different
+    domains."""
 
     def criterion_init(
         self,

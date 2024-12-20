@@ -15,14 +15,12 @@ from speechain.utilbox.import_util import parse_path_args
 
 
 class Tokenizer(ABC):
-    """
-    Tokenizer is the base class of all the _Tokenizer_ objects in this toolkit.
-    It on-the-fly transforms text data between strings and tensors.
+    """Tokenizer is the base class of all the _Tokenizer_ objects in this toolkit. It
+    on-the-fly transforms text data between strings and tensors.
 
     For data storage and visualization, the text data should be in the form of strings which is not friendly for model
     forward calculation. For model forward calculation, the text data is better to be in the form of vectors
     (`torch.tensor` or `numpy.ndarray`).
-
     """
 
     def __init__(self, token_path: str = None, copy_path: str = None, **tokenizer_conf):
@@ -82,9 +80,8 @@ class Tokenizer(ABC):
     def tokenizer_init_fn(
         self, token_path: str, copy_path: str = None, **tokenizer_conf
     ):
-        """
-        This hook interface function initializes the customized part of a _Tokenizer_ subclass if had.
-        This interface is not mandatory to be overridden.
+        """This hook interface function initializes the customized part of a _Tokenizer_
+        subclass if had. This interface is not mandatory to be overridden.
 
         Args:
             copy_path: str = None
@@ -93,13 +90,11 @@ class Tokenizer(ABC):
             **tokenizer_conf:
                 The arguments used by tokenizer_init_fn() for your customized Tokenizer initialization.
                 For more details, please refer to the docstring of your target Tokenizer subclass.
-
         """
         pass
 
     def tensor2text(self, tensor: torch.LongTensor) -> str:
-        """
-        This functions decodes a text tensor into a human-friendly string.
+        """This functions decodes a text tensor into a human-friendly string.
 
         The default implementation transforms each token index in the input tensor to the token string by `
         self.idx2token`. If the token index is `self.unk_idx`, an asterisk (*) will be used to represent an unknown
@@ -114,7 +109,6 @@ class Tokenizer(ABC):
 
         Returns:
             The string of the decoded sentence.
-
         """
         token_list = []
         for idx in tensor.tolist():
@@ -138,10 +132,9 @@ class Tokenizer(ABC):
         no_eos: bool = False,
         return_tensor: bool = True,
     ) -> torch.LongTensor or List:
-        """
-        This functions encodes a text string into a model-friendly tensor.
-        This interface is mandatory to be overridden.
-        By default, this function will attach two <sos/eos> at the beginning and end of the returned token id sequence.
+        """This functions encodes a text string into a model-friendly tensor. This
+        interface is mandatory to be overridden. By default, this function will attach
+        two <sos/eos> at the beginning and end of the returned token id sequence.
 
         Args:
             text: str
@@ -155,6 +148,5 @@ class Tokenizer(ABC):
 
         Returns: torch.LongTensor
             The tensor of the encoded sentence
-
         """
         raise NotImplementedError

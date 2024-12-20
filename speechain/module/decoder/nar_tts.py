@@ -18,9 +18,7 @@ from speechain.utilbox.train_util import make_len_from_mask, make_mask_from_len
 
 
 class FastSpeech2Decoder(Module):
-    """
-    Decoder Module for Non-Autoregressive FastSpeech2 model.
-    """
+    """Decoder Module for Non-Autoregressive FastSpeech2 model."""
 
     def module_init(
         self,
@@ -153,8 +151,8 @@ class FastSpeech2Decoder(Module):
     def average_scalar_by_duration(
         frame_scalar: torch.Tensor, duration: torch.Tensor, duration_len: torch.Tensor
     ):
-        """
-        Compute the average scalar value for each token in a batch of variable length frames.
+        """Compute the average scalar value for each token in a batch of variable length
+        frames.
 
         Args:
           frame_scalar:

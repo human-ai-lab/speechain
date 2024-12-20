@@ -34,8 +34,7 @@ class MultiHeadedAttention(Module):
         dropout: float = 0.1,
         scale_dp_by_head: bool = False,
     ):
-        """
-        Create a multi-headed attention layer.
+        """Create a multi-headed attention layer.
 
         Args:
             num_heads:
@@ -115,8 +114,7 @@ class MultiHeadedAttention(Module):
         q: torch.Tensor,
         mask: torch.Tensor = None,
     ):
-        """
-        Computes multi-headed attention.
+        """Computes multi-headed attention.
 
         Args:
             k: keys   [B, M, D] with M being the sentence length.
@@ -125,7 +123,6 @@ class MultiHeadedAttention(Module):
             mask: optional mask [B, 1, M]
 
         Returns:
-
         """
 
         k, v, q = self.kvq_forward(k, v, q)

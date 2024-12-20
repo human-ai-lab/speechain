@@ -27,9 +27,9 @@ from speechain.utilbox.train_util import get_min_indices_by_freq
 
 
 class FastSpeech2(Model):
-    """
-    NonAuto-Regressive FastSpeech2 Text-To-Speech Synthesis Model. (single-speaker & multi-speaker)
+    """NonAuto-Regressive FastSpeech2 Text-To-Speech Synthesis Model.
 
+    (single-speaker & multi-speaker)
     """
 
     def module_init(

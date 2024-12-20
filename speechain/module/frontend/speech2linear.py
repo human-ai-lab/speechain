@@ -14,10 +14,8 @@ from speechain.module.abs import Module
 
 
 class Speech2LinearSpec(Module):
-    """
-    The acoustic frontend where the input is raw speech waveforms and the output is linear spectrogram.
-
-    """
+    """The acoustic frontend where the input is raw speech waveforms and the output is
+    linear spectrogram."""
 
     def module_init(
         self,

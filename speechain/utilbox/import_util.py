@@ -23,10 +23,7 @@ def import_class(class_string):
 
 
 def get_idle_port() -> str:
-    """
-    find an idle port to used for distributed learning
-
-    """
+    """Find an idle port to used for distributed learning."""
     pscmd = "netstat -ntl |grep -v Active| grep -v Proto|awk '{print $4}'|awk -F: '{print $NF}'"
     procs = os.popen(pscmd).read()
     procarr = procs.split("\n")
@@ -38,11 +35,7 @@ def get_idle_port() -> str:
 
 
 def get_idle_gpu(ngpu: int = 1, id_only: bool = False) -> List[GPU]:
-    """
-
-    find idle GPUs for distributed learning.
-
-    """
+    """Find idle GPUs for distributed learning."""
     sorted_gpus = sorted(getGPUs(), key=lambda g: g.memoryUtil)
     if len(sorted_gpus) < ngpu:
         warnings.warn(
@@ -58,8 +51,8 @@ def get_idle_gpu(ngpu: int = 1, id_only: bool = False) -> List[GPU]:
 
 
 def parse_path_args(input_path: str) -> str:
-    """
-    This function parses the input path string into valid path before its later usage.
+    """This function parses the input path string into valid path before its later
+    usage.
 
     Args:
         input_path: str
@@ -68,7 +61,6 @@ def parse_path_args(input_path: str) -> str:
 
     Returns: str
         Parsed valid absolute path.
-
     """
 
     # do nothing for the absolute path

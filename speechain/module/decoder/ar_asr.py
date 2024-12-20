@@ -15,7 +15,7 @@ from speechain.utilbox.train_util import make_mask_from_len
 
 
 class ARASRDecoder(Module):
-    """ """
+    """"""
 
     def module_init(self, embedding: Dict, decoder: Dict, vocab_size: int = None):
         """

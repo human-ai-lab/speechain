@@ -98,8 +98,7 @@ class TransformerEncoderLayer(Module):
         self.fdfwd_layernorm = nn.LayerNorm(d_model, eps=1e-6)
 
     def forward(self, src: torch.Tensor, mask: torch.Tensor):
-        """
-        Forward pass for a single transformer encoder layer.
+        """Forward pass for a single transformer encoder layer.
 
         Args:
             src: (batch, src_maxlen, d_model)
@@ -109,7 +108,6 @@ class TransformerEncoderLayer(Module):
 
         Returns:
             The output of this Transformer encoder layer and the attention matrix
-
         """
 
         "Multi-head Attention Layer part"
@@ -295,8 +293,7 @@ class TransformerEncoder(Module):
 
     @staticmethod
     def subsequent_mask(batch_size, maxlen: int) -> torch.Tensor:
-        """
-        Mask out subsequent positions (to prevent attending to future positions)
+        """Mask out subsequent positions (to prevent attending to future positions)
         Transformer helper function.
 
         Args:
@@ -305,18 +302,15 @@ class TransformerEncoder(Module):
                 size of mask (2nd and 3rd dim)
 
         Returns:
-
         """
         return ~torch.triu(
             torch.ones(batch_size, maxlen, maxlen, dtype=torch.bool), diagonal=1
         )
 
     def forward(self, src: torch.Tensor, mask: torch.Tensor):
-        """
-        Pass the input (and mask) through each layer in turn.
-        Applies a Transformer encoder to sequence of embeddings x.
-        The input mini-batch x needs to be sorted by src length.
-        x and mask should have the same dimensions [batch, time, dim].
+        """Pass the input (and mask) through each layer in turn. Applies a Transformer
+        encoder to sequence of embeddings x. The input mini-batch x needs to be sorted
+        by src length. x and mask should have the same dimensions [batch, time, dim].
 
         Args:
             src: (batch_size, src_maxlen, embed_size)
@@ -328,7 +322,6 @@ class TransformerEncoder(Module):
             The output of the Transformer encoder with its mask.
             The outputs of each Transformer encoder layer will be returned as a List.
             The attention matrix of each Transformer encoder layer will also be returned as a List.
-
         """
 
         # add position encoding to word embeddings

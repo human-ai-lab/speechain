@@ -15,14 +15,14 @@ from speechain.utilbox.train_util import make_mask_from_len
 
 
 class CrossEntropy(Criterion):
-    """
-    This criterion calculates the cross entropy between model predictions and target labels.
+    """This criterion calculates the cross entropy between model predictions and target
+    labels.
+
     In this implementation, we realize the following functions:
         1. Sentence normalization. The loss will be normalized according to the length of each sentence.
         2. Label smoothing. The target label will be transformed from a sharp one-hot vector to a smooth distribution vector.
         3. Token reweighting. The weight of each token in the cross entropy calculation can be customized manually.
         If you want to customize the weights, you need to give the token dictionary.
-
     """
 
     def criterion_init(

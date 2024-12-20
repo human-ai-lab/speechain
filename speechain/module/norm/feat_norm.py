@@ -10,8 +10,8 @@ from speechain.module.abs import Module
 
 
 class FeatureNormalization(Module):
-    """
-    The feature normalization frontend that makes every feature dimension the distribution with 0 mean and 1 variance.
+    """The feature normalization frontend that makes every feature dimension the
+    distribution with 0 mean and 1 variance.
 
     As SpeechBrain, we also provide four kinds of feature normalization with different granularities.
         1. utterance-level normalization: the mean and std are calculated on each individual utterance.
@@ -39,7 +39,6 @@ class FeatureNormalization(Module):
         domain). In this scenario, the summation of mean & std vectors will be gathered instead of all of them to reduce
         the data communication volume across all the processes. The real mean & std vectors will be recovered by the
         batch size of each process.
-
     """
 
     def module_init(
@@ -617,10 +616,8 @@ class FeatureNormalization(Module):
         unexpected_keys,
         error_msgs,
     ):
-        """
-        Lazily register all the buffer variables ending with '_batch', '_std', or '_mean' from state_dict to self.
-
-        """
+        """Lazily register all the buffer variables ending with '_batch', '_std', or
+        '_mean' from state_dict to self."""
         for key in state_dict.keys():
             if key.startswith(prefix):
                 input_name = key[len(prefix) :].split(".", 1)[0]

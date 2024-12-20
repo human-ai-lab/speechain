@@ -140,7 +140,6 @@ class CurvePlotter(Plotter):
             x_stride (int): the stride of the x-axis
 
         Returns:
-
         """
         # save each material into a specific .txt file for easy visualization
         for file_name, material in materials.items():
@@ -250,8 +249,7 @@ class HistPlotter(Plotter):
     """HistPlotter does the job of plotting the histogram of the given material."""
 
     def __init__(self, plot_conf: Dict = None, grid_conf: Dict = None):
-        """
-        Initialize the HistPlotter.
+        """Initialize the HistPlotter.
 
         Args:
             plot_conf (Dict): the configuration of the plot
@@ -285,7 +283,6 @@ class HistPlotter(Plotter):
             **kwargs:
 
         Returns:
-
         """
         # set up the figure label of x and y axes
         ax.set_xlabel(xlabel if xlabel is not None else fig_name)
@@ -336,7 +333,6 @@ def snapshot_logs(
         snapshooter_conf:
 
     Returns:
-
     """
     snapshooter = SnapShooter(**snapshooter_conf)
     while True:
@@ -354,7 +350,8 @@ def snapshot_logs(
 
 
 class SnapShooter:
-    """SnapShooter does the job of recording snapshots of the model during training or validation."""
+    """SnapShooter does the job of recording snapshots of the model during training or
+    validation."""
 
     def __init__(
         self,
@@ -367,6 +364,7 @@ class SnapShooter:
         hist_plotter_conf: Dict = None,
     ):
         """Initialize the SnapShooter.
+
         Args:
             result_path:
             fig_width:
@@ -374,7 +372,6 @@ class SnapShooter:
             curve_plotter_conf:
             matrix_plotter_conf:
             hist_plotter_conf:
-
         """
         # initialize the figure plotters and the tensorboard writer
         if snap_mode is not None:

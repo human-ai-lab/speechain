@@ -71,8 +71,8 @@ class CTCPrefixScorer:
         )
 
     def forward_step(self, g, state):
-        """This method if one step of forwarding operation
-        for the prefix ctc scorer.
+        """This method if one step of forwarding operation for the prefix ctc scorer.
+
         Arguments
         ---------
         g : torch.Tensor
@@ -157,8 +157,9 @@ class CTCPrefixScorer:
         return psi - psi_prev, (r, psi)
 
     def permute_mem(self, memory, beam_idx, token_idx):
-        """This method permutes the CTC model memory
-        to synchronize the memory index with the current output.
+        """This method permutes the CTC model memory to synchronize the memory index
+        with the current output.
+
         Arguments
         ---------
         memory : No limit
