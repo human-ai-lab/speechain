@@ -39,6 +39,7 @@ markdown_extensions:
 
 nav:
   - index.md
+  - handbook.md
   - datasets.md
   - recipes.md
   - asr.md
@@ -50,5 +51,4 @@ nav:
   - module.md
   - optim_sche.md
   - tokenizer.md
-  - handbook.md
   - Reference: reference/ 

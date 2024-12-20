@@ -1,7 +1,7 @@
 # Handbook
 
-Our documentation is organized by different roles in this toolkit. 
-You can start the journey of SpeeChain by your current position.
+Our documentation is organized by different roles in this toolkit.
+You can start exploring SpeeChain by reading the following sections or by jumping directly to the section that interests you. These sections also appear as README files in some subfolders of the [toolkit repository](https://github.com/bagustris/SpeeChain).
 
 👆[Back to the home page](https://github.com/bagustris/SpeeChain#speechain-a-pytorch-based-speechlanguage-processing-toolkit-for-the-machine-speech-chain)
 
@@ -22,6 +22,7 @@ You can start the journey of SpeeChain by your current position.
 
 ## For those who just discovered SpeeChain
 In SpeeChain toolkit, a basic research pipeline has 5 steps:  
+
 1. Dump a dataset from the Internet to your disk.  
 2. Prepare experimental configuration files.  
 3. Train a model.  
@@ -52,10 +53,13 @@ In order to avoid messy and unreadable configuration setting in the terminal, Sp
 **PS:** The following contents are not urgent for you to learn. If you don't want to jump into details too much right now, please go to the [**next step**](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-train-and-evaluate-a-model)
 
 #### Flexible Path Parsing Services
-In SpeeChain, the path arguments can be given in 3 ways:
+In SpeeChain, the path arguments can be given in 3 ways:  
+
 1. **Absolute Path:** You can indicate an absolute path by beginning the path with a slash '/', e.g., `/x/xx/xxx/speechain/runner.py`.
+
 2. **General Relative Path:** If your input path begins with `.` or `..`, it will be converted to the corresponding absolute path in our framework.  
     **Note:** The relative path will be parsed by the directory where you execute the script rather than the directory where the executable script is placed!
+
 3. **In-toolkit Relative Path:**  
     The path arguments can be given as the relative location under the toolkit root, i.e., `${SPEECHAIN_ROOT}`. 
     The toolkit root `${SPEECHAIN_ROOT}` is created by the bash script `envir_preparation.sh`.  
@@ -105,8 +109,7 @@ In SpeeChain, our framework provides a convenient way to convert your entered st
     g: xyz
     ```
 
-   Moreover, the _List_ string can also be nested into the _Dict_ string like `a:[1,2,3]` will be parsed as
-
+   Moreover, the _List_ string can also be nested into the _Dict_ string like `a:[1,2,3]` will be parsed as  
     ```bash
     a:
     - 1
@@ -412,13 +415,13 @@ Based on the abstract class, many implementation classes are included in the sam
     /snapshooter.py     # The figure snapshooter. Used to transform the input snapshotting materials into the visible figures.
 ```
 
-For more details about `/speechain/criterion`, please refer to [${SPEECHAIN_ROOT}/speechain/criterion/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/criterion#criterion).  
-For more details about `/speechain/dataset`, please refer to [${SPEECHAIN_ROOT}/speechain/dataset/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset).  
-For more details about `/speechain/iterator`, please refer to [${SPEECHAIN_ROOT}/speechain/iterator/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#iterator).  
-For more details about `/speechain/model`, please refer to [${SPEECHAIN_ROOT}/speechain/model/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#model).  
-For more details about `/speechain/module`, please refer to [${SPEECHAIN_ROOT}/speechain/module/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#module).  
-For more details about `/speechain/optim_sche`, please refer to [${SPEECHAIN_ROOT}/speechain/optim_sche/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#optimscheduler).  
-For more details about `/speechain/tokenizer`, please refer to [${SPEECHAIN_ROOT}/speechain/tokenizer/README.md](https://github.com/bagustris/SpeeChain/tree/main/speechain/tokenizer#tokenizer).
+Read more about [`/speechain/criterion`](./criterion.md)  
+Read more about [`/speechain/dataset`](./dataset.md)  
+Read more about [`/speechain/iterator`](./iterator.md)  
+Read more about [`/speechain/model`](./model.md)  
+Read more about [`/speechain/module`](./module.md)  
+Read more about [`/speechain/optim_sche`](./optim_sche.md)  
+Read more about [`/speechain/tokenizer`](./tokenizer.md)  
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
