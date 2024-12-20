@@ -18,7 +18,7 @@ In each group, 2 or more iterator objects can be constructed so that there could
 ## Configuration File Format
 The configuration of *Iterator* is given in *data_cfg*. 
 The configuration format is shown below.
-```
+```yaml
 train:
     {iterator_name}:
         type: {file_name}.{class_name}
@@ -58,24 +58,31 @@ test:
         ...
 ```
 * The first-level keys must be one of ***train***, ***valid***, and ***test***. 
-The combination of your first-level keys must be one of **train & valid & test** (for training and testing), **train & valid** (for training only), or **test** (for testing only).
-   * The second-level keys are iterator names used for distinguishing the loaded data of each iterator. 
+
+  The combination of your first-level keys must be one of **train & valid & test** (for training and testing), **train & valid** (for training only), or **test** (for testing only).
+
+* The second-level keys are iterator names used for distinguishing the loaded data of each iterator. 
    There is no restriction on the iterator names, so you can name them in your own preference.  
    Under the name of each iterator, there are two third-level keys whose names are fixed:
+
      1. **type:**  
      The value of this key acts as the query string to pick up your target *Iterator* subclass in `SPEECHAIN_ROOT/speechain/iterator/`. 
      Your given query should be in the form of `{file_name}.{class_name}` where `file_name` specifies your target _.py_ file in `SPEECHAIN_ROOT/speechain/iterator/` and `class_name` indicates your target _Iterator_ subclass in `SPEECHAIN_ROOT/speechain/iterator/{file_name}.py`.   
-     For example, `block.BlockIterator` means the subclass `BlockIterator` in `SPEECHAIN_ROOT/speechain/iterator/block.py`.
+     For example, `block.BlockIterator` means the subclass `BlockIterator` in `SPEECHAIN_ROOT/speechain/iterator/block.py`.  
+     
      2. **conf:**  
      The value of this key indicates the configuration of your iterator. 
      The configuration is made up of the following 4 fourth-level keys:
+
          1. **dataset_type:**  
          The value of this key acts as the query string to pick up your target built-in _Dataset_ subclass in `SPEECHAIN_ROOT/speechain/dataset/`.
          Your given query should be in the form of `{file_name}.{class_name}` where `file_name` specifies your target _.py_ file in `SPEECHAIN_ROOT/speechain/dataset/`, and `class_name` indicates your target _Dataset_ subclass in `SPEECHAIN_ROOT/speechain/dataset/{file_name}.py`.   
          For example, `speech_text.SpeechTextDataset` means the subclass `SpeechTextDataset` in `./speechain/dataset/speech_text.py`.
+
          2. **dataset_conf:**  
          The value of this key contains all the configuration used to initialize the built-in *Dataset* object. 
          Please refer to [Dataset API Document](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#api-document) for more details.
+
          3. **General Iterator Configuration:**  
          These configurations are used to initialize the general part shared by all iterator subclasses. 
          There are 6 general arguments that can be set manually in _data_cfg:_ (please refer to [speechain.iterator.abs.Iterator.\_\_init__](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#__init__self-dataset_type-dataset_conf-batches_per_epoch-data_len-group_info-data_selection-is_descending-shuffle-seed-ngpu-num_workers-pin_memory-distributed-iter_conf) for more details)  
@@ -91,7 +98,7 @@ The combination of your first-level keys must be one of **train & valid & test**
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#table-of-contents)
 
 ## Iterator Library
-```
+```bash
 /speechain
     /iterator
         /abs.py         # Abstract class of Iterator. Base of all Iterator implementations.
@@ -214,13 +221,13 @@ Each iterator subclass should override a static hook function `batches_generate_
     `data_len` is not used in this hook function but used for sorting all the instances in the general initialization function of the iterator. 
     The sorted data instances make sure that the instances in a single batch have similar lengths.
 * **Arguments:**
-  * _**data_index:**_ List[str]  
-    The list of indices of all the data instances available to generate the batching view.
-  * _**data_len:**_ Dict[str, int]  
-    The dictionary that indicates the data length of each available data instance in data_index.
-  * _**batch_size:**_ int = None  
-    How many data instances does a batch should have. 
-    If not given, it will be the number of GPUs (ngpu) to ensure that the model validation or testing is done one data instance at each step on a single GPU process.  
+    * _**data_index:**_ List[str]  
+      The list of indices of all the data instances available to generate the batching view.
+    * _**data_len:**_ Dict[str, int]  
+      The dictionary that indicates the data length of each available data instance in data_index.
+    * _**batch_size:**_ int = None  
+      How many data instances does a batch should have. 
+      If not given, it will be the number of GPUs (ngpu) to ensure that the model validation or testing is done one data instance at each step on a single GPU process.  
     **Note:** `batch_size` is implicitly given by `**iter_conf` in `__init__()` to this static hook function, so your implementation don't need to keep this argument, and you can declare your own argument.
 * **Return:** List[List[str]]  
   A list of batches generated by your batching strategy. This List[List[str]] is called the batching view of the iterator object.
@@ -233,113 +240,64 @@ Each iterator subclass should override a static hook function `batches_generate_
 
 ## How to Construct Multiple Dataloaders
 
-[//]: # (Multiple Dataloaders can be easily constructed by giving the configuration of multiple iterators. )
+Multiple Dataloaders can be easily constructed by giving the configuration of multiple iterators.
+Each iterator creates an independent Dataloader that contributes a data-label pair in the batch. 
 
-[//]: # (Each iterator creates an independent Dataloader that contributes a data-label pair in the batch. )
+An example of semi-supervised ASR training is shown below. There are two iterators in the _train_ group: _sup_ and _unsup_ (the iterator names are given by users based on their preferences) .
 
-[//]: # ()
-[//]: # (An example of semi-supervised ASR training is shown below. There are two iterators in the _train_ group: _sup_ and _unsup_ &#40;the iterator names are given by users based on their preferences&#41;. )
+These two iterators are in the same type and have built-in datasets with the same type.
+```yaml
+train:
+    sup:
+        type: block.BlockIterator
+        conf:
+            dataset_type: speech_text.SpeechTextDataset
+            dataset_conf:
+                ...
+            ...
+    unsup:
+        type: block.BlockIterator
+        conf:
+            dataset_type: speech_text.SpeechTextDataset
+            dataset_conf:
+                ...
+            ...
+```
 
-[//]: # (These two iterators are in the same type and have built-in datasets with the same type.)
+If there are multiple Dataloaders used to load data, each Dataloader will contribute a sub-Dict in the batch Dict _train_batch_ as shown below. 
 
-[//]: # (```)
+The name of each sub-Dict is the one users give as the name of the corresponding iterator.
+```yaml
+train_batch:
+    sup:
+        feat: torch.Tensor
+        feat_len: torch.Tensor
+        text: torch.Tensor
+        text_len: torch.Tensor
+    unsup:
+        feat: torch.Tensor
+        feat_len: torch.Tensor
+        text: torch.Tensor
+        text_len: torch.Tensor
+```
 
-[//]: # (train:)
+If you have only one iterator like the configuration below, your _train_batch_ will not have any sub-Dict but only the data-label pair from that iterator. 
 
-[//]: # (    sup:)
+In this case, you don't need to give the name tag for the iterator.
+```yaml
+train:
+    type: block.BlockIterator
+    conf:
+        dataset_type: speech.speech_text.SpeechTextDataset
+        dataset_conf:
+            ...
+        ...
 
-[//]: # (        type: block.BlockIterator)
-
-[//]: # (        conf:)
-
-[//]: # (            dataset_type: speech_text.SpeechTextDataset)
-
-[//]: # (            dataset_conf:)
-
-[//]: # (                ...)
-
-[//]: # (            ...)
-
-[//]: # (    unsup:)
-
-[//]: # (        type: block.BlockIterator)
-
-[//]: # (        conf:)
-
-[//]: # (            dataset_type: speech_text.SpeechTextDataset)
-
-[//]: # (            dataset_conf:)
-
-[//]: # (                ...)
-
-[//]: # (            ...)
-
-[//]: # (```)
-
-[//]: # (If there are multiple Dataloaders used to load data, each Dataloader will contribute a sub-Dict in the batch Dict _train_batch_ as shown below. )
-
-[//]: # (The name of each sub-Dict is the one users give as the name of the corresponding iterator.)
-
-[//]: # (```)
-
-[//]: # (train_batch:)
-
-[//]: # (    sup:)
-
-[//]: # (        feat: torch.Tensor)
-
-[//]: # (        feat_len: torch.Tensor)
-
-[//]: # (        text: torch.Tensor)
-
-[//]: # (        text_len: torch.Tensor)
-
-[//]: # (    unsup:)
-
-[//]: # (        feat: torch.Tensor)
-
-[//]: # (        feat_len: torch.Tensor)
-
-[//]: # (        text: torch.Tensor)
-
-[//]: # (        text_len: torch.Tensor)
-
-[//]: # (```)
-
-[//]: # (If you have only one iterator like the configuration below, your _train_batch_ will not have any sub-Dict but only the data-label pair from that iterator. )
-
-[//]: # (In this case, you don't need to give the name tag for the iterator.)
-
-[//]: # (```)
-
-[//]: # (train:)
-
-[//]: # (    type: block.BlockIterator)
-
-[//]: # (    conf:)
-
-[//]: # (        dataset_type: speech.speech_text.SpeechTextDataset)
-
-[//]: # (        dataset_conf:)
-
-[//]: # (            ...)
-
-[//]: # (        ...)
-
-[//]: # (```)
-
-[//]: # (```)
-
-[//]: # (train_batch:)
-
-[//]: # (    feat: torch.Tensor)
-
-[//]: # (    feat_len: torch.Tensor)
-
-[//]: # (    text: torch.Tensor)
-
-[//]: # (    text_len: torch.Tensor)
-
-[//]: # (```)
+train_batch:
+    feat: torch.Tensor
+    feat_len: torch.Tensor
+    text: torch.Tensor
+    text_len: torch.Tensor
+```
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#table-of-contents)

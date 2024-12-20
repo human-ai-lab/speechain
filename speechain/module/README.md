@@ -32,7 +32,7 @@ This base class has two required abstract interface functions that must be overr
 2. [**API Document**](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#api-document)
 
 ## Module Library
-```
+```bash
 /speechain
     /module
         /abs.py             # Abstract class of Module. Base of all Module implementations.
@@ -91,12 +91,12 @@ _Overridable interface functions:_
   You could utilize `self.input_size` in your `module_init()` implement to initialize your module and give the output data dimension to `self.output_size`.  
   **Note:** The usage of these two member variables is not mandatory, but it would be a convenient way for you to initialize your module.
 * **Arguments:**
-  * _**input_size:**_ int = None  
-    The last dimension of the tensor from the front _Module_ object. If not given, this argument would be None.
-  * _**distributed:**_ bool = False  
-    Whether the _Model_ object this _Module_ object is belong to is distributed to multiple GPUs.
-  * _\****module_conf:**_  
-    The arguments used by `module_init()` for your customized _Module_ initialization.
+    * _**input_size:**_ int = None  
+      The last dimension of the tensor from the front _Module_ object. If not given, this argument would be None.
+    * _**distributed:**_ bool = False  
+      Whether the _Model_ object this _Module_ object is belong to is distributed to multiple GPUs.
+    * _\****module_conf:**_  
+      The arguments used by `module_init()` for your customized _Module_ initialization.
 
 👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#api-document)
 
@@ -105,9 +105,9 @@ _Overridable interface functions:_
   Abstract interface function for customized initialization of each _Module_ subclass. 
   This interface function is mandatory to be overridden by your implementation.
 * **Arguments:**
-  * _\****module_conf:**_  
-    The arguments used for customized Module initialization.
-    For more details, please refer to the docstring of your target Module subclass.
+    * _\****module_conf:**_  
+      The arguments used for customized Module initialization.
+      For more details, please refer to the docstring of your target Module subclass.
 
 👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#api-document)
 
@@ -116,9 +116,9 @@ _Overridable interface functions:_
     This abstract interface function is the customized implementation of `torch.nn.Module.forward()` used during model forward calculation. 
     This interface function is mandatory to be overridden by your implementation.
 * **Arguments:**
-  * _****kwargs:**_  
-    The input arguments for module forward calculation.  
-    For more details, please refer to the docstring of `forward()` of your target _Module_ subclass.
+    * _\****kwargs:**_  
+      The input arguments for module forward calculation.  
+      For more details, please refer to the docstring of `forward()` of your target _Module_ subclass.
 * **Return:**  
   Module forward calculation results.  
   For more details, please refer to the docstring of `forward()` of your target _Module_ subclass.
@@ -131,9 +131,9 @@ _Overridable interface functions:_
   It can be considered as the reverse process of `forward()`.  
   This interface function is not mandatory to be overridden.
 * **Arguments:**
-  * _\****kwargs:**_  
-    The input forward calculation results to be recovered. 
-    For more details, please refer to the docstring of `recover()` of your target _Module_ subclass.
+    * _\****kwargs:**_  
+      The input forward calculation results to be recovered. 
+      For more details, please refer to the docstring of `recover()` of your target _Module_ subclass.
 * **Return:**  
   The recovered data or closely-recovered data (sometimes `forward()` may not be totally recoverable).  
   For more details, please refer to the docstring of `recover()` of your target _Module_ subclass.

@@ -3,7 +3,7 @@
 [*Model*](https://github.com/bagustris/SpeeChain/blob/main/speechain/model/abs.py) is the hub of this part where different *Module* and *Criterion* objects can be freely assembled to create a model.
 _Model_ encapsulates the general model-related services and provides sufficient interface functions for you to override to customize your own models. 
 
-👆[Back to the handbook page](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#speechain-handbook)
+👆[Back to the handbook page](./handbook.md)
 
 ## Table of Contents
 1. [**Configuration File Format**](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#configuration-file-format)
@@ -16,7 +16,7 @@ _Model_ encapsulates the general model-related services and provides sufficient 
 ## Configuration File Format
 The configuration of your model is given in *train_cfg*. 
 The configuration format is shown below.
-```
+```yaml
 model:
     model_type: {file_name}.{class_name}
     model_conf:
@@ -44,24 +44,30 @@ model:
     criterion_conf:
         ...    
 ```
-* The first-level key must be **model** to notify the framework of the model configuration.
+The first-level key must be **model** to notify the framework of the model configuration.  
+
   1. **model_type** is used as the query to pick up your target *Model* subclass in `{SPEECHAIN_ROOT}/speechain/model/` for model initialization.
   Your given query should be in the form of `{file_name}.{class_name}`, e.g., `asr.ASR` means the subclass `ASR` in `{SPEECHAIN_ROOT}/speechain/model/asr.py`.
   
-  2. **model_conf** contains the general configuration of your model. It is made up of the following 4 parts:
+  2. **model_conf** contains the general configuration of your model. It is made up of the following 5 parts:
+
       1. **init** indicates the function used to initialize the parameters of your model before training. 
       The available initialization functions are shown in the keys of the built-in dictionary `init_class_dict`.  
       For more details about the available initialization functions, please refer to the built-in dictionary `init_class_dict`.
+
       2. **frozen_modules** contains the names of the modules that don't need to be updated during training. 
-      If a list of module names is given, all those modules will be frozen.
+      If a list of module names is given, all those modules will be frozen. 
+
       3. **pretrained_model** contains the pretrained models you would like to load into your model as the initial parameters. 
       If a list of pretrained models is given, all those pretrained models will be used to initialize your model.  
          1. **path** indicates where the pretrained model file is placed.
          2. **mapping** is a dictionary used to solve the mismatch between the parameter names of the pretrained model and the model you want to train. 
          Each key-value item solves a name mismatch where the key is the name in the pretrained model and the value is the name in the model to be trained.
+
       4. **visual_infer_conf** contains the inference configuration you want to use for model visualization during training. 
          This argument is default to be an empty dictionary which means the default inference configuration of each model will be used.  
          For more details, please refer to the docstring of `inference()` of each _Model_ subclass.
+
       5. **customize_conf** will be used to initialize the main body of the model in the interface function *module_init()*.  
          For more details about the argument setting, please refer to the README.md of each _Model_ subclass.
     
@@ -76,7 +82,7 @@ model:
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#table-of-contents)
 
 ## Model Library
-```
+```bash
 /speechain
     /model
         /abs.py     # Abstract Model class. Base of all Model implementations.
@@ -89,28 +95,30 @@ model:
 
 ## API Document
 [**speechain.model.abs.Model**](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#speechainmodelabsmodel)  
+
 1. _Non-overridable backbone functions:_  
-   1. [\_\_init\_\_](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#__init__self-args-device-model_conf-module_conf-criterion_conf)
-   2. [batch_to_cuda](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#batch_to_cudaself-data)  
-   3. [forward](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#forwardself-batch_data-epoch-kwargs)  
-   4. [aver_metrics_across_procs](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#aver_metrics_across_procsself-metrics-batch_data)  
-   5. [evaluate](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#evaluateself-test_batch-infer_conf)  
+    1. [\_\_init\_\_](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#__init__self-args-device-model_conf-module_conf-criterion_conf)  
+    2. [batch_to_cuda](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#batch_to_cudaself-data)  
+    3. [forward](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#forwardself-batch_data-epoch-kwargs)  
+    4. [aver_metrics_across_procs](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#aver_metrics_across_procsself-metrics-batch_data)  
+    5. [evaluate](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#evaluateself-test_batch-infer_conf)  
    
 2. _Overridable interface functions:_  
-   1. [bad_cases_selection_init_fn](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#bad_cases_selection_init_fn)
-   2. [module_init](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#module_initself-kwargs)
-   3. [criterion_init](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#criterion_initself-criterion_conf)
-   4. [batch_preprocess_fn](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#batch_preprocess_fnself-batch_data)
-   5. [module_forward](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#module_forwardself-batch_data)
-   6. [criterion_forward](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#criterion_forwardself-kwargs)
-   7. [visualize](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#visualizeself-epoch-sample_index-valid_sample)
-   8. [inference](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#inferenceself-infer_conf-kwargs)
+    1. [bad_cases_selection_init_fn](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#bad_cases_selection_init_fn)  
+    2. [module_init](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#module_initself-kwargs)
+    3. [criterion_init](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#criterion_initself-criterion_conf)  
+    4. [batch_preprocess_fn](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#batch_preprocess_fnself-batch_data)  
+    5. [module_forward](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#module_forwardself-batch_data)  
+    6. [criterion_forward](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#criterion_forwardself-kwargs)  
+    7. [visualize](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#visualizeself-epoch-sample_index-valid_sample)  
+    8. [inference](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#inferenceself-infer_conf-kwargs)
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#table-of-contents)
 
 ### speechain.model.abs.Model
 _speechain.model.abs.Model_ is the base class for all models in this toolkit. 
 The main job of a model includes:   
+
 1. (optional) preprocess the input batch data to the trainable format  
 2. calculate the model prediction results by the _Module_ members  
 3. evaluate the prediction results by the _Criterion_ members  
@@ -144,30 +152,30 @@ There are a built-in dictionary named `init_class_dict` and a built-in list name
        If there is only one frozen module, you can directly give the string of its name to `frozen_modules` like `frozen_modules: {module_name}`. 
        If there are multiple modules you want to freeze, you can give their names in a list as
 
-          ```
+          ```yaml
           frozen_modules:
            - {module_name1}
            - {module_name2}
            - ...
           ```
   
-       Moreover, the frozen granularity depends on your input `frozen_modules`. For example,
-       1. If you give `frozen_modules: encoder_prenet`, all parameters of the prenet of your encoder will be frozen  
-       2. If you give `frozen_modules: encoder_prenet.conv`, only the convolution layers of the prenet of your encoder will be frozen  
-       3. If you give `frozen_modules: encoder_prenet.conv.0`, only the first convolution layer of the prenet of your encoder will be frozen  
-       4. If you give `frozen_modules: encoder_prenet.conv.0.bias`, only the bias vector of the first convolution layer of the prenet of your encoder will be frozen
+       Moreover, the frozen granularity depends on your input `frozen_modules`. For example,  
+        1. If you give `frozen_modules: encoder_prenet`, all parameters of the prenet of your encoder will be frozen  
+        2. If you give `frozen_modules: encoder_prenet.conv`, only the convolution layers of the prenet of your encoder will be frozen  
+        3. If you give `frozen_modules: encoder_prenet.conv.0`, only the first convolution layer of the prenet of your encoder will be frozen  
+        4. If you give `frozen_modules: encoder_prenet.conv.0.bias`, only the bias vector of the first convolution layer of the prenet of your encoder will be frozen
 
 * **Arguments:**  
-  * _**args:**_ argparse.Namespace  
-    Experiment pipeline arguments received from the `Runner` object in `runner.py`.
-  * _**device:**_ torch.device   
-    The computational device used for model calculation in the current GPU process.
-  * _**model_conf:**_ Dict  
-    The model configuration used for general model initialization.
-  * _**module_conf:**_ Dict  
-    The module configuration used for network structure initialization.
-  * _**criterion_conf:**_ Dict = None  
-    The criterion configuration used for criterion (loss functions and evaluation metrics) initialization.
+    * _**args:**_ argparse.Namespace  
+      Experiment pipeline arguments received from the `Runner` object in `runner.py`.
+    * _**device:**_ torch.device   
+      The computational device used for model calculation in the current GPU process.
+    * _**model_conf:**_ Dict  
+      The model configuration used for general model initialization.
+    * _**module_conf:**_ Dict  
+      The module configuration used for network structure initialization.
+    * _**criterion_conf:**_ Dict = None  
+      The criterion configuration used for criterion (loss functions and evaluation metrics) initialization.
 
 👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#api-document)
 
@@ -175,12 +183,12 @@ There are a built-in dictionary named `init_class_dict` and a built-in list name
 * **Description:**  
     The recursive function that transfers the batch data to the specified device in the current process.
 * **Arguments:**
-  * _**data:**_ Dict or torch.Tensor  
-    The input batch data. It should be either a Tensor or a Dict of Tensors. 
-    For the Dict input, the function itself will be called once by each Tensor element.
-* **Return:** Dict or torch.Tensor  
-    If the input is a Dict, the returned output will also be a Dict of Tensors transferred to the target device;  
-    If the input is a Tensor, the returned output will be its copy on the target device.
+    * _**data:**_ Dict or torch.Tensor  
+      The input batch data. It should be either a Tensor or a Dict of Tensors. 
+      For the Dict input, the function itself will be called once by each Tensor element.
+  * **Return:** Dict or torch.Tensor  
+      If the input is a Dict, the returned output will also be a Dict of Tensors transferred to the target device;  
+      If the input is a Tensor, the returned output will be its copy on the target device.
 
 👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#api-document)
 
@@ -194,13 +202,13 @@ There are a built-in dictionary named `init_class_dict` and a built-in list name
     For each step above, we provide interface functions for you to override and make your own implementation.
 
 * **Arguments:**  
-  * _**batch_data:**_ Dict  
-    The input batch data received from the `train` or `valid` dataloader object in the experimental pipeline.  
-    The batch is in the form of a Dict where the key is the data name and the value is the data content.   
-  * _**epoch:**_ int = None   
-    The number of the current epoch. Used for real-time model visualization and model prediction.  
-  * _****kwargs:**_  
-    The additional arguments for real-time model visualization. If given, the code will go through the model visualization branch.  
+    * _**batch_data:**_ Dict  
+      The input batch data received from the `train` or `valid` dataloader object in the experimental pipeline.  
+      The batch is in the form of a Dict where the key is the data name and the value is the data content.   
+    * _**epoch:**_ int = None   
+      The number of the current epoch. Used for real-time model visualization and model prediction.  
+    * _****kwargs:**_  
+      The additional arguments for real-time model visualization. If given, the code will go through the model visualization branch.  
 * **Return:**  
     In the training branch, the loss functions and evaluation metrics will be returned each of which is in the form of a _Dict_.  
     In the validation branch, only the evaluation metrics will be returned.  
@@ -212,10 +220,10 @@ There are a built-in dictionary named `init_class_dict` and a built-in list name
 * **Description:**  
     This function averages the evaluation metrics across all GPU processes in the DDP mode for model distribution.
 * **Arguments:**
-  * _**metrics:**_ Dict[str, torch.Tensor]  
-    The evaluation metrics to be averaged across all GPU processes. 
-  * _**batch_data:**_ Dict  
-    The input batch data used to calculate the batch size for averaging evaluation metrics.
+    * _**metrics:**_ Dict[str, torch.Tensor]  
+      The evaluation metrics to be averaged across all GPU processes. 
+    * _**batch_data:**_ Dict  
+      The input batch data used to calculate the batch size for averaging evaluation metrics.
 * **Return:** Dict[str, torch.Tensor]  
     The evaluation metrics _Dict_ after averaging. The key names remain the same.
 
@@ -228,11 +236,12 @@ There are a built-in dictionary named `init_class_dict` and a built-in list name
     2. calculate the inference results
   
     For each step above, we provide interface functions for you to override and make your own implementation.
+    
 * **Arguments:**
-  * _**test_batch:**_ Dict  
-    The input batch data received from the `test` dataloader object in the experimental pipeline.
-  * _**infer_conf:**_ Dict  
-    The configuration used for model inference.
+    * _**test_batch:**_ Dict  
+      The input batch data received from the `test` dataloader object in the experimental pipeline.
+    * _**infer_conf:**_ Dict  
+      The configuration used for model inference.
 * **Return:** Dict  
     A Dict of the inference results where each key-value item corresponds to one evaluation metric you want to save to the disk.
 
@@ -255,8 +264,8 @@ There are a built-in dictionary named `init_class_dict` and a built-in list name
     Some models have their customized part that also needs to be initialization in this function, e.g. the tokenizer of ASR and TTS models.  
     **Note:** This interface function must be overridden for each _Model_ subclass.
 * **Arguments:**
-  * _****kwargs:**_  
-    The combination of the arguments in your `module_conf` and `model_conf['customize_conf']`.
+    * _****kwargs:**_  
+      The combination of the arguments in your `module_conf` and `model_conf['customize_conf']`.
 
 👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#api-document)
 
@@ -266,8 +275,8 @@ There are a built-in dictionary named `init_class_dict` and a built-in list name
     These _Criterion_ members can be divided into two parts: the loss functions used for training and the evaluation metrics used for validation.  
     **Note:** This interface function must be overridden for each _Model_ subclass.
 * **Arguments:**
-  * _****criterion_conf:**_  
-    The arguments in your given `criterion_conf`.
+    * _****criterion_conf:**_  
+      The arguments in your given `criterion_conf`.
 
 👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#api-document)
 
@@ -277,8 +286,8 @@ There are a built-in dictionary named `init_class_dict` and a built-in list name
   This function is not mandatory to be overridden and the original implementation in the base _Model_ class does nothing but return the input `batch_data`.  
   **Note:** the key names in the returned Dict should match the argument names in `self.model_forward()`.
 * **Arguments:**
-  * _**batch_data:**_ Dict  
-    Raw data of the input batch to be preprocessed in this hook function.
+    * _**batch_data:**_ Dict  
+      Raw data of the input batch to be preprocessed in this hook function.
 * **Return:** Dict  
     Processed data of the input batch that is ready to be used in `self.model_forward()`.
 
@@ -292,8 +301,8 @@ There are a built-in dictionary named `init_class_dict` and a built-in list name
     2. The argument names should match the key names in the returned Dict of `self.batch_preprocess_fn()`.
     3. The key names in the returned Dict should match the argument names of `self.loss_calculation()` and `self.metrics_calculation()`.
 * **Arguments:**
-  * _****batch_data:**_  
-    Processed data of the input batch received from `self.batch_preprocess_fn()`.
+    * _****batch_data:**_  
+      Processed data of the input batch received from `self.batch_preprocess_fn()`.
 * **Return:** Dict  
     Prediction results (logits) of the model on the input batch data. 
     Some intermediate results (e.g., attention matrices) can also be returned for later use.
@@ -306,8 +315,8 @@ There are a built-in dictionary named `init_class_dict` and a built-in list name
     It receives the model prediction results from `self.model_forward()` and input batch data from `self.batch_preprocess_fn()`.  
     **Note:** This interface function must be overridden for each _Model_ subclass.
 * **Arguments:**
-  * _****kwargs:**_ 
-    The combination of the returned arguments from `self.batch_preprocess_fn()` and `self.model_forward()`.
+    * _****kwargs:**_ 
+      The combination of the returned arguments from `self.batch_preprocess_fn()` and `self.model_forward()`.
 * **Return:** (Dict[str, torch.Tensor], Dict[str, torch.Tensor]) or Dict[str, torch.Tensor]  
     The returned values should be different for the training and validation branches.
     1. For training, two Dict[str, torch.Tensor] should be returned where the first one contains all the trainable training losses for optimization and the second one contains all the non-trainable evaluation metrics used to record the training status.
@@ -335,6 +344,7 @@ There are a built-in dictionary named `init_class_dict` and a built-in list name
         )
     )
     ```
+    
     The first-level key is used to decide the name of the meta file as `idx2{file_name}`. 
     Its value is also a _Dict_ and there must be two keys in this sub-_Dict_: `format` and `content`. 
     The configuration of the sub-_Dict_ is different for different file formats:
@@ -371,10 +381,10 @@ There are a built-in dictionary named `init_class_dict` and a built-in list name
        ```
        where `/x/xx/` is your result path given in your `exp_cfg`.
 * **Arguments:**
-  * _**infer_conf:**_ Dict  
-    The configuration Dict used for model inference.
-  * _****kwargs:**_  
-    The testing data loaded from `test` dataloader object in the experimental pipeline. 
+    * _**infer_conf:**_ Dict  
+      The configuration Dict used for model inference.
+    * _****kwargs:**_  
+      The testing data loaded from `test` dataloader object in the experimental pipeline. 
 * **Return:** Dict[str, Dict[str, str or List]]  
     The model inference results to be saved on the disk.
 
@@ -383,29 +393,29 @@ There are a built-in dictionary named `init_class_dict` and a built-in list name
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#table-of-contents)
 
 ## Supported Models
-1. [ASR Recipes](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#automatic-speech-recognition-asr)
-   1. [asr.ARASR](https://github.com/bagustris/SpeeChain/blob/main/speechain/model/asr.py#L29)  
-      * **Structure:** Auto-Regressive CTC-Attention ASR model.  
-      * **Input:** One tuple of speech-text paired data (_feat_, _feat_len_, _text_, _text_len_) in _model_forward()_.  
-      * **Output:** One ASR loss calculated on the input data tuple in _criterion_calculation()_.
-   2. [asr.SemiARASR](https://github.com/bagustris/SpeeChain/blob/main/speechain/model/asr.py#L658) 
-      * **Structure:** Semi-supervised Auto-Regressive CTC-Attention ASR model.  
-      * **Input:** Multiple tuples of speech-text paired data  (_feat_, _feat_len_, _text_, _text_len_) in _model_forward()_. 
-      Each of them is generated by a specific `torch.utils.data.Dataloader`.
-      * **Output:** Multiple ASR losses calculated on all the input data tuples in _criterion_calculation()_. 
-      A loss named _loss_ is also returned which is the trainable overall loss summed by all ASR losses. 
-2. [TTS Recipes](https://github.com/bagustris/SpeeChain/tree/main/recipes/tts#text-to-speech-synthesis-tts)
-   1. [tts.ARTTS](https://github.com/bagustris/SpeeChain/blob/main/speechain/model/tts.py#L36)
-      * **Structure:** Auto-Regressive Attention TTS model.  
-      * **Input:** One tuple of speech-text paired data (_feat_, _feat_len_, _text_, _text_len_) in _model_forward()_.  
-      * **Output:** One TTS loss calculated on the input data tuple in _criterion_calculation()_.
+1. [ASR Recipes](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#automatic-speech-recognition-asr)  
+    1. [asr.ARASR](https://github.com/bagustris/SpeeChain/blob/main/speechain/model/asr.py#L29)  
+        * **Structure:** Auto-Regressive CTC-Attention ASR model.  
+        * **Input:** One tuple of speech-text paired data (_feat_, _feat_len_, _text_, _text_len_) in _model_forward()_.  
+        * **Output:** One ASR loss calculated on the input data tuple in _criterion_calculation()_.
+    2. [asr.SemiARASR](https://github.com/bagustris/SpeeChain/blob/main/speechain/model/asr.py#L658) 
+        * **Structure:** Semi-supervised Auto-Regressive CTC-Attention ASR model.  
+        * **Input:** Multiple tuples of speech-text paired data  (_feat_, _feat_len_, _text_, _text_len_) in _model_forward()_. 
+        Each of them is generated by a specific `torch.utils.data.Dataloader`.
+        * **Output:** Multiple ASR losses calculated on all the input data tuples in _criterion_calculation()_. 
+        A loss named _loss_ is also returned which is the trainable overall loss summed by all ASR losses. 
+2. [TTS Recipes](https://github.com/bagustris/SpeeChain/tree/main/recipes/tts#text-to-speech-synthesis-tts)  
+    1. [tts.ARTTS](https://github.com/bagustris/SpeeChain/blob/main/speechain/model/tts.py#L36)
+        * **Structure:** Auto-Regressive Attention TTS model.  
+        * **Input:** One tuple of speech-text paired data (_feat_, _feat_len_, _text_, _text_len_) in _model_forward()_.  
+        * **Output:** One TTS loss calculated on the input data tuple in _criterion_calculation()_.
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/model#table-of-contents)
 
 ## How to Freeze a Specific Part of your Model
 Parameter freezing can be done simply by giving the name of the module you want to freeze in _frozen_modules_. 
 In the example below, the encoder of the ASR model will be frozen while other modules are still trainable.
-```
+```yaml
 model:
     model_type: asr.ARASR
     model_conf:
@@ -413,7 +423,7 @@ model:
 ```
 If you want to freeze multiple modules, you can give their names as a list in _frozen_modules_. 
 In the example below, the prenets of both the encoder and decoder will be frozen.
-```
+```yaml
 model:
     model_type: asr.ARASR
     model_conf:
@@ -423,7 +433,7 @@ model:
 ```
 The parameter freezing granularity can be very fine if you specify the module name by a series of dots. 
 In the example below, the convolution layers of the prenet of the encoder will be frozen.
-```
+```yaml
 model:
     model_type: asr.ARASR
     model_conf:
@@ -436,7 +446,7 @@ model:
 ## How to Initialize your Model by the Pretrained Model
 Pretrained model loading can be easily done by giving the model path in _pretrained_model_. 
 In the example below, the entire ASR model will be initialized by the given _best_accuracy.pth_ model.
-```
+```yaml
 mdl_root: recipe/asr/librispeech/train-clean-100/exp/{exp_name}/models
 model:
     model_type: asr.ARASR
@@ -448,7 +458,7 @@ If you only want to initialize a part of your model, you can use the _mapping_ a
 The parameter name mismatch can also be solved by the _mapping_ argument. 
 In the example below, only the encoder of the ASR model will be initialized by the given pretrained model. 
 Even though the pretrained model is constructed by unit modules, it can still be loaded into the ASR model constructed by template modules by aligning their module names.
-```
+```yaml
 model_root: recipe/asr/librispeech/train-clean-100/exp/{exp_name}/models
 model:
     model_type: asr.ARASR
@@ -464,7 +474,7 @@ In the example below, the encoder and decoder of the ASR model are initialized b
 
 Note that if there are overlapping modules between the _mapping_ arguments of different pretrained models, 
 the module will be initialized by the pretrained models at the back of the list.
-```
+```yaml
 model_root: recipe/asr/librispeech/train-clean-100/exp/{exp_name}/models
 model:
     model_type: asr.ARASR
