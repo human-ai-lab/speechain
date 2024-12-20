@@ -53,11 +53,11 @@ Below is a table of available backbones:
 ## Preparing Durations for FastSpeech2
 For training a FastSpeech2 model, you need to acquire additional duration data for your target dataset. 
 Follow these steps:  
-1. Create a virtual environment for MFA: `conda create -n speechain_mfa -c conda-forge montreal-forced-aligner gdown`.  
-2. Activate the `speechain_mfa` environment: `conda activate speechain_mfa`.  
-3. Downsample your target TTS dataset to 16khz. For details, please see [how to dump a dataset on your machine](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-dump-a-dataset-on-your-machine).  
-4. By default, MFA package will store all the temporary files to your user directory. If you lack sufficient space, add `export MFA_ROOT_DIR={your-target-directory}` to `~/.bashrc` and run `source ~/.bashrc`.  
-5. Navigate to `${SPEECHAIN_ROOT}/datasets` and run `bash mfa_preparation.sh -h` for help. Then, add appropriate arguments to `bash mfa_preparation.sh` to acquire duration data.  
+ 1. Create a virtual environment for MFA: `conda create -n speechain_mfa -c conda-forge montreal-forced-aligner gdown`.  
+ 2. Activate the `speechain_mfa` environment: `conda activate speechain_mfa`.  
+ 3. Downsample your target TTS dataset to 16khz. For details, please see [how to dump a dataset on your machine](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-dump-a-dataset-on-your-machine).  
+ 4. By default, MFA package will store all the temporary files to your user directory. If you lack sufficient space, add `export MFA_ROOT_DIR={your-target-directory}` to `~/.bashrc` and run `source ~/.bashrc`.  
+ 5. Navigate to `${SPEECHAIN_ROOT}/datasets` and run `bash mfa_preparation.sh -h` for help. Then, add appropriate arguments to `bash mfa_preparation.sh` to acquire duration data.  
 
 **Note:** MFA cannot process duration calculations for multiple datasets concurrently on a single machine (or a single node on a cluster). 
 Please process each dataset one at a time.

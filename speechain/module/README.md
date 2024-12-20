@@ -71,16 +71,16 @@ This base class has two required abstract interface functions that must be overr
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#table-of-contents)
 
 
-## API Document
-_Non-overridable backbone functions:_
+## API Document  
+_Non-overridable backbone functions:_  
    1. [speechain.module.abs.Module.\_\_init__](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodule__init__self-input_size-distributed-module_conf)  
 
 _Overridable interface functions:_  
-   2. [speechain.module.abs.Module.module_init](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodulemodule_initself-module_conf)
-   3. [speechain.module.abs.Module.forward](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmoduleforwardself-kwargs)
-   4. [speechain.module.abs.Module.recover](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodulerecoverself-kwargs)
-   5. [speechain.module.abs.Module.reset_parameters](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodulereset_parametersself)
-   6. [speechain.module.abs.Module.get_recordable_para](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmoduleget_recordable_paraself)
+   1. [speechain.module.abs.Module.module_init](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodulemodule_initself-module_conf)  
+   2. [speechain.module.abs.Module.forward](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmoduleforwardself-kwargs)  
+   3. [speechain.module.abs.Module.recover](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodulerecoverself-kwargs)  
+   4. [speechain.module.abs.Module.reset_parameters](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmodulereset_parametersself)  
+   5. [speechain.module.abs.Module.get_recordable_para](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#speechainmoduleabsmoduleget_recordable_paraself)
 
 ### speechain.module.abs.Module.\_\_init__(self, input_size, distributed, **module_conf)
 * **Description:**  
@@ -95,7 +95,7 @@ _Overridable interface functions:_
     The last dimension of the tensor from the front _Module_ object. If not given, this argument would be None.
   * _**distributed:**_ bool = False  
     Whether the _Model_ object this _Module_ object is belong to is distributed to multiple GPUs.
-  * _****module_conf:**_  
+  * _\****module_conf:**_  
     The arguments used by `module_init()` for your customized _Module_ initialization.
 
 👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/module#api-document)
@@ -105,7 +105,7 @@ _Overridable interface functions:_
   Abstract interface function for customized initialization of each _Module_ subclass. 
   This interface function is mandatory to be overridden by your implementation.
 * **Arguments:**
-  * _****module_conf:**_  
+  * _\****module_conf:**_  
     The arguments used for customized Module initialization.
     For more details, please refer to the docstring of your target Module subclass.
 
@@ -131,7 +131,7 @@ _Overridable interface functions:_
   It can be considered as the reverse process of `forward()`.  
   This interface function is not mandatory to be overridden.
 * **Arguments:**
-  * _****kwargs:**_  
+  * _\****kwargs:**_  
     The input forward calculation results to be recovered. 
     For more details, please refer to the docstring of `recover()` of your target _Module_ subclass.
 * **Return:**  
@@ -142,9 +142,9 @@ _Overridable interface functions:_
 
 ### speechain.module.abs.Module.reset_parameters(self)
 * **Description:**  
-  This abstract interface function is used to initialize the customized parameters in the _Module_ subclass if had. 
+  This abstract interface function is used to initialize the customized parameters in the _Module_ subclass if had.  
   Some _Module_ subclasses have their customized parameters with specific initialization functions.  
-  If your _Module_ implementation has some customized parameters and you want to initialize them by yourself, 
+  If your _Module_ implementation has some customized parameters and you want to initialize them by yourself,  
   please give the initialization logic in this interface function.  
   This interface function is not mandatory to be overridden.  
   **Note:** Don't forget to add `self.default_init_modules.append(YourModule)` in `model_init()` of your _Model_.

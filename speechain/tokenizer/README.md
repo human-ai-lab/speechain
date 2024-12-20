@@ -83,13 +83,13 @@ _Overridable interface functions:_
     This functions encodes a text string into a model-friendly tensor.  
     This interface is mandatory to be overridden.  
     By default, this function will attach two <sos/eos> at the beginning and end of the returned token id sequence.
-* **Arguments:**
-  * _**text:**_ str  
-    The input text string to be encoded
-  * _**no_sos:**_ bool = False  
-    Whether to remove the <sos/eos> at the beginning of the token id sequence.
-  * _**no_eos:**_ bool = False  
-    Whether to remove the <sos/eos> at the end of the token id sequence.
+* **Arguments:**  
+    * _**text:**_ str  
+      The input text string to be encoded
+    * _**no_sos:**_ bool = False  
+      Whether to remove the <sos/eos> at the beginning of the token id sequence.
+    * _**no_eos:**_ bool = False  
+      Whether to remove the <sos/eos> at the end of the token id sequence.
 * **Return:** torch.LongTensor  
     The tensor of the encoded sentence
 

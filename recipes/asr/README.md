@@ -20,7 +20,7 @@ ASR (Automatic Speech Recognition) is a technology that converts spoken language
 	    <th>Test Other</th>  
 	</tr>
    <tr>
-      <td rowspan="8">librispeech</td>
+      <td rowspan="9">librispeech</td>
       <td rowspan="1">train-clean-5</td>
       <td>5-bpe5k_conformer-small_lr2e-3</td>
       <td>15.2% / 35.8%</td>
@@ -83,7 +83,7 @@ ASR (Automatic Speech Recognition) is a technology that converts spoken language
 
 
 ## Pretrained Models for Reproducibility
-For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/recipes/asr/`, we provide the following pretrained models to ensure consistent performance:
+For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/recipes/asr/`, we provide the following pretrained models to ensure consistent performance:  
 1. SentencePiece tokenizer models ([GoogleDrive](https://drive.google.com/drive/u/0/folders/1ZrnodlK2Ta6wnvhpXf79W27omSUVOaG0)). 
    * Please download tokenizer model and vocabulary to where your dataset is dumped. The default path is `${SPEECHAIN_ROOT}/datasets`.   
      **Note:** If your dataset is dumped outside SpeeChain, please replace `${SPEECHAIN_ROOT}/datasets` in the following commands by your place.
@@ -124,7 +124,7 @@ For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/r
           # Download LM configuration
           gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/lm_text/exp/100-bpe5k_transformer_gelu https://drive.google.com/uc?id=1TRtIOu2ptXTKphY77cF3fne9b-i-vNJD
           ```
-     3. **train-960:**
+     2. **train-960:**
           ```
           # Download LM model
           gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/train-960_lm_text/exp/960-bpe5k_transformer_gelu/models https://drive.google.com/uc?id=1hMFlaJVojonyBiwaXmC_I7iLxI-kSWit
@@ -136,7 +136,7 @@ For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/r
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#table-of-contents)
 
 
-## Training an ASR model
+## Training an ASR model  
 Before training an ASR model, ensure that your target datasets are dumped by the scripts in `${SPEECHAIN_ROOT}/datasets/{your-target-dataset}`.
 More details on how to dump a dataset can be found [here](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-dump-a-dataset-on-your-machine).
 
@@ -148,7 +148,7 @@ More details on how to dump a dataset can be found [here](https://github.com/bag
    cd ${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-960
    bash run.sh --exp_cfg 960-bpe5k_transformer-wide_ctc_perturb (--ngpu x --gpus x,x)
    ```
-   **Note:** 
+   **Note:**   
    1. Review the comments on the top of the configuration file to ensure that your computational resources fit the configuration before training the model.
       If your resources do not match the configuration, adjust it by `--ngpu` and `--gpus` to match your available GPU memory.
    2. To save the experimental results outside the toolkit folder `${SPEECHAIN_ROOT}`, 

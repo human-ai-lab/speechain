@@ -234,10 +234,10 @@ For dumping an existing dataset,
    2. Run `bash run.sh --help` to familiarize yourself with the involved arguments.
    3. Run `bash run.sh` to dump your target dataset (add some arguments if needed).
 
-**Note:**  
-   1. **If you already have the _decompressed_ dataset on your disk**, please attach the argument `--src_path {the-path-of-your-existing-dataset}` to the command `bash run.sh` in the no.3 step above.
-   Please make sure that `src_path` is an absolute path starting with a slash '/' and the content of `src_path` should be exactly the same with the one downloaded from the internet (please see the help message of `--src_path` in each `run.sh`).
-   2. **If you want to save the dumped data and metadata files outside the toolkit folder (`${SPEECHAIN_ROOT}`)**, please attach the argument `--tgt_path {the-path-you-want-to-save-files}` to the command `bash run.sh` in the no.3 step above.
+**Note:**    
+   1. **If you already have the _decompressed_ dataset on your disk**, please attach the argument `--src_path {the-path-of-your-existing-dataset}` to the command `bash run.sh` in the no.3 step above.  
+   Please make sure that `src_path` is an absolute path starting with a slash '/' and the content of `src_path` should be exactly the same with the one downloaded from the internet (please see the help message of `--src_path` in each `run.sh`).  
+   2. **If you want to save the dumped data and metadata files outside the toolkit folder (`${SPEECHAIN_ROOT}`)**, please attach the argument `--tgt_path {the-path-you-want-to-save-files}` to the command `bash run.sh` in the no.3 step above.  
    Please make sure that `tgt_path` is an absolute path starting with a slash '/'.
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)

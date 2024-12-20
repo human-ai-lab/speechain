@@ -4,9 +4,10 @@ on:
     branches:
       - main
     # paths:
-    #   - 'docs/**'
-    #   - 'mkdocs.yml'
-    #   - '.github/workflows/documentation.yml'
+      # - 'docs/**'
+      # - 'speechain/**'
+      # - 'mkdocs.yml'
+      # - '.github/workflows/documentation.yml'
 
 jobs:
   build-docs:
