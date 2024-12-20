@@ -1,4 +1,4 @@
-# Dataset (Module)
+# Dataset (Class)
 
 [*Dataset*](https://github.com/bagustris/SpeeChain/blob/main/speechain/dataset/abs.py) is the base class that takes charge of reading the data instances from the disk into the memory and packaging them into a batch for model training or testing.
 
@@ -58,8 +58,8 @@ dataset_conf:
 
 ## API Document
 [**speechain.dataset.abs.Dataset**](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#speechaindatasetabsdataset)  
-1. _Non-overridable backbone functions:_  
 
+_Non-overridable backbone functions:_  
    1. [\_\_init__](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#__init__self-main_data-data_selection-dataset_conf)  
    2. [\_\_getitem__](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#__getitem__self-index)  
    3. [data_selection](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#data_selectionself-selection_mode-selection_num-meta_info)  
@@ -67,7 +67,7 @@ dataset_conf:
    5. [remove_data_by_index](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#remove_data_by_indexself)  
    6. [collate_fn](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#collate_fnself-batch)  
    
-2. _Overridable interface functions:_  
+_Overridable interface functions:_  
    1. [dataset_init_fn](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#dataset_init_fnself-dataset_conf)  
    2. [extract_main_data_fn](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#extract_main_data_fnbatch_dict-main_data)  
    3. [collate_main_data_fn](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#collate_main_data_fnself-batch_dict)  
@@ -91,30 +91,29 @@ If you want to make your own _Dataset_ implementation, please follow the instruc
     * **_data_selection:_** List[str or List[str]] = None  
       The strategies for data selection during the iterator initialization to shrink the used data instances.
       Multiple strategies can be specified in a list. Each data selection strategy must be either a bi-list (non-meta strategy) or tri-list (meta strategy).  
+        1. _non-meta strategy:_  
+        The rule-based selection strategies that don't involve metadata. 
+        These strategies should be given as a bi-list, i.e., ['selection mode', 'selection number'].  
+        'selection mode' indicates the way to select data instances while 'selection number' indicates how many data instances to be selected.  
+        Currently, available non-meta selection modes include:
+        
+            1. 'order': Select the data instances from the beginning of the dataset.  
+            2. 'rev_order': Select the data instances from the end of the dataset.  
+            3. 'random': Randomly select the data instances from the dataset.  
+            **Note:** You should keep the same
+            random seeds for all the GPU processes in the DDP mode to ensure that the selected data instances
+            are the same in each process. In this case, please set the 'same_proc_seed' argument to True in
+            your configuration given to speechain.runner.py.  
 
-      1. _non-meta strategy:_  
-      The rule-based selection strategies that don't involve metadata. 
-      These strategies should be given as a bi-list, i.e., ['selection mode', 'selection number'].  
-      'selection mode' indicates the way to select data instances while 'selection number' indicates how many data instances to be selected.  
-      Currently, available non-meta selection modes include:
-      
-          1. 'order': Select the data instances from the beginning of the dataset.  
-          2. 'rev_order': Select the data instances from the end of the dataset.  
-          3. 'random': Randomly select the data instances from the dataset.  
-          **Note:** You should keep the same
-          random seeds for all the GPU processes in the DDP mode to ensure that the selected data instances
-          are the same in each process. In this case, please set the 'same_proc_seed' argument to True in
-          your configuration given to speechain.runner.py.  
-
-      2. _meta strategy:_  
-      The selection strategies that involves metadata. 
-      These strategies should be given as a tri-list, i.e., ['selection mode', 'selection threshold', 'metadata path'].   
-      'selection mode' indicates the way to select data instances, 'selection threshold' indicates the metadata threshold to select data instances, and 'metadata path' indicates where is the metadata used for selection.  
-      Currently, available meta selection modes include:
-      
-          1. 'min': Select the data instances who have smaller metadata.  
-          2. 'max': Select the data instances who have larger  metadata.  
-          3. 'middle': Remove the data instances whose metadata is the largest and smallest.  
+        2. _meta strategy:_  
+        The selection strategies that involves metadata. 
+        These strategies should be given as a tri-list, i.e., ['selection mode', 'selection threshold', 'metadata path'].   
+        'selection mode' indicates the way to select data instances, 'selection threshold' indicates the metadata threshold to select data instances, and 'metadata path' indicates where is the metadata used for selection.  
+        Currently, available meta selection modes include:
+        
+            1. 'min': Select the data instances who have smaller metadata.  
+            2. 'max': Select the data instances who have larger  metadata.  
+            3. 'middle': Remove the data instances whose metadata is the largest and smallest.  
 
     * _\****dataset_conf:**_  
     The configuration arguments for customized Dataset initialization.
@@ -128,8 +127,8 @@ If you want to make your own _Dataset_ implementation, please follow the instruc
     In each time, this function receives an index and returns the selected data instance.  
     The hook `extract_main_data_fn()` is executed here to extract the main body of the selected data instance from the disk.   
 * **Arguments:**
-  * _**index:**_ str  
-    The index of the selected data instance given by the _Dataloader_ object.
+    * _**index:**_ str  
+      The index of the selected data instance given by the _Dataloader_ object.
 * **Return:** Dict[str, Any]  
     A dictionary containing a data instance.
 
@@ -140,41 +139,41 @@ If you want to make your own _Dataset_ implementation, please follow the instruc
     This function executes the data selection by the input selection strategy arguments. 
     A new batching view of the selected data instances will be returned.
 * **Arguments:**  
-  * _**selection_mode:**_ str  
-    The mode indicating how the data instances are selected. 
-    Selection modes are grouped by different types of data selection strategies.
-    1. _non-meta strategy:_  
-      The rule-based selection strategies that don't involve metadata. 
-      Currently, available non-meta selection modes include:
-         1. 'order': Select the data instances from the beginning of the dataset.
-         2. 'rev_order': Select the data instances from the end of the dataset.
-         3. 'random': Randomly select the data instances from the dataset.  
-         **Note:** You should keep the same
-         random seeds for all the GPU processes in the DDP mode to ensure that the selected data instances
-         are the same in each process. In this case, please set the 'same_proc_seed' argument to True in
-         your configuration given to speechain.runner.py.
-    2. _meta strategy:_  
-      The selection strategies that involves metadata. 
-      Currently, available meta selection modes include:
-       1. 'min': Select the data instances who have smaller metadata.
-       2. 'max': Select the data instances who have larger  metadata.
-       3. 'middle': Remove the data instances whose metadata is the largest and smallest.
-  * _**selection_num:**_ float or int or str  
-    This argument has the different usage with different data types.  
-    1. _float_ type:  
-    Float value represents the relative number of data instances to be selected. 
-    If _selection_num_ is given as a float number, it must be between 0 and 1.
-    2. _int_ type:  
-    Integer value represents the absolute number of data instances to be selected. 
-    If _selection_num_ is given as an interger number, it must be negative (its absolute value will be taken).
-    3. _str_ type:  
-    String value represents the metadata threshold used to select the data instances. 
-    Only 'min' and 'max' modes support string _selection_num_.  
-    **Note:** You can use the !-suffixed representer `!str` to convert a float or integer number to a string in your ._yaml_ file.
-  * _**meta_info:**_ str = None  
-    The path where the metadata information used for selection is placed. 
-    Only the meta strategies 'min', 'max', and 'middle' need this argument.
-    
+    * _**selection_mode:**_ str  
+      The mode indicating how the data instances are selected. 
+      Selection modes are grouped by different types of data selection strategies.
+      1. _non-meta strategy:_  
+        The rule-based selection strategies that don't involve metadata. 
+        Currently, available non-meta selection modes include:
+          1. 'order': Select the data instances from the beginning of the dataset.
+          2. 'rev_order': Select the data instances from the end of the dataset.
+          3. 'random': Randomly select the data instances from the dataset.  
+          **Note:** You should keep the same
+          random seeds for all the GPU processes in the DDP mode to ensure that the selected data instances
+          are the same in each process. In this case, please set the 'same_proc_seed' argument to True in
+          your configuration given to speechain.runner.py.
+      2. _meta strategy:_  
+        The selection strategies that involves metadata. 
+        Currently, available meta selection modes include:
+        1. 'min': Select the data instances who have smaller metadata.
+        2. 'max': Select the data instances who have larger  metadata.
+        3. 'middle': Remove the data instances whose metadata is the largest and smallest.
+    * _**selection_num:**_ float or int or str  
+      This argument has the different usage with different data types.  
+      1. _float_ type:  
+      Float value represents the relative number of data instances to be selected. 
+      If _selection_num_ is given as a float number, it must be between 0 and 1.
+      2. _int_ type:  
+      Integer value represents the absolute number of data instances to be selected. 
+      If _selection_num_ is given as an interger number, it must be negative (its absolute value will be taken).
+      3. _str_ type:  
+      String value represents the metadata threshold used to select the data instances. 
+      Only 'min' and 'max' modes support string _selection_num_.  
+      **Note:** You can use the !-suffixed representer `!str` to convert a float or integer number to a string in your ._yaml_ file.
+    * _**meta_info:**_ str = None  
+      The path where the metadata information used for selection is placed. 
+      Only the meta strategies 'min', 'max', and 'middle' need this argument.
+      
 * **Return:** List[str]  
     A list of indices of the selected data instances.
 
@@ -253,158 +252,100 @@ If you want to make your own _Dataset_ implementation, please follow the instruc
 
 ## How to Mix Multiple Data Sources in my Dataset Object
 
-[//]: # (If you want to initialize your iterator with multiple datasets and want your dataloader to pick up batches from the mixed dataset, )
-
-[//]: # (you can simply give a list of file paths to the _src_data_ and _tgt_label_ arguments to initialize the built-in dataset of your iterator like the example below.)
-
-[//]: # (```)
-
-[//]: # (data_root: ./datasets/speech/librispeech/data/wav)
-
-[//]: # (train:)
-
-[//]: # (    type: block.BlockIterator)
-
-[//]: # (    conf:)
-
-[//]: # (        dataset_type: speech.speech_text.SpeechTextDataset)
-
-[//]: # (        dataset_conf:)
-
-[//]: # (            src_data:)
-
-[//]: # (                - !ref <data_root>/train_clean_100/feat.scp)
-
-[//]: # (                - !ref <data_root>/train_clean_360/feat.scp)
-
-[//]: # (                - !ref <data_root>/train_other_500/feat.scp)
-
-[//]: # (            tgt_label:)
-
-[//]: # (                - !ref <data_root>/train_clean_100/text)
-
-[//]: # (                - !ref <data_root>/train_clean_100/text)
-
-[//]: # (                - !ref <data_root>/train_other_500/text)
-
-[//]: # (        ...)
-
-[//]: # (```)
+If you want to initialize your iterator with multiple datasets and want your 
+dataloader to pick up batches from the mixed dataset, 
+you can simply give a list of file paths to the _src_data_ 
+and _tgt_label_ arguments to initialize the built-in dataset 
+of your iterator like the example below.
+```yaml
+data_root: ./datasets/speech/librispeech/data/wav
+train:
+    type: block.BlockIterator
+    conf:
+        dataset_type: speech.speech_text.SpeechTextDataset
+        dataset_conf:
+            src_data:
+                - !ref <data_root>/train_clean_100/feat.scp
+                - !ref <data_root>/train_clean_360/feat.scp
+                - !ref <data_root>/train_other_500/feat.scp
+            tgt_label:
+                - !ref <data_root>/train_clean_100/text
+                - !ref <data_root>/train_clean_100/text
+                - !ref <data_root>/train_other_500/text
+        ...
+```
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#table-of-contents)
 
 
 ## How to Perform Data Selection in my Dataset Object
 
-[//]: # (If you only need to load a part of the data samples from the built-in dataset, )
+If you only need to load a part of the data samples from the built-in dataset, 
+you can use the arguments _selection_mode_ and _selection_num_. 
+_selection_mode_ specifies the selection method and _selection_num_ specifies 
+the number of selected samples. 
+_selection_num_ can be given as a positive float number 
+or a negative integer number. 
+The positive float number means the ratio of the dataset. 
+In the example below, the first 50% of *LibriSpeech-train_clean_100* 
+will be selected. 
+```yaml
+data_root: ./datasets/speech/librispeech/data/wav
+train:
+    type: block.BlockIterator
+    conf:
+        dataset_type: speech.speech_text.SpeechTextDataset
+        dataset_conf:
+            src_data: !ref <data_root>/train_clean_100/feat.scp
+            tgt_label: !ref <data_root>/train_clean_100/text
 
-[//]: # (you can use the arguments _selection_mode_ and _selection_num_. )
+        selection_mode: order
+        selection_num: 0.5
+        ...
+```
 
-[//]: # (_selection_mode_ specifies the selection method and _selection_num_ specifies the number of selected samples. )
-
-[//]: # (_selection_num_ can be given as a positive float number or a negative integer number. )
-
-[//]: # (The positive float number means the ratio of the dataset. In the example below, the first 50% of *LibriSpeech-train_clean_100* will be selected. )
-
-[//]: # (```)
-
-[//]: # (data_root: ./datasets/speech/librispeech/data/wav)
-
-[//]: # (train:)
-
-[//]: # (    type: block.BlockIterator)
-
-[//]: # (    conf:)
-
-[//]: # (        dataset_type: speech.speech_text.SpeechTextDataset)
-
-[//]: # (        dataset_conf:)
-
-[//]: # (            src_data: !ref <data_root>/train_clean_100/feat.scp)
-
-[//]: # (            tgt_label: !ref <data_root>/train_clean_100/text)
-
-[//]: # ()
-[//]: # (        selection_mode: order)
-
-[//]: # (        selection_num: 0.5)
-
-[//]: # (        ...)
-
-[//]: # (```)
-
-[//]: # (The negative integer number means the absolute number of the selected samples. )
-
-[//]: # (In the example below, 1000 data samples of *LibriSpeech-train_clean_100* will be randomly selected. )
-
-[//]: # (```)
-
-[//]: # (data_root: ./datasets/speech/librispeech/data/wav)
-
-[//]: # (train:)
-
-[//]: # (    type: block.BlockIterator)
-
-[//]: # (    conf:)
-
-[//]: # (        dataset_type: speech.speech_text.SpeechTextDataset)
-
-[//]: # (        dataset_conf:)
-
-[//]: # (            src_data: !ref <data_root>/train_clean_100/feat.scp)
-
-[//]: # (            tgt_label: !ref <data_root>/train_clean_100/text)
-
-[//]: # ()
-[//]: # (        selection_mode: random)
-
-[//]: # (        selection_num: -1000)
-
-[//]: # (        ...)
-
-[//]: # (```)
-
-[//]: # (Moreover, data selection and datasets mixing can be used in a single iterator but they will be done sequentially. )
-
-[//]: # (In the example below, _train_clean_100_, _train_clean_360_, and _train_other_500_ datasets of the _LibriSpeech_ corpus will be first mixed into a large dataset, and then the last 50% of the large dataset will be selected.)
-
-[//]: # (```)
-
-[//]: # (data_root: ./datasets/speech/librispeech/data/wav)
-
-[//]: # (train:)
-
-[//]: # (    type: block.BlockIterator)
-
-[//]: # (    conf:)
-
-[//]: # (        dataset_type: speech.speech_text.SpeechTextDataset)
-
-[//]: # (        dataset_conf:)
-
-[//]: # (            src_data:)
-
-[//]: # (                - !ref <data_root>/train_clean_100/feat.scp)
-
-[//]: # (                - !ref <data_root>/train_clean_360/feat.scp)
-
-[//]: # (                - !ref <data_root>/train_other_500/feat.scp)
-
-[//]: # (            tgt_label:)
-
-[//]: # (                - !ref <data_root>/train_clean_100/text)
-
-[//]: # (                - !ref <data_root>/train_clean_360/text)
-
-[//]: # (                - !ref <data_root>/train_other_500/text)
-
-[//]: # (        )
-[//]: # (        selection_mode: rev_order)
-
-[//]: # (        selection_num: 0.5)
-
-[//]: # (        ...)
-
-[//]: # (```)
+The negative integer number means the absolute number of the selected samples. 
+In the example below, 1000 data samples of *LibriSpeech-train_clean_100* 
+will be randomly selected. 
+```yaml
+data_root: ./datasets/speech/librispeech/data/wav
+train:
+    type: block.BlockIterator
+    conf:
+        dataset_type: speech.speech_text.SpeechTextDataset
+        dataset_conf:
+            src_data: !ref <data_root>/train_clean_100/feat.scp
+            tgt_label: !ref <data_root>/train_clean_100/text
+)
+        selection_mode: random
+        selection_num: -1000
+        ...
+```
+Moreover, data selection and datasets mixing can be used in a single iterator 
+but they will be done sequentially. 
+In the example below, _train_clean_100_, _train_clean_360_, 
+and _train_other_500_ datasets of the _LibriSpeech_ corpus will be first mixed 
+into a large dataset, and then the last 50% of the large dataset 
+will be selected.
+```yaml
+data_root: ./datasets/speech/librispeech/data/wav
+train:
+    type: block.BlockIterator
+    conf:
+        dataset_type: speech.speech_text.SpeechTextDataset
+        dataset_conf:
+            src_data:
+                - !ref <data_root>/train_clean_100/feat.scp
+                - !ref <data_root>/train_clean_360/feat.scp
+                - !ref <data_root>/train_other_500/feat.scp
+            tgt_label:
+                - !ref <data_root>/train_clean_100/text
+                - !ref <data_root>/train_clean_360/text
+                - !ref <data_root>/train_other_500/text
+        )
+        selection_mode: rev_order
+        selection_num: 0.5
+        ...
+```
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#table-of-contents)

@@ -110,13 +110,14 @@ test:
 
 ## API Document
 [**speechain.iterator.abs.Iterator**](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#speechainiteratorabsiterator)  
-1. _Non-overridable backbone functions:_
-   1. [\_\_init\_\_](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#__init__self-dataset_type-dataset_conf-batches_per_epoch-data_len-group_info-data_selection-is_descending-shuffle-seed-ngpu-num_workers-pin_memory-distributed-iter_conf)
-   2. [\_\_len\_\_](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#__len__self)
-   3. [get_batch_indices](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#get_batch_indicesself)
-   4. [get_group_info](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#get_group_infoself)
-   5. [build_loader](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#build_loaderself-epoch-start_step)
-2. _Overridable interface functions:_  
+
+_Non-overridable backbone functions:_  
+   1. [\_\_init\_\_](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#__init__self-dataset_type-dataset_conf-batches_per_epoch-data_len-group_info-data_selection-is_descending-shuffle-seed-ngpu-num_workers-pin_memory-distributed-iter_conf)  
+   2. [\_\_len\_\_](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#__len__self)  
+   3. [get_batch_indices](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#get_batch_indicesself)  
+   4. [get_group_info](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#get_group_infoself)  
+   5. [build_loader](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#build_loaderself-epoch-start_step)  
+_Overridable interface functions:_  
    1. [batches_generate_fn](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#batches_generate_fnself-data_index-data_len-batch_size)
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#table-of-contents)
@@ -130,38 +131,38 @@ Each iterator subclass should override a static hook function `batches_generate_
     The general initialization function shared by all the _Iterator_ classes. 
     _Dataset_ initialization is automatically done here by the given _dataset_type_ and _dataset_conf_.
 * **Arguments:**
-  * **_dataset_type:_** str  
-    Query string to pick up the target Dataset subclass in `SPEECHAIN_ROOT/speechain/dataset/`
-  * **_dataset_conf:_**  Dict  
-    Dataset configuration for the automatic initialization of the built-in _Dataset_ object.
-  * **_batches_per_epoch:_** int = None  
-    The number of batches in each epoch. This number can be either smaller or larger than the real batch number. 
-    If not given (None), all batches will be used in each epoch.
-  * **_data_len:_** str or List[str] = None  
-    The path of the data length file. Multiple data length files can be given in a list, but they must contain non-overlapping data instances.
-  * _**group_info:**_ Dict[str, str or List[str]]  
-    The dictionary of paths for the _idx2data_ files used for group-wise evaluation results visualization.
-  * **_is_descending:_** bool = True  
-    Whether the batches are sorted in the descending order by the length (True) or in the ascending order (False). 
-    This argument is effective only when _data_len_ is given.
-  * **_shuffle:_** bool = True  
-    Whether the batches are shuffled at the beginning of each epoch.
-  * **_seed:_** int = 0  
-    Random seed for iterator initialization. This argument is automatically given by the experiment environment configuration.  
-    The seed will be used to
-    1. shuffle batches before giving to the Dataloader of each epoch.
-    2. initialize all the workers of the Dataloader for the reproducibility.
-  * **_ngpu:_** int = 1  
-    The number of GPUs used to train or test models. This argument is automatically given by the experiment environment configuration.  
-    The GPU number is used to ensure that each GPU process in the DDP mode has the batches with the same number of data instances.
-  * **_num_workers:_** int = 1  
-    Number of workers for the Dataloader. This argument is automatically given by the experiment environment configuration.  
-  * **_pin_memory:_** bool = False  
-    Whether pin_memory is activated in the Dataloader. This argument is automatically given by the experiment environment configuration.  
-  * **_distributed:_** bool = False  
-    Whether DDP is used to distribute the model. This argument is automatically given by the experiment environment configuration.  
-  * **_iter_conf:_** Dict  
-    Iterator configuration for customized batch generation
+    * **_dataset_type:_** str  
+      Query string to pick up the target Dataset subclass in `SPEECHAIN_ROOT/speechain/dataset/`
+    * **_dataset_conf:_**  Dict  
+      Dataset configuration for the automatic initialization of the built-in _Dataset_ object.
+    * **_batches_per_epoch:_** int = None  
+      The number of batches in each epoch. This number can be either smaller or larger than the real batch number. 
+      If not given (None), all batches will be used in each epoch.
+    * **_data_len:_** str or List[str] = None  
+      The path of the data length file. Multiple data length files can be given in a list, but they must contain non-overlapping data instances.
+    * _**group_info:**_ Dict[str, str or List[str]]  
+      The dictionary of paths for the _idx2data_ files used for group-wise evaluation results visualization.
+    * **_is_descending:_** bool = True  
+      Whether the batches are sorted in the descending order by the length (True) or in the ascending order (False). 
+      This argument is effective only when _data_len_ is given.
+    * **_shuffle:_** bool = True  
+      Whether the batches are shuffled at the beginning of each epoch.
+    * **_seed:_** int = 0  
+      Random seed for iterator initialization. This argument is automatically given by the experiment environment configuration.  
+      The seed will be used to
+        1. shuffle batches before giving to the Dataloader of each epoch.
+        2. initialize all the workers of the Dataloader for the reproducibility.
+    * **_ngpu:_** int = 1  
+      The number of GPUs used to train or test models. This argument is automatically given by the experiment environment configuration.  
+      The GPU number is used to ensure that each GPU process in the DDP mode has the batches with the same number of data instances.
+    * **_num_workers:_** int = 1  
+      Number of workers for the Dataloader. This argument is automatically given by the experiment environment configuration.  
+    * **_pin_memory:_** bool = False  
+      Whether pin_memory is activated in the Dataloader. This argument is automatically given by the experiment environment configuration.  
+    * **_distributed:_** bool = False  
+      Whether DDP is used to distribute the model. This argument is automatically given by the experiment environment configuration.  
+    * **_iter_conf:_** Dict  
+      Iterator configuration for customized batch generation
 
 👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#api-document)
 
@@ -201,11 +202,11 @@ Each iterator subclass should override a static hook function `batches_generate_
     For a smaller `batches_per_epoch`, a part of `self.batches` will be used as the batch clip; 
     For a larger `batches_per_epoch`, `self.batches` will be supplemented by a part of itself to form the batch clip.
 * **Arguments:**  
-  * **_epoch:_** int = 1  
-    The number of the current epoch. Used as part of the random seed to shuffle the batches.
-  * **_start_step:_** int = 0  
-    The start point for the dataloader of the current epoch. 
-    Mainly used for resuming a model testing job from a checkpoint.
+    * **_epoch:_** int = 1  
+      The number of the current epoch. Used as part of the random seed to shuffle the batches.
+    * **_start_step:_** int = 0  
+      The start point for the dataloader of the current epoch. 
+      Mainly used for resuming a model testing job from a checkpoint.
 * **Return:** torch.util.data.DataLoader  
     A DataLoader built on the batch clip of the current epoch. 
     If `batches_per_epoch` is not given, the batch clip is `self.batches`.
