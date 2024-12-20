@@ -88,8 +88,9 @@ For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/r
 1. SentencePiece tokenizer models  
    * Please download tokenizer model and vocabulary to where your dataset is dumped. The default path is `${SPEECHAIN_ROOT}/datasets`.   
      **Note:** If your dataset is dumped outside SpeeChain, please replace `${SPEECHAIN_ROOT}/datasets` in the following commands by your place.
-   * **LibriSpeech:**
-     1. **train-clean-100:** 
+   * **LibriSpeech:**  
+     1. **train-clean-100:**  
+
           ```bash
           # Download BPE model
           gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc 
@@ -97,7 +98,9 @@ For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/r
           # Download BPE vocabulary
           gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc 
           ```
-     2. **train-clean-460:** 
+
+     2. **train-clean-460:**  
+
           ```bash
           # Download BPE model
           gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc 
@@ -105,7 +108,9 @@ For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/r
           # Download BPE vocabulary
           gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc 
           ```
+
      3. **train-960:** 
+          
           ```bash
           # Download BPE model
           gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc 
@@ -113,20 +118,24 @@ For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/r
           # Download BPE vocabulary by 
           gdown -O ${SPEECHAIN_ROOT}/datasets/librispeech/data/sentencepiece/train-clean-100/bpe5k/no-punc 
           ```
+
 3. Transformer-based language models  
    * Please download both LM model and configuration file. The default path is `${SPEECHAIN_ROOT}/recipes/lm`.   
      **Note:** If you want to store model files outside SpeeChain, please replace `${SPEECHAIN_ROOT}/recipes/lm` in the following commands by your place. Also, change the `lm_cfg_path` and `lm_model_path` arguments in each ASR configuration file.
    * **LibriSpeech:**
      1. **train-clean-100:** 
-          ```bash
+          
+          ```bash  
           # Download LM model
           gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/lm_text/exp/100-bpe5k_transformer_gelu/models 
 
           # Download LM configuration
           gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/lm_text/exp/100-bpe5k_transformer_gelu 
           ```
+
      2. **train-960:**
-          ```bash
+          
+          ```bash  
           # Download LM model
           gdown -O ${SPEECHAIN_ROOT}/recipes/lm/librispeech/train-960_lm_text/exp/960-bpe5k_transformer_gelu/models 
 
@@ -145,13 +154,15 @@ More details on how to dump a dataset can be found [here](https://github.com/bag
 1. locate a _.yaml_ configuration file in `${SPEECHAIN_ROOT}/recipes/asr`. 
    Suppose we want to train an ASR model by the configuration `${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-960/exp_cfg/960-bpe5k_transformer-wide_ctc_perturb.yaml`.
 2. Train and evaluate the ASR model on your target training set
-   ```
+   
+   ```bash
    cd ${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-960
    bash run.sh --exp_cfg 960-bpe5k_transformer-wide_ctc_perturb (--ngpu x --gpus x,x)
    ```
+   
    **Note:**   
-   1. Review the comments on the top of the configuration file to ensure that your computational resources fit the configuration before training the model.
-      If your resources do not match the configuration, adjust it by `--ngpu` and `--gpus` to match your available GPU memory.
+   1. Review the comments on the top of the configuration file to ensure that your computational resources fit the configuration before training the model.  
+   If your resources do not match the configuration, adjust it by `--ngpu` and `--gpus` to match your available GPU memory.
    2. To save the experimental results outside the toolkit folder `${SPEECHAIN_ROOT}`, 
       specify your desired location by appending `--train_result_path {your-target-path}` to `bash run.sh`.  
       In this example, `bash run.sh --exp_cfg 960-bpe5k_transformer-wide_ctc_perturb --train_result_path /a/b/c`
@@ -177,7 +188,7 @@ More details on how to dump a dataset can be found [here](https://github.com/bag
 3. Copy a pre-tuned configuration file into your newly created folder. 
    Suppose we want to use the configuration `${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-960/exp_cfg/960-bpe5k_transformer-wide_ctc_perturb.yaml`:  
 
-   ```bash
+   ```bash  
    cd ${SPEECHAIN_ROOT}/recipes/asr/{your-new-dataset}/{your-target-subset}
    mkdir ./data_cfg ./exp_cfg
    cp ${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-960/exp_cfg/960-bpe5k_transformer-wide_ctc_perturb.yaml ./exp_cfg
@@ -186,7 +197,7 @@ More details on how to dump a dataset can be found [here](https://github.com/bag
    **Note:**  
    - Update the dataset arguments at the beginning of your selected configuration:
 
-      ```
+      ```  
       # dataset-related
       dataset: librispeech -> 'your-new-dataset'
       train_set: train-960 -> 'your-target-subset'
@@ -198,9 +209,10 @@ More details on how to dump a dataset can be found [here](https://github.com/bag
       token_type: sentencepiece
       token_num: bpe5k
       ```
+
 4. Train the ASR model on your target training set:
 
-   ```bash
+   ```bash  
    cd ${SPEECHAIN_ROOT}/recipes/asr/{your-new-dataset}/{your-target-subset}
    bash run.sh --test false --exp_cfg 960-bpe5k_transformer-wide_ctc_perturb (--ngpu x --gpus x,x)
    ```
@@ -209,9 +221,10 @@ More details on how to dump a dataset can be found [here](https://github.com/bag
    1. `--test false` is used to skip the testing stage.
    2. Ensure your computational resources match the configuration before training the model.
    3. To save experimental results outside ${SPEECHAIN_ROOT}, specify your desired location by appending --train_result_path {your-target-path} to bash run.sh.
+
 5. Tune the inference hyperparameters on the corresponding validation set
 
-   ```bash
+   ```bash  
    cp ${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-960/data_cfg/test_dev-clean+other.yaml ./data_cfg
    mv ./data_cfg/test_dev-clean.yaml ./data_cfg/test_{your-valid-set-name}.yaml
    bash run.sh --train false --exp_cfg 960-bpe5k_transformer-wide_ctc_perturb --data_cfg test_{your-valid-set-name}
@@ -220,7 +233,7 @@ More details on how to dump a dataset can be found [here](https://github.com/bag
    **Note:**  
    1. Update the dataset arguments in `./data_cfg/test_{your-valid-set-name}.yaml`:
       
-      ```
+      ```  
       dataset: librispeech -> 'your-new-dataset'
       valid_dset: &valid_dset dev-clean -> &valid_dset 'valid-set-of-new-dataset'
       ```
@@ -228,6 +241,7 @@ More details on how to dump a dataset can be found [here](https://github.com/bag
    2. `--train false` is used to skip the training stage.
    3. `--data_cfg` switches the data loading configuration from the original one for training in exp_cfg to the one for validation tuning.
    4. To access experimental results saved outside `${SPEECHAIN_ROOT}`, append `--train_result_path {your-target-path}` to `bash run.sh`.
+
 6. Evaluate the trained ASR model on the official test sets
   
    ```bash

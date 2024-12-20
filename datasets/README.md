@@ -229,9 +229,9 @@ For example,
 
 
 ## How to Dump a Dataset on your Machine
-For dumping an existing dataset, 
-   1. Go to the folder of your target dataset `${SPEECHAIN_ROOT}/datasets/{dataset_name}` (e.g. if you want to dump LibriTTS, please go to `${SPEECHAIN_ROOT}/datasets/libritts`)
-   2. Run `bash run.sh --help` to familiarize yourself with the involved arguments.
+For dumping an existing dataset,  
+   1. Go to the folder of your target dataset `${SPEECHAIN_ROOT}/datasets/{dataset_name}` (e.g. if you want to dump LibriTTS, please go to `${SPEECHAIN_ROOT}/datasets/libritts`)  
+   2. Run `bash run.sh --help` to familiarize yourself with the involved arguments.  
    3. Run `bash run.sh` to dump your target dataset (add some arguments if needed).
 
 **Note:**    
@@ -248,10 +248,10 @@ If you want to use the pretrained speaker embedding model on your machine, pleas
 2. Write your own extraction script. You can use the metadata files `idx2wav` and `idx2wav_len` to read and organize the audio files.  
 Please save all the speaker embedding vectors to a specific folder in the same directory of `idx2wav` and give a metadata file named `idx2spk_feat` for data reference.  
 
-**Note:** 
-   1. For the file format of `idx2spk_feat`, please click [here](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2spk_feat) for reference.
-   2. Please keep the same data index with `idx2wav` in your `idx2spk_feat`.
-   3. Each speaker embedding vector should be in the shape of `[1, spk_feat_dim]`.
+**Note:**  
+   1. For the file format of `idx2spk_feat`, please click [here](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2spk_feat) for reference.  
+   2. Please keep the same data index with `idx2wav` in your `idx2spk_feat`.  
+   3. Each speaker embedding vector should be in the shape of `[1, spk_feat_dim]`.  
    4. Speaker embedding vectors could be saved in two ways:  
       1. save each vector to an individual `.npy` file  
       2. save all vectors to a `.npz` file where the index of each vector is exactly the one in `idx2spk_feat`.
