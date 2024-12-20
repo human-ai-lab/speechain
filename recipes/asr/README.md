@@ -158,27 +158,34 @@ More details on how to dump a dataset can be found [here](https://github.com/bag
       will save results to `/a/b/c/960-bpe5k_transformer-wide_ctc_perturb`.
 
 ### Creating a new configuration for a non-existing dataset
-1. Dump your target dataset from the Internet following these [instructions](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-contribute-a-new-dataset).
+1. Dump your target dataset from the Internet following these [instructions](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-contribute-a-new-dataset).  
 2. Create a folder for your dumped dataset `${SPEECHAIN_ROOT}/recipes/asr/{your-new-dataset}/{your-target-subset}`:
-   ```
+   
+   ```bash
    mkdir ${SPEECHAIN_ROOT}/recipes/asr/{your-new-dataset}/{your-target-subset}
    cp ${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-960/run.sh ${SPEECHAIN_ROOT}/recipes/asr/{your-new-dataset}/{your-target-subset}/run.sh
    ```
-   **Note:** 
+
+   **Note:**  
    1. Update the arguments `dataset` and `subset` (line no.16 & 17) in `${SPEECHAIN_ROOT}/recipes/asr/{your-new-dataset}/{your-target-subset}/run.sh`:
+
       ```
       dataset=librispeech -> 'your-new-dataset'
       subset='train-960' -> 'your-new-dataset'
       ```
+
 3. Copy a pre-tuned configuration file into your newly created folder. 
-   Suppose we want to use the configuration `${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-960/exp_cfg/960-bpe5k_transformer-wide_ctc_perturb.yaml`:
-   ```
+   Suppose we want to use the configuration `${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-960/exp_cfg/960-bpe5k_transformer-wide_ctc_perturb.yaml`:  
+
+   ```bash
    cd ${SPEECHAIN_ROOT}/recipes/asr/{your-new-dataset}/{your-target-subset}
    mkdir ./data_cfg ./exp_cfg
    cp ${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-960/exp_cfg/960-bpe5k_transformer-wide_ctc_perturb.yaml ./exp_cfg
    ```
-   **Note:** 
-   1. Update the dataset arguments at the beginning of your selected configuration:
+
+   **Note:**  
+   - Update the dataset arguments at the beginning of your selected configuration:
+
       ```
       # dataset-related
       dataset: librispeech -> 'your-new-dataset'
@@ -192,33 +199,41 @@ More details on how to dump a dataset can be found [here](https://github.com/bag
       token_num: bpe5k
       ```
 4. Train the ASR model on your target training set:
-   ```
+
+   ```bash
    cd ${SPEECHAIN_ROOT}/recipes/asr/{your-new-dataset}/{your-target-subset}
    bash run.sh --test false --exp_cfg 960-bpe5k_transformer-wide_ctc_perturb (--ngpu x --gpus x,x)
    ```
-   **Note:** 
+
+   **Note:**  
    1. `--test false` is used to skip the testing stage.
    2. Ensure your computational resources match the configuration before training the model.
    3. To save experimental results outside ${SPEECHAIN_ROOT}, specify your desired location by appending --train_result_path {your-target-path} to bash run.sh.
 5. Tune the inference hyperparameters on the corresponding validation set
-   ```
+
+   ```bash
    cp ${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-960/data_cfg/test_dev-clean+other.yaml ./data_cfg
    mv ./data_cfg/test_dev-clean.yaml ./data_cfg/test_{your-valid-set-name}.yaml
    bash run.sh --train false --exp_cfg 960-bpe5k_transformer-wide_ctc_perturb --data_cfg test_{your-valid-set-name}
    ```
-   **Note:** 
+
+   **Note:**  
    1. Update the dataset arguments in `./data_cfg/test_{your-valid-set-name}.yaml`:
+      
       ```
       dataset: librispeech -> 'your-new-dataset'
       valid_dset: &valid_dset dev-clean -> &valid_dset 'valid-set-of-new-dataset'
       ```
+
    2. `--train false` is used to skip the training stage.
    3. `--data_cfg` switches the data loading configuration from the original one for training in exp_cfg to the one for validation tuning.
    4. To access experimental results saved outside `${SPEECHAIN_ROOT}`, append `--train_result_path {your-target-path}` to `bash run.sh`.
 6. Evaluate the trained ASR model on the official test sets
-   ```
+  
+   ```bash
    bash run.sh --train false --exp_cfg 960-bpe5k_transformer-wide_ctc_perturb --infer_cfg "{the-best-configuration-you-get-during-validation-tuning}"
    ```
+
    **Note:** 
    1. `--train false` is used to skip the training stage.
    2. There are two ways to specify the optimal `infer_cfg` tuned on the validation set:
