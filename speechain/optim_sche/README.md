@@ -18,7 +18,7 @@ Each _OptimScheduler_ object has one built-in member optimizer (`torch.optim.Opt
 ## Configuration File Format
 The configuration of *OptimScheduler* is given in the `optim_sches` tag of *train_cfg*. 
 The configuration format is shown below.
-```yml
+```yaml
 optim_sches:
     type: {file_name}.{class_name}
     conf:
@@ -32,26 +32,33 @@ optim_sches:
         # customized optimscheduler configuration
         ...
 ```
-* The first-level key must be **optim_sches** to notify the framework of the optimscheduler configuration.
-  1. **type** is a second-level key that indicates your optimscheduler type. 
-  The value of this key is used as the query to pick up your target *OptimScheduler* subclass for initialization. 
-  Your given query should be in the form of `file_name.class_name` to indicate the place of your target subclass.  
-  For example, `noam.NoamLr` means the class `NoamLr` in `./speechain/optim_sche/noam.py`.
-  3. **conf** is a second-level key that indicates your optimscheduler configuration. 
-  The value of this key is a _Dict_ whose configuration is as following:
-      1. **optim_type** is a query that indicates the type of the built-in `torch.optim.Optimizer` in this optimscheduler. 
-      Your given query should be in the form of `class_name` to indicate your target subclass in `torch.optim`.  
-      For example, `Adam` means the class `torch.optim.Adam`.
-      2. **optim_conf** contains all the configuration used to initialize the built-in optimizer.  
-        For more details, please refer to the [_PyTorch_ document](https://pytorch.org/docs/1.2.0/optim.html#algorithms) of your target `torch.optim.Optimizer` subclass.
-      3. **optimscheduler general configuration** is shared by all _OptimScheduler_ subclasses. 
-         1. optim_loss
-         2. updated_modules
-         3. step_per_update
-      4. **optimscheduler customized configuration** is used to initialize the customized part of each optimscheduler subclass. 
-      This part defines the scheduling strategy to adjust the learning rates during training.
-      Please refer to the docstrings of your target *OptimScheduler* subclass for more details.
-      
+
+* The first-level key must be **optim_sches** to notify the framework of the optimscheduler configuration.  
+
+    1. **type** is a second-level key that indicates your optimscheduler type. 
+    The value of this key is used as the query to pick up your target *OptimScheduler* subclass for initialization.   
+    Your given query should be in the form of `file_name.class_name` to indicate the place of your target subclass.  
+    For example, `noam.NoamLr` means the class `NoamLr` in `./speechain/optim_sche/noam.py`.  
+
+    2. **conf** is a second-level key that indicates your optimscheduler configuration. 
+    The value of this key is a _Dict_ whose configuration is as following:
+
+          1. **optim_type** is a query that indicates the type of the built-in `torch.optim.Optimizer` in this optimscheduler.  
+          Your given query should be in the form of `class_name` to indicate your target subclass in `torch.optim`.  
+          For example, `Adam` means the class `torch.optim.Adam`.
+
+          2. **optim_conf** contains all the configuration used to initialize the built-in optimizer.  
+            For more details, please refer to the [_PyTorch_ document](https://pytorch.org/docs/1.2.0/optim.html#algorithms) of your target `torch.optim.Optimizer` subclass.  
+
+          3. **optimscheduler general configuration** is shared by all _OptimScheduler_ subclasses.  
+                1. optim_loss  
+                2. updated_modules  
+                3. step_per_update  
+
+          4. **optimscheduler customized configuration** is used to initialize the customized part of each optimscheduler subclass. 
+          This part defines the scheduling strategy to adjust the learning rates during training.  
+          Please refer to the docstrings of your target *OptimScheduler* subclass for more details.
+        
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
 
 ## OptimScheduler Library
@@ -65,7 +72,7 @@ optim_sches:
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
 
 ## API Document
-_Non-overridable backbone functions:_
+_Non-overridable backbone functions:_  
    1. [speechain_optim_sche.abs.OptimScheduler.\_\_init__](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimscheduler__init__self-optim_type-optim_conf-model-distributed-optim_loss-updated_modules-step_per_update-use_amp-accum_grad-ft_factor-grad_clip-grad_norm_type-sche_conf)  
    2. [speechain.optim_sche.abs.OptimScheduler.step](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulersteplosses-time_func-optim_name-step_num)  
    3. [speechain.optim_sche.abs.OptimScheduler.get_lr](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#speechain_optim_scheabsoptimschedulerget_lrself)  
@@ -87,40 +94,41 @@ _Overridable interface functions:_
 * **Arguments:**  
 
     _Arguments received from `exp_cfg`_:  
-  * _**model:**_ speechain.model.abs.Model  
-    The pointer to the model whose parameters will be optimized by the built-in `torch.optim.Optimizer`.  
-  * _**distributed:**_ bool = False  
-    Whether the model to be optimized is distributed to multiple GPUs.   
-    If True, gradient accumulation will be done asynchronously in the DDP mode to speed up training.  
-  * _**use_amp:**_ bool = True  
-    Whether the Automatic Mixed Precision (AMP) technique is used during back-propagation.  
-    If True, a built-in `torch.cuda.amp.GradScaler` will be initialized to calculate the gradients and optimize the parameters.  
-  * _**accum_grad:**_ int = 1  
-    The number of steps to accumulate gradients before optimization. 
-    The larger this argument is, the larger your virtual batches will be.  
-  * _**ft_factor:**_ float = 1.0  
-    The finetuning factor used to scale down the learning rates during training.
+    
+     * _**model:**_ speechain.model.abs.Model  
+       The pointer to the model whose parameters will be optimized by the built-in `torch.optim.Optimizer`.  
+     * _**distributed:**_ bool = False  
+       Whether the model to be optimized is distributed to multiple GPUs.   
+       If True, gradient accumulation will be done asynchronously in the DDP mode to speed up training.  
+     * _**use_amp:**_ bool = True  
+       Whether the Automatic Mixed Precision (AMP) technique is used during back-propagation.  
+       If True, a built-in `torch.cuda.amp.GradScaler` will be initialized to calculate the gradients and optimize the parameters.  
+     * _**accum_grad:**_ int = 1  
+       The number of steps to accumulate gradients before optimization. 
+       The larger this argument is, the larger your virtual batches will be.  
+     * _**ft_factor:**_ float = 1.0  
+       The finetuning factor used to scale down the learning rates during training.
   
   _Arguments received from `train_cfg`_:  
 
-  * _**optim_type:**_ str  
-    The optimizer query used to pick up the target _Optimizer_ subclass from `torch.optim`.  
-  * _**optim_conf:**_ Dict  
-    The configuration used to initialize the built-in `torch.optim.Optimizer`.  
-  * _**optim_loss:**_ str = None  
-    The name of the target loss used in this _OptimScheduler_ object to calculate the gradients. 
-    If not given, the loss named `loss` will be used for optimization.  
-  * _**updated_modules:**_ str or List[str]  
-    This argument allows you to update only a part of parameters of the built-in model pointer. 
-    `updated_modules` indicate the names of your target modules (first-level module in the nested module tree) in the built-in model pointer.  
-    Its value can be either a string (only one target module) or a list (multiple target modules).  
-    If not given, the entire model will be updated.  
-  * _**step_per_update:**_ int = 1  
-    The optimization interval for the built-in optimizer.
-    It means that the parameter optimization will be done once every `step_per_update` steps.  
-  * _****sche_conf:**_  
-    The arguments used to initialize the customized part of this _OptimScheduler_.   
-    Mainly used to decide the learning rate scheduling strategy.
+   * _**optim_type:**_ str  
+     The optimizer query used to pick up the target _Optimizer_ subclass from `torch.optim`.  
+   * _**optim_conf:**_ Dict  
+     The configuration used to initialize the built-in `torch.optim.Optimizer`.  
+   * _**optim_loss:**_ str = None  
+     The name of the target loss used in this _OptimScheduler_ object to calculate the gradients. 
+     If not given, the loss named `loss` will be used for optimization.  
+   * _**updated_modules:**_ str or List[str]  
+     This argument allows you to update only a part of parameters of the built-in model pointer. 
+     `updated_modules` indicate the names of your target modules (first-level module in the nested module tree) in the built-in model pointer.  
+     Its value can be either a string (only one target module) or a list (multiple target modules).  
+     If not given, the entire model will be updated.  
+   * _**step_per_update:**_ int = 1  
+     The optimization interval for the built-in optimizer.
+     It means that the parameter optimization will be done once every `step_per_update` steps.  
+   * _****sche_conf:**_  
+     The arguments used to initialize the customized part of this _OptimScheduler_.   
+     Mainly used to decide the learning rate scheduling strategy.
 
 👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
 
@@ -128,16 +136,16 @@ _Overridable interface functions:_
 * **Description:**  
     This function optimizes the target parameters of the built-in model pointer with the input training losses.
 * **Arguments:**
-  * _**losses:**_ Dict[str, torch.Tensor]  
-    The training loss Dict received from the `criterion_forward()` of the bulit-in model pointer.
-  * _**time_func:**_  
-    The context function used to record the consumed time during gradient back-propagation and parameter optimization.
-  * _**optim_name:**_ str  
-    The name of the _OptimScheduler_ object. 
-    This argument is used to identify the recorded consumed time information.
-  * _**step_num:**_ int  
-    The number of the current training step. 
-    This argument is used to update the learning rate for the current step by `self.update_lr()`.
+    * _**losses:**_ Dict[str, torch.Tensor]  
+      The training loss Dict received from the `criterion_forward()` of the bulit-in model pointer.
+    * _**time_func:**_  
+      The context function used to record the consumed time during gradient back-propagation and parameter optimization.
+    * _**optim_name:**_ str  
+      The name of the _OptimScheduler_ object. 
+      This argument is used to identify the recorded consumed time information.
+    * _**step_num:**_ int  
+      The number of the current training step. 
+      This argument is used to update the learning rate for the current step by `self.update_lr()`.
 
 👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
 
@@ -161,8 +169,8 @@ _Overridable interface functions:_
 * **Description:**  
   This function loads the existing checkpoint information into the _OptimScheduler_ object as the starting status.
 * **Arguments:**
-  * _**state_dict:**_ Dict  
-    The status information loaded from the existing checkpoint.
+    * _**state_dict:**_ Dict  
+      The status information loaded from the existing checkpoint.
 
 👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
 
@@ -181,9 +189,9 @@ _Overridable interface functions:_
     This abstract interface function is the customized initialization function which decides how the learning rate is scheduled as the training goes.  
     This interface is mandatory to be overridden.  
 * **Arguments:**
-  * _****sche_conf:**_  
-    The arguments used to initialize the customized part of this OptimScheduler.
-    For more details about the learning rate scheduling strategy, please refer to the docstring of `sche_init()` of your target OptimScheduler subclass.  
+    * _****sche_conf:**_  
+      The arguments used to initialize the customized part of this OptimScheduler.
+      For more details about the learning rate scheduling strategy, please refer to the docstring of `sche_init()` of your target OptimScheduler subclass.  
 
 👆[Back to the API list](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#api-document)
 
@@ -191,10 +199,10 @@ _Overridable interface functions:_
 * **Description:**  
     This abstract interface function generates the learning rate by the input step number.  
 * **Arguments:**
-  * _**real_step:**_ int  
-    The number of the real step for parameter optimization. 
-    Due to the existence of `self.accum_grad`, parameter optimization may not be done at each training step. 
-    The real step number here means the training steps where parameter optimization is done.
+    * _**real_step:**_ int  
+      The number of the real step for parameter optimization. 
+      Due to the existence of `self.accum_grad`, parameter optimization may not be done at each training step. 
+      The real step number here means the training steps where parameter optimization is done.
 * **Return:** float  
     The learning rate used for parameter optimization in the current training step.
 
@@ -214,15 +222,18 @@ _Overridable interface functions:_
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/speechain/optim_sche#table-of-contents)
 
 ## How to Construct Multiple Optimizers on Multiple Losses
-The cooperation of multiple optimizers is handled by 3 arguments: _optim_losses_, _updated_modules_, and _step_per_update_. 
-1. _optim_losses_ means the training loss used to calculate the gradients for the optimizer. 
-2. _update_modules_ means the target module in your where that you would like the optimizer to update the parameters.
+The cooperation of multiple optimizers is handled by 3 arguments: _optim_losses_, _updated_modules_, and _step_per_update_.  
+
+1. _optim_losses_ means the training loss used to calculate the gradients for the optimizer.   
+
+2. _update_modules_ means the target module in your where that you would like the optimizer to update the parameters.  
+
 3. _step_per_update_ means the updating frequency of the optimizer (i.e. the parameter optimization can be done once per _step_per_update_ steps).
 
 In the example below, there are two optimschedulers for optimizing the parameters of an Encoder-Decoder model. 
 _encoder_optim_ optimizes the encoder part using the training loss called _encoder_loss_ while _decoder_optim_ optimizes the decoder part using the training loss called _decoder_loss_. 
 The encoder optimization is done once every 2 steps while the decoder optimization is done once every step.
-```yml
+```yaml
 optim_sches:
     encoder_optim:
         type: noam.NoamLr

@@ -155,19 +155,19 @@ _Overridable interface functions:_
 * **Description:**  
   This function returns the parameters of the module that you want to record as part of step information.  
   If you want to record the value of the customized parameters of your module:
-  1. when it is a leaf (no _Module_ members) in the nested _Module_ tree of the model, 
-     please override this function and return the parameter values in a _Dict_.  
-     For an example, you can refer to [${SPEECHAIN_ROOT}/speechain/module/transformer/pos_enc.py]().
-  2. when it is a non-leaf (with _Module_ members) in the nested _Module_ tree of the model, 
-     please follow the pseudocode below:  
-     ```python
-     class YourModule(Module):
-        def get_recordable_para(self) -> Dict or None:
-           output = dict()
-           # add the value of your target parameter into the output as key-value items
-           output.update(super(YourModule, self).get_recordable_para())
-           return output
-     ```
+    1. when it is a leaf (no _Module_ members) in the nested _Module_ tree of the model, 
+      please override this function and return the parameter values in a _Dict_.  
+      For an example, you can refer to [${SPEECHAIN_ROOT}/speechain/module/transformer/pos_enc.py]().
+    2. when it is a non-leaf (with _Module_ members) in the nested _Module_ tree of the model, 
+      please follow the pseudocode below:  
+      ```python
+      class YourModule(Module):
+          def get_recordable_para(self) -> Dict or None:
+            output = dict()
+            # add the value of your target parameter into the output as key-value items
+            output.update(super(YourModule, self).get_recordable_para())
+            return output
+      ```
 * **Return:** Dict or None  
   For the leaf module, the default implementation returns None;  
   For the non-leaf module, the default implementation returns a Dict containing names and recordable parameters of its member modules.

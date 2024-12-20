@@ -21,12 +21,12 @@ You can start the journey of SpeeChain by your current position.
 
 
 ## For those who just discovered SpeeChain
-In SpeeChain toolkit, a basic research pipeline has 5 steps:
-1. Dump a dataset from the Internet to your disk.
-2. Prepare experimental configuration files.
-3. Train a model.
-4. Evaluate the trained model.
-5. Analyse the evaluation results.
+In SpeeChain toolkit, a basic research pipeline has 5 steps:  
+1. Dump a dataset from the Internet to your disk.  
+2. Prepare experimental configuration files.  
+3. Train a model.  
+4. Evaluate the trained model.  
+5. Analyse the evaluation results.  
 
 The following subsections will explain how to execute the steps above one by one.
 
@@ -69,35 +69,33 @@ In SpeeChain, our framework provides a convenient way to convert your entered st
 1. For the _List_ variables, your entered string should be surrounded by a pair of square brackets and each element inside the brackets should be split by a comma.
    The structure can be nested to initialize sub-_List_ in the return _List_ variable.  
    For example, the string `[a,[1,2,[1.1,2.2,3.3],[h,i,j,k]],c,[d,e,[f,g,[h,i,j,k]]]]` will be parsed to
-
-   ```bash
-   - 'a'
-   - - 1
-     - 2
-     - - 1.1
-       - 2.2
-       - 3.3
-     - - 'h'
-       - 'i'
-       - 'j'
-       - 'k'
-   - 'c'
-   - - 'd'
-     - 'e'
-     - - 'f'
-       - 'g'
-       - - 'h'
-         - 'i'
-         - 'j'
-         - 'k'
-   ```
+    ```bash
+    - 'a'
+    - - 1
+      - 2
+      - - 1.1
+        - 2.2
+        - 3.3
+      - - 'h'
+        - 'i'
+        - 'j'
+        - 'k'
+    - 'c'
+    - - 'd'
+      - 'e'
+      - - 'f'
+        - 'g'
+        - - 'h'
+          - 'i'
+          - 'j'
+          - 'k'
+    ```
 
 2. For the _Dict_ variables, the key and its value should be split by a colon. 
    The value should be surrounded by a pair of braces if it's a sub-_Dict_. 
    The structure can be nested to initialize sub-_Dict_ in the return _Dict_ variable.  
-   For example, the string `a:{b:12.3,c:{d:123,e:{g:xyz}}},g:xyz` will be parsed to
-
-    ```bash
+   For example, the string `a:{b:12.3,c:{d:123,e:{g:xyz}}},g:xyz` will be parsed to  
+    ```yaml
     a:
         b: 12.3
         c:
@@ -109,22 +107,23 @@ In SpeeChain, our framework provides a convenient way to convert your entered st
 
    Moreover, the _List_ string can also be nested into the _Dict_ string like `a:[1,2,3]` will be parsed as
 
-   ```bash
-   a:
-   - 1
-   - 2
-   - 3
-   ```
+    ```bash
+    a:
+    - 1
+    - 2
+    - 3
+    ```
 
 #### Concise Configuration File
 As the number of arguments increases, it would be hard for us to given all the arguments one by one in the terminal. 
 As a frequently-used file format for configuration, _.yaml_ has been popular in many well-known toolkits. 
 
 In SpeeChain, we wrap the conventional _.yaml_ file and provides some advanced !-suffixed _.yaml_ representers to further simplify its layout and improve the readability:  
+
   1. **!str** allows you to cast a numerical value into a string by replacing `key_name: 10` with `key_name: !str 10`. 
      In this scenario, the value of `key_name` will be a string '10' instead of an integer 10.
-  2. **!list** allows you to compress the configuration of a list into one line from  
 
+  2. **!list** allows you to compress the configuration of a list into one line from  
       ```yaml
       key_name: 
       - - a
@@ -140,9 +139,10 @@ In SpeeChain, we wrap the conventional _.yaml_ file and provides some advanced !
       - !list [a,b,c]
       - !list [d,e,f]
       ```
-      **Note:** 
-      1. The elements should be separated by commas ',' and surrounded by a pair of angle brackets '[]'. 
-      2. Nested structures like `key_name: !list [!list [a,b,c],!list [d,e,f]]` are not supported yet.
+      **Note:**  
+      1. The elements should be separated by commas ',' and surrounded by a pair of angle brackets '[]'.  
+      2. Nested structures like `key_name: !list [!list [a,b,c],!list [d,e,f]]` are not supported yet.  
+
   3. **!tuple** allows you to create tuples in your configuration. 
       The statement
       ```yaml
@@ -150,9 +150,10 @@ In SpeeChain, we wrap the conventional _.yaml_ file and provides some advanced !
       - a
       - b
       - c
-      ```
+      ```  
       can only give us a list, but sometimes we may need to create a tuple. Instead, we can use `key_name: !tuple (a,b,c)` to create a tuple.  
       **Note:** The elements should be separated by commas ',' and surrounded by a pair of brackets '()'. 
+
   4. **!ref** allows you to reuse the values you have already created by replacing
 
       ```yaml
@@ -170,16 +171,18 @@ In SpeeChain, we wrap the conventional _.yaml_ file and provides some advanced !
       ```
 
       In this scenario, the value of `key_name1` will be reused to create `key_name2` which will be further reused to create `key_name3`.  
-      **Note:** 
+
+      **Note:**  
+
       1. Nested structures like  
           ```yaml
           key_name1: abc/def/ghi/jkl
           key_name2: !ref <key_name1>/mno
           key_name3: !list [!ref <key_name1>,!ref <key_name2>]
           ```
-          are not supported yet.
-      2. Different !ref representers must be used in order. The following usage is invalid:  
+          are not supported yet.  
 
+      2. Different **!ref** representers must be used in order. The following usage is invalid (`key_name3` is used before `key_name2`):  
           ```yaml
           key_name1: abc/def/ghi/jkl
           key_name3: !ref <key_name2>/pqr
@@ -192,12 +195,16 @@ In SpeeChain, we wrap the conventional _.yaml_ file and provides some advanced !
 #### Inference Configuration for hyperparameter adjustment
 Model inference configuration is given by `infer_cfg` in the configuration file. 
 There could be either one inference configuration or multiple configurations in *infer_cfg*:  
+
   1. If _infer_cfg_ is not given, the default inference configuration will be used for model inference.
+
   2. If you only want to give one inference configuration, please give it by either a string or a _Dict_.
+
      1. **String:** The string indicates where the inference configuration file is placed. For example, 
         `infer_cfg: config/infer/asr/greedy_decoding.yaml` means the configuration file `${SPEECHAIN_ROOT}/config/infer/asr/greedy_decoding.yaml` will be used for model inference. 
         In this example, the evaluation results will be saved to a folder named `greedy_decoding`.  
         If there are many arguments you need to give in the configuration, we recommend you to give them by a configuration file for concision. 
+
      2. **Dict:** The _Dict_ indicates the content of your inference configuration. For example.
         ```yaml
         infer_cfg:
@@ -209,67 +216,69 @@ There could be either one inference configuration or multiple configurations in 
         If there are not so many arguments in your configuration, we recommend you to give them by a _Dict_ to avoid messy configuration files on your disk.
 
   3. If you want to give multiple inference configuration in *infer_cfg*, please give them by either a _List_ or a _Dict_.  
-     1. **List:** Each element in the _List_ could be either a string or a _Dict_.  
-        * The string indicates the file paths of a given inference configuration. For example,
 
-          ```yaml
-          infer_cfg:
-            - config/infer/asr/greedy_decoding.yaml
-            - config/infer/asr/beam_size=16.yaml
-          ```
-          means that both `greedy_decoding.yaml` and `beam_size=16.yaml` in `${SPEECHAIN_ROOT}/config/infer/asr/` will be used for ASR decoding.  
-        * The _Dict_ indicates the content of a given inference configuration. For example,
-          ```yaml
-          infer_cfg:
-            - beam_size: 1
-              temperature: 1.0
-            - beam_size: 16
-              temperature: 1.0
-          ```
-          could be used and two folders `beam_size=1_temperature=1.0` and `beam_size=16_temperature=1.0` will be created to place their evaluation results.  
-        * Of course, strings and *Dict*s can be mixed in _infer_cfg_ like
-          ```yaml
-          infer_cfg:
-            - config/infer/asr/greedy_decoding.yaml
-            - beam_size: 16
-              temperature: 1.0
-          ```
-     2. **Dict:** There must be two keys in the _Dict_: `shared_args` and `exclu_args`.  
-        `shared_args` (short of 'shared arguments') is a _Dict_ which contains the arguments shared by all the configurations in the _Dict_.  
-        `exclu_args` (short of 'exclusive arguments') is a _List[Dict]_ where each element contains the exclusive arguments for each configuration.  
-        For example,
-        ```yaml
-          infer_cfg:
-            shared_args:
-                beam_size: 16
-            exclu_args:
-                - temperature: 1.0
-                - temperature: 1.5
-        ```
-        means that there will be two configurations used for model inference:
-        ```yaml
-        beam_size: 16
-        temperature: 1.0
-        ```
-        and
-        ```yaml
-        beam_size: 16
-        temperature: 1.5
-        ```
-        Their evaluation results will be saved to `beam_size=16_temperature=1.0` and `beam_size=16_temperature=1.5`.  
-        If your configurations don't contain too many arguments and you only want to change one or two arguments for each of them, we recommend you to give your configurations in this way.
+      1. **List:** Each element in the _List_ could be either a string or a _Dict_.  
+         * The string indicates the file paths of a given inference configuration. For example,
+           ```yaml
+           infer_cfg:
+             - config/infer/asr/greedy_decoding.yaml
+             - config/infer/asr/beam_size=16.yaml
+           ```
+           means that both `greedy_decoding.yaml` and `beam_size=16.yaml` in `${SPEECHAIN_ROOT}/config/infer/asr/` will be used for ASR decoding.  
+         * The _Dict_ indicates the content of a given inference configuration. For example,
+           ```yaml
+           infer_cfg:
+             - beam_size: 1
+               temperature: 1.0
+             - beam_size: 16
+               temperature: 1.0
+           ```
+           could be used and two folders `beam_size=1_temperature=1.0` and `beam_size=16_temperature=1.0` will be created to place their evaluation results.  
+         * Of course, strings and *Dict*s can be mixed in _infer_cfg_ like
+           ```yaml
+           infer_cfg:
+             - config/infer/asr/greedy_decoding.yaml
+             - beam_size: 16
+               temperature: 1.0
+           ```
+      2. **Dict:** There must be two keys in the _Dict_: `shared_args` and `exclu_args`.  
+         `shared_args` (short of 'shared arguments') is a _Dict_ which contains the arguments shared by all the configurations in the _Dict_.  
+         `exclu_args` (short of 'exclusive arguments') is a _List[Dict]_ where each element contains the exclusive arguments for each configuration.  
+         For example,
+         ```yaml
+           infer_cfg:
+             shared_args:
+                 beam_size: 16
+             exclu_args:
+                 - temperature: 1.0
+                 - temperature: 1.5
+         ```
+         means that there will be two configurations used for model inference:
+         ```yaml
+         beam_size: 16
+         temperature: 1.0
+         ```
+         and
+         ```yaml
+         beam_size: 16
+         temperature: 1.5
+         ```
+         Their evaluation results will be saved to `beam_size=16_temperature=1.0` and `beam_size=16_temperature=1.5`.  
+         If your configurations don't contain too many arguments and you only want to change one or two arguments for each of them, we recommend you to give your configurations in this way.
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 
 ### How to train and evaluate a model
 We provide two levels of executable bash scripts:
+
 1. All-in-one executable `run.sh` in `${SPEECHAIN_ROOT}/recipes/`. This bash script is task-independent and can be called everywhere to run an experimental job.  
    For more details, please go to `${SPEECHAIN_ROOT}/recipes` and run `bash run.sh --help` for the message about involved arguments.
+
 2. Low-level `run.sh` designed for sub-folder in `${SPEECHAIN_ROOT}/recipes/`. Those scripts are used to run the experiments of the specific task.  
    For more details, please go to the target sub-folder and run `bash run.sh --help` for the message about involved arguments.
 
-The execution hierarchy of the scripts is:
+The execution hierarchy of the scripts is:  
 ```bash
 ${SPEECHAIN_ROOT}/recipes/{task_name}/{dataset_name}/{subset_name}/run.sh
     --->${SPEECHAIN_ROOT}/recipes/run.sh
@@ -340,7 +349,7 @@ For more details, please refer to the README.md of each type of dataset in [${SP
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
 
-#### Recipe Folder
+#### Recipes Folder
 This folder contains our recipes for all tasks on the available datasets. 
 Each task corresponds to a specific sub-folder where each dataset corresponds a specific sub-sub-folder.
 In the dataset folder, there may be some sub-folders corresponding to different settings of model training where a sub-sub-folder `/data_cfg` contains all the configuration files of data loading that are shared by all the model sub-sub-folders.
@@ -376,7 +385,6 @@ For more details, please refer to [${SPEECHAIN_ROOT}/recipes/README.md](https://
 The folder `/speechain` is the core part of our toolkit where each sub-folder corresponds to a specific part of an experimental pipeline. 
 In each sub-folder, there is a .py file named `abs.py` that declares the abstract class of the corresponding pipeline part. 
 Based on the abstract class, many implementation classes are included in the same sub-folder with the name like `xxx.py`.
-
 ```bash
 /speechain
     # Sub-folders for all specific parts of an experimental pipeline
@@ -444,6 +452,7 @@ For how to customize your own optimization strategy, please refer to the [API do
 We have some specifications for you to standardize your contribution:
 
 1. **Documentation**: We will appreciate it a lot if you could provide enough documents for your contribution.
+
     * We recommend you to use the Google-style function docstring. 
     If you are using PyCharm, you can set the docstring style in File→Setting→Tools→Python Integrated Tools→Docstrings→Docstring format.
     
@@ -459,6 +468,7 @@ We have some specifications for you to standardize your contribution:
                 emb_feat: (batch_size, seq_len, d_model)
                     Embedded input feature sequences
         ```
+
     * For in-line comments, we recommend you start a new line every time you want to comment (it's better not to type a long comment after the code). 
     The codes are better to be divided into several code blocks by their roles with an in-line comment right above the block as follows.
       ```python3
@@ -469,22 +479,26 @@ We have some specifications for you to standardize your contribution:
         self.layernorm_first = layernorm_first
       ```
     
-    Note you can format the docstring using [docformatter](https://github.com/PyCQA/docformatter) with the following command.
+    Note you can format the docstring using [docformatter](https://github.com/PyCQA/docformatter) with the following command at the root directory of SpeeChain.
     ```bash
     docformatter --in-place -s google -r speechain --black
     ```
-2. **Naming**: We have several recommendations for class names and variable names.
-    * For class names, we recommend you to name your class in the CamelCase style. The names are better to be in the form of "What is it made up of" + "What is it". 
-    
-        For example, `SpeechTextDataset` means a dataset class that returns speech-text paired data during training. 
-        `Conv2dPrenet` means a prenet module that is made up of Conv2d layers.
-    * For long variable names, please make some abbreviations. For the abbreviations, we recommend the following 2 frequently-used strategies:
-        * **Tail-Truncating**: delete the letters from the tail and only retain the part before the second vowel. 
-        For example, '*convolution*' -> '*conv*', '*previous*' -> '*prev*'.
-        * **Vowel-Omitting**: directly delete all vowels and some trivial consonants behind each vowel. 
-        For example, '*transformer*' -> '*trfm*', '*source*' -> '*src*', '*target*' -> '*tgt*'.
-    * For the temporary variables only used to register data for a short period, please add an underline at the beginning of the name to notify other users.
-    For example, '*_tmp_feat_dim*' means the temporary variable used to register the intermediate value of the feature dimension. 
 
+2. **Naming**: We have several recommendations for class names and variable names.
+
+     * For class names, we recommend you to name your class in the CamelCase style. The names are better to be in the form of "What is it made up of" + "What is it". 
+     
+         For example, `SpeechTextDataset` means a dataset class that returns speech-text paired data during training. 
+         `Conv2dPrenet` means a prenet module that is made up of Conv2d layers.
+
+     * For long variable names, please make some abbreviations. For the abbreviations, we recommend the following 2 frequently-used strategies:
+         * **Tail-Truncating**: delete the letters from the tail and only retain the part before the second vowel. 
+         For example, '*convolution*' -> '*conv*', '*previous*' -> '*prev*'.
+         * **Vowel-Omitting**: directly delete all vowels and some trivial consonants behind each vowel. 
+         For example, '*transformer*' -> '*trfm*', '*source*' -> '*src*', '*target*' -> '*tgt*'.
+
+     * For the temporary variables only used to register data for a short period, please add an underline at the beginning of the name to notify other users.
+     For example, `_tmp_feat_dim` means the temporary variable used to register the intermediate value of the feature dimension. 
+ 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
