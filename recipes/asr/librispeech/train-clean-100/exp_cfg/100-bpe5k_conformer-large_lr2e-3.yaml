@@ -36,7 +36,7 @@ token_type: sentencepiece
 token_num: bpe5k
 
 # batch-related
-batch_len: 1.8e7
+batch_len: 1.8e6 #7
 
 # model-related
 ctc_weight: 0.3
@@ -61,7 +61,7 @@ ft_factor: 1.0
 grad_clip: 5.0
 
 # multi-GPU-related
-ngpu: 2 # please change ngpu based on the situation of your machine
+ngpu: 1 # please change ngpu based on the situation of your machine
 gpus: null # null means the GPUs with the largest free memory will be used
 #enable_syncbatchnorm: False
 
