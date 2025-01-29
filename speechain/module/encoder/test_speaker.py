@@ -2,14 +2,14 @@ import unittest
 import torch
 
 # import torch.nn as nn
-from module.encoder.speaker import SEModule, Res2Block, SpeakerEncoder
+from module.encoder.speaker import SEModule, Res2Block, EncoderClassifier
 
 
-class TestSpeakerEncoder(unittest.TestCase):
+class TestEncoderClassifier(unittest.TestCase):
     def setUp(self):
         self.device = torch.device("cpu")
-        self.ecapa_model = SpeakerEncoder(model_type="ecapa")
-        self.xvector_model = SpeakerEncoder(model_type="xvector")
+        self.ecapa_model = EncoderClassifier(model_type="ecapa")
+        self.xvector_model = EncoderClassifier(model_type="xvector")
 
     def test_semodule_forward(self):
         se = SEModule(channels=512)
@@ -52,17 +52,17 @@ class TestSpeakerEncoder(unittest.TestCase):
 
     def test_invalid_model_type(self):
         with self.assertRaises(ValueError):
-            SpeakerEncoder(model_type="invalid")
+            EncoderClassifier(model_type="invalid")
 
     def test_from_hparams_ecapa(self):
-        model = SpeakerEncoder.from_hparams(
+        model = EncoderClassifier.from_hparams(
             source="ecapa", run_opts={"device": self.device}
         )
         self.assertEqual(model.model_type, "ecapa")
         self.assertEqual(next(model.parameters()).device, self.device)
 
     def test_from_hparams_xvector(self):
-        model = SpeakerEncoder.from_hparams(
+        model = EncoderClassifier.from_hparams(
             source="xvector", run_opts={"device": self.device}
         )
         self.assertEqual(model.model_type, "xvector")

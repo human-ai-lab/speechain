@@ -1,12 +1,12 @@
 import unittest
 import torch
 import numpy as np
-from module.vocoder.hifigan import HiFiGAN, ResBlock, MRF
+from module.vocoder.hifigan import HIFIGAN, ResBlock, MRF
 
 
 class TestHiFiGAN(unittest.TestCase):
     def setUp(self):
-        self.model = HiFiGAN()
+        self.model = HIFIGAN()
         self.device = torch.device("cpu")
 
     def test_resblock_forward(self):
@@ -40,8 +40,8 @@ class TestHiFiGAN(unittest.TestCase):
         self.assertEqual(out.shape, (batch_size, expected_len))
 
     def test_from_hparams_no_weights(self):
-        model = HiFiGAN.from_hparams(source=None, run_opts={"device": self.device})
-        self.assertIsInstance(model, HiFiGAN)
+        model = HIFIGAN.from_hparams(source=None, run_opts={"device": self.device})
+        self.assertIsInstance(model, HIFIGAN)
         self.assertEqual(next(model.parameters()).device, self.device)
 
     def test_model_output_range(self):

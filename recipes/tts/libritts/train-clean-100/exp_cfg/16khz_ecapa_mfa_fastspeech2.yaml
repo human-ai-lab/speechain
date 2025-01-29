@@ -33,7 +33,7 @@ token_num: stress
 txt_format: no-punc # used for testing by the G2P package
 
 # batch-related
-batch_len: 1.5e7
+batch_len: 1.5e6 #7
 
 # model-related
 reduction_factor: 1

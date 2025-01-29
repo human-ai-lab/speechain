@@ -43,7 +43,7 @@ class Res2Block(nn.Module):
         return x + torch.cat(outputs[: self.scale], dim=1)
 
 
-class SpeakerEncoder(nn.Module):
+class EncoderClassifier(nn.Module):
     def __init__(self, model_type="ecapa"):
         super().__init__()
         self.model_type = model_type

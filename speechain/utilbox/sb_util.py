@@ -2,8 +2,8 @@ import os
 from typing import Union
 
 import torch
-from speechbrain.pretrained import HIFIGAN
-from speechain.module.vocoder import HiFiGAN  # New module to implement
+# from speechbrain.pretrained import HIFIGAN
+from speechain.module.vocoder import HIFIGAN  # New module
 
 from speechain.utilbox.data_loading_util import parse_path_args
 

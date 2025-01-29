@@ -28,12 +28,13 @@ hop_length: 256
 
 # tokenizer-related
 token_type: mfa
-mfa_model: acoustic=librispeech_train-clean-100_lexicon=librispeech
+# mfa_model: acoustic=librispeech_train-clean-100_lexicon=librispeech
+mfa_model: acoustic=english_us_arpa_lexicon=english_us_arpa
 token_num: stress
 txt_format: punc # used for testing by the G2P package
 
 # batch-related
-batch_len: 1.5e7
+batch_len: 1.5e6 #7
 
 # model-related
 reduction_factor: 1
@@ -129,21 +130,22 @@ data_cfg:
       shuffle: False
       data_len: !ref <data_root>/<wav_format>/<valid_set>/idx2wav_len
 
+  # test:
   test:
-    test-clean:
-      type: abs.Iterator
-      conf:
-        dataset_type: speech_text.RandomSpkFeatDataset
-        dataset_conf:
-          main_data:
-            text: !ref <data_root>/g2p/test-clean/<token_num>/<txt_format>/idx2text
-          spk_feat: !ref <data_root>/<wav_format>/<train_set>/idx2<spk_emb_model>_spk_feat
-          use_aver_feat: True
+  test-clean:
+    type: abs.Iterator
+    conf:
+      dataset_type: speech_text.RandomSpkFeatDataset
+      dataset_conf:
+        main_data:
+          text: !ref <data_root>/g2p/test-clean/<token_num>/<txt_format>/idx2text
+        spk_feat: !ref <data_root>/<wav_format>/<train_set>/idx2<spk_emb_model>_spk_feat
+        use_aver_feat: True
 
-        shuffle: False
-        data_len: !ref <data_root>/g2p/test-clean/<token_num>/<txt_format>/idx2text_len
-
-
+      # shuffle: False
+      # data_len: !ref <data_root>/g2p/test-clean/<token_num>/<txt_format>/idx2text_len
+      vocoder: hifigan
+      return_wav: True
 
 ####################################
 # Model Construction Configuration #

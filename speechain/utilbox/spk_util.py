@@ -4,8 +4,8 @@ from typing import Dict, Tuple
 import numpy as np
 import torch
 import torchaudio
-from speechbrain.pretrained import EncoderClassifier
-from speechain.module.encoder import SpeakerEncoder  # New module to implement
+# from speechbrain.pretrained import EncoderClassifier
+from speechain.module.encoder.speaker import EncoderClassifier  # New module
 from tqdm import tqdm
 
 from speechain.utilbox.data_loading_util import read_data_by_path

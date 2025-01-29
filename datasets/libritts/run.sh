@@ -55,7 +55,7 @@ feat_config=
 # empty sample_rate means the sampling rate of the original LibriTTS (24kHz) will be used
 sample_rate=16000
 # empty spk_emb_model means no speaker embedding will be extracted
-spk_emb_model=
+spk_emb_model=ecapa
 # tokenizer for LibriTTS is default to be g2p
 token_type=g2p
 # empty vocab_size will be automatically initialized if token_type is 'word' or 'sentencepiece':
@@ -70,14 +70,14 @@ split_by_whitespace=true
 # arguments used by data_download.sh
 separator=','
 # text format for LibriTTS is default to be normal
-txt_format=no-punc
+txt_format=punc # punc or no-punc
 
 
 # LibriTTS-specific arguments
 # which portion of LibriTTS corpus you want to process
 # 100: train-clean-100; 460: train-clean-100 + train-clean-360; 960: train-clean-100 + train-clean-360 + train-other-500
 # dev-clean, dev-other, test-clean, test-other will be downloaded regardless of your input dump_part
-dump_part=960
+dump_part=100
 
 
 ### get args from the command line ###

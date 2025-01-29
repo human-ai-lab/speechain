@@ -45,7 +45,7 @@ class MRF(nn.Module):
         return sum([block(x) for block in self.resblocks])
 
 
-class HiFiGAN(nn.Module):
+class HIFIGAN(nn.Module):
     def __init__(
         self,
         in_channels=80,
