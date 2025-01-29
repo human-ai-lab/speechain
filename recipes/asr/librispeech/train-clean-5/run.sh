@@ -47,7 +47,7 @@ no_optim=false
 
 resume=false
 train=true
-test=
+test=true
 train_result_path=
 test_result_path=
 test_model=

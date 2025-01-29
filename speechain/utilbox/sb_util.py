@@ -2,6 +2,7 @@ import os
 from typing import Union
 
 import torch
+
 # from speechbrain.pretrained import HIFIGAN
 from speechain.module.vocoder import HIFIGAN  # New module
 
