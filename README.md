@@ -66,7 +66,7 @@ If either one is empty, please manually add them into your `~/.bashrc` by `expor
    2. `SPEECHAIN_PYTHON` should be the absolute path of the python compiler in the folder of `speechain` environment (i.e. `/xxx/anaconda3/envs/speechain/bin/python3.X` where `/xxx/` is where your `anaconda3` is placed and `X` depends on `environment.yaml`).
 7. Read the [handbook](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#speechain-handbook) and start your journey in SpeeChain!
 
+## Citation 
+If you are using this toolkit, please cite reference below: 
+> Qi, H., Novitasari, S., Tjandra, A., Sakti, S., & Nakamura, S. (2023). SpeeChain: A Speech Toolkit for Large-Scale Machine Speech Chain. http://arxiv.org/abs/2301.02966
 
-
-## Acknowledgement
-Part of this software was developed in a project commissioned by the New Energy and Industrial Technology Development Organization (NEDO).
