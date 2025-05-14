@@ -1,7 +1,7 @@
 """
-    Author: Heli Qi
-    Affiliation: NAIST
-    Date: 2022.07
+Author: Heli Qi
+Affiliation: NAIST
+Date: 2022.07
 """
 
 from speechain.optim_sche.abs import OptimScheduler

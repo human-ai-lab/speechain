@@ -1,10 +1,10 @@
 """
-    Author: Heli Qi
-    Affiliation: NAIST
-    Date: 2022.07
+Author: Heli Qi
+Affiliation: NAIST
+Date: 2022.07
 
-    Modified from
-    https://github.com/huggingface/transformers/blob/518bd02c9b71291333ef374f055a4d1ac3042654/src/transformers/generation_beam_search.py
+Modified from
+https://github.com/huggingface/transformers/blob/518bd02c9b71291333ef374f055a4d1ac3042654/src/transformers/generation_beam_search.py
 
 """
 

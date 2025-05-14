@@ -1,7 +1,7 @@
 """
-    Author: Heli Qi
-    Affiliation: NAIST
-    Date: 2022.09
+Author: Heli Qi
+Affiliation: NAIST
+Date: 2022.09
 """
 
 from typing import List
