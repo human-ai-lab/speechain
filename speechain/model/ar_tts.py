@@ -1,11 +1,11 @@
 """
-    Author: Sashi Novitasari
-    Affiliation: NAIST
-    Date: 2022.08
+Author: Sashi Novitasari
+Affiliation: NAIST
+Date: 2022.08
 
-    Author: Heli Qi
-    Affiliation: NAIST
-    Date: 2022.09
+Author: Heli Qi
+Affiliation: NAIST
+Date: 2022.09
 """
 
 import copy

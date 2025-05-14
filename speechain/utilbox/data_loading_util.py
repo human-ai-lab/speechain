@@ -1,7 +1,7 @@
 """
-    Author: Heli Qi
-    Affiliation: NAIST
-    Date: 2022.11
+Author: Heli Qi
+Affiliation: NAIST
+Date: 2022.11
 """
 
 import json
@@ -179,7 +179,7 @@ def load_idx2data_file(
 
 
 def read_idx2data_file_to_dict(
-    path_dict: Dict[str, str or List[str]]
+    path_dict: Dict[str, str or List[str]],
 ) -> (Dict[str, str], List[str]):
     """
 

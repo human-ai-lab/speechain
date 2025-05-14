@@ -1,8 +1,8 @@
 """
-    Origin: Sashi Novitasari
-    Modification: Heli Qi
-    Affiliation: NAIST
-    Date: 2022.07
+Origin: Sashi Novitasari
+Modification: Heli Qi
+Affiliation: NAIST
+Date: 2022.07
 """
 
 import math

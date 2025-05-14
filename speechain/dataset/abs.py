@@ -1,7 +1,7 @@
 """
-    Author: Heli Qi
-    Affiliation: NAIST
-    Date: 2022.07
+Author: Heli Qi
+Affiliation: NAIST
+Date: 2022.07
 """
 
 from abc import ABC
@@ -158,7 +158,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
 
     @staticmethod
     def data_len_register_fn(
-        main_data: Dict[str, Dict[str, str]]
+        main_data: Dict[str, Dict[str, str]],
     ) -> Union[Dict[str, Union[int, float]], None]:
         """Static hook function that registers default information about the length of
         each data instance.

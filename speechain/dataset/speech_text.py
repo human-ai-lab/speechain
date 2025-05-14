@@ -1,7 +1,7 @@
 """
-    Author: Heli Qi
-    Affiliation: NAIST
-    Date: 2022.07
+Author: Heli Qi
+Affiliation: NAIST
+Date: 2022.07
 """
 
 import os.path
@@ -105,7 +105,7 @@ class SpeechTextDataset(Dataset):
 
     @staticmethod
     def data_len_register_fn(
-        main_data: Dict[str, Dict[str, str]]
+        main_data: Dict[str, Dict[str, str]],
     ) -> Dict[str, int or float] or None:
         """
 
