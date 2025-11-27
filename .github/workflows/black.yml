@@ -5,8 +5,19 @@ on: [push, pull_request]
 jobs:
   lint:
     runs-on: ubuntu-latest
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+    
     steps:
       - uses: actions/checkout@v4
       - uses: psf/black@stable
         with:
           src: './speechain'
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Format code with Black'
+
