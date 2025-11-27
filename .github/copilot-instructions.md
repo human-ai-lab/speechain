@@ -4,7 +4,7 @@
 
 SpeeChain is a PyTorch-based machine speech chain toolkit for Automatic Speech Recognition (ASR) and Text-to-Speech (TTS) synthesis. It supports multi-GPU training, real-time visualization, on-the-fly data processing, and flexible model training pipelines.
 
-**Languages/Frameworks:** Python 3.8+, PyTorch, CUDA
+**Languages/Frameworks:** Python 3.10+, PyTorch, CUDA
 **Project Type:** Python ML toolkit with pip package
 **Size:** ~100 Python source files in the `speechain/` module
 
@@ -13,7 +13,7 @@ SpeeChain is a PyTorch-based machine speech chain toolkit for Automatic Speech R
 ### Environment Setup
 1. Install the package in development mode:
    ```bash
-   pip install -e .
+   uv pip install -e .
    ```
 2. This installs the `speechain` package from `setup.py` with all dependencies.
 
@@ -128,15 +128,15 @@ All workflows trigger on `push` and `pull_request` events.
 4. **Verify imports work:** `python -c "import speechain"`
 
 ### Adding New Files
-- New modules go under appropriate `speechain/` subdirectory
+- New modules go under the appropriate `speechain/` subdirectory
 - Follow existing patterns (e.g., `abs.py` for abstract classes)
 - Test files should be named `test_*.py` in the same directory
 
 ## Configuration Files
 
 - **Package Definition:** `setup.py`
-- **Conda Environment:** `environment.yaml` (Python 3.8)
-- **Pip Requirements:** `requirements.txt`
+- **Conda Environment:** `environment.yaml` (Python 3.8) --> obsolete
+- **(UV) Pip Requirements:** `requirements.txt`
 - **Documentation:** `mkdocs.yml`
 - **Git Ignore:** `.gitignore` (includes datasets/, recipes/, config/, site/)
 
