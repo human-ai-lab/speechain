@@ -1,12 +1,12 @@
 # SpeeChain: A PyTorch-based Machine Speech Chain Toolkit for ASR and TTS 
-_SpeeChain_ is an open-source PyTorch-based speech and language processing toolkit produced by the [_AHC lab_](https://ahcweb01.naist.jp/en/) at Nara Institute of Science and Technology (NAIST). 
+_SpeeChain_ is an open-source PyTorch-based speech and language processing toolkit initiated by the [_AHC lab_](https://ahcweb01.naist.jp/en/) at Nara Institute of Science and Technology (NAIST). 
 This toolkit is designed to simplify the pipeline of the research on the machine speech chain, 
 i.e., the joint model of automatic speech recognition (ASR) and text-to-speech synthesis (TTS). 
 
-_SpeeChain is currently in beta._ Contribution to this toolkit is warmly welcomed anywhere anytime! 
+_SpeeChain is currently in beta._ Contribution to this toolkit is warmly welcomed anywhere, anytime! 
 
 If you find our toolkit helpful for your research, we sincerely hope that you can give us a star⭐! 
-Anytime when you encounter problems when using our toolkit, please don't hesitate to leave us an issue!
+Anytime you encounter problems when using our toolkit, please don't hesitate to leave us an issue!
 
 ## Table of Contents
 1. [**Machine Speech Chain**](https://github.com/bagustris/SpeeChain#machine-speech-chain)
@@ -36,7 +36,7 @@ Below are the simple, most important features that SpeeChain can do. You may che
 * **Optimization:**
   * Model training can be done by multiple optimizers. Each optimizer is responsible for a specific part of model parameters.
   * Gradient accumulation for mimicking the large-batch gradients by the ones on several small batches.
-  * Easy-to-set finetuning factor to scale down the learning rates without any modification of the scheduler configuration. 
+  * Easy-to-set fine-tuning factor to scale down the learning rates without any modification of the scheduler configuration. 
 * **Model Evaluation:**
   * Multi-level _.md_ evaluation reports (overall-level, group-level model, and sample-level) without any layout misplacement. 
   * Histogram visualization for the distribution of evaluation metrics
@@ -67,6 +67,6 @@ If either one is empty, please manually add them into your `~/.bashrc` by `expor
 7. Read the [handbook](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#speechain-handbook) and start your journey in SpeeChain!
 
 ## Citation 
-If you are using this toolkit, please cite reference below: 
+The original implementation of this repo can be referred to [heli-qi/speechain](https://github.com/heli-qi/SpeeChain). If you are using this toolkit, please cite the reference below: 
 > Qi, H., Novitasari, S., Tjandra, A., Sakti, S., & Nakamura, S. (2023). SpeeChain: A Speech Toolkit for Large-Scale Machine Speech Chain. http://arxiv.org/abs/2301.02966
 
