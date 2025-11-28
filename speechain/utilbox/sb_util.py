@@ -50,7 +50,7 @@ def get_speechbrain_hifigan(
             assert device.startswith("cuda:")
 
     download_dir = parse_path_args("recipes/tts/speechbrain_vocoder")
-    
+
     if not use_multi_speaker:
         assert sample_rate == 22050
         # Use our local HiFiGAN implementation with auto-download
