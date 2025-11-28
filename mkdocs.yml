@@ -52,6 +52,8 @@ nav:
   - handbook.md
   - datasets.md
   - recipes.md
+  - Tutorials:
+    - TTS LJSpeech: tts_ljspeech_tutorial.md
   - asr.md
   - tts.md
   - criterion.md
