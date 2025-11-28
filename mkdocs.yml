@@ -52,8 +52,6 @@ nav:
   - handbook.md
   - datasets.md
   - recipes.md
-  - Tutorials:
-    - TTS LJSpeech: tts_ljspeech_tutorial.md
   - asr.md
   - tts.md
   - criterion.md
@@ -63,4 +61,6 @@ nav:
   - module.md
   - optim_sche.md
   - tokenizer.md
+  - Tutorials:
+    - TTS LJSpeech: tts_ljspeech_tutorial.md
   - Reference: reference/ 
