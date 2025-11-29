@@ -316,7 +316,7 @@ class HiFiGAN(nn.Module):
             Audio waveform tensor
         """
         # Transpose from (batch, time, channels) to (batch, channels, time)
-        if mel.dim() == 3 and mel.size(-1) == 80:
+        if mel.dim() == 3 and mel.size(-1) == self.in_channels:
             mel = mel.transpose(1, 2)
 
         with torch.no_grad():
