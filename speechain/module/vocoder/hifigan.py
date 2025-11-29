@@ -223,10 +223,10 @@ class HiFiGAN(nn.Module):
     def remove_weight_norm(self):
         """Remove weight normalization from all layers."""
 
-        for l in self.ups:
-            remove_weight_norm(l)
-        for l in self.resblocks:
-            l.remove_weight_norm()
+        for up_layer in self.ups:
+            remove_weight_norm(up_layer)
+        for resblock in self.resblocks:
+            resblock.remove_weight_norm()
         remove_weight_norm(self.conv_pre)
         remove_weight_norm(self.conv_post)
 
