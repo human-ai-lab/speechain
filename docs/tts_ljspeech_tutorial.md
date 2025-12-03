@@ -225,7 +225,7 @@ recipes/tts/ljspeech/exp/22.05khz_mfa_fastspeech2_punc/default_inference/latest/
 
 ## HiFi-GAN Vocoder
 
-The HiFi-GAN vocoder converts mel spectrograms to audio waveforms. It is **automatically downloaded** from HuggingFace Hub on first use:
+The HiFi-GAN vocoder converts mel spectrograms to audio waveforms. It is **automatically downloaded** from Hugging Face Hub on first use:
 
 - Model: `speechbrain/tts-hifigan-ljspeech`
 - Cache location: `recipes/tts/speechbrain_vocoder/hifigan-ljspeech/`
