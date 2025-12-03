@@ -362,7 +362,14 @@ def load_hifigan_vocoder(
             new_key = key.replace(".conv.", ".")
             new_state_dict[new_key] = value
 
-        model.load_state_dict(new_state_dict, strict=False)
+        try:
+            model.load_state_dict(new_state_dict, strict=True)
+            print("Loaded HiFi-GAN checkpoint successfully from local path")
+        except RuntimeError as e:
+            print(f"Warning: Strict loading from local path failed: {e}")
+            # Try with strict=False as fallback
+            model.load_state_dict(new_state_dict, strict=False)
+            print("Loaded HiFi-GAN checkpoint from local path with strict=False")
 
         if device is not None:
             model = model.to(device)
