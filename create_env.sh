@@ -3,7 +3,7 @@
 # 1. Create the speechain environment if there is no environment named speechain
 
 # Set the python version, if use other than 3.9, modify environment.yaml
-PYTHON_VERSION=3.8
+PYTHON_VERSION=3.9
 echo "Installing speechain env using Python version: $PYTHON_VERSION"
 
 speechain_envir=$(conda env list | grep speechain)

@@ -1,4 +1,4 @@
-editdistance==0.6.0
+edit-distance>=0.6.0
 g2p_en==2.1.0
 GPUtil==1.4.0
 h5py==3.1.0

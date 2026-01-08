@@ -155,22 +155,22 @@ Before training an ASR model, ensure that your target datasets are dumped by the
 More details on how to dump a dataset can be found [here](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-dump-a-dataset-on-your-machine).
 
 ### Use an existing dataset with a pre-tuned configuration
-1. locate a _.yaml_ configuration file in `${SPEECHAIN_ROOT}/recipes/asr`. 
-   Suppose we want to train an ASR model by the configuration `${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-960/exp_cfg/960-bpe5k_transformer-wide_ctc_perturb.yaml`.
+1. Locate a _.yaml_ configuration file in `${SPEECHAIN_ROOT}/recipes/asr`. 
+   Suppose we want to train an ASR model by the configuration `${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-clean-5/exp_cfg/5-bpe1k_conformer-small_lr2e-3.yaml`.
 
 2. Train and evaluate the ASR model on your target training set
    
    ```bash
    cd ${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-960
-   bash run.sh --exp_cfg 960-bpe5k_transformer-wide_ctc_perturb (--ngpu x --gpus x,x)
+   bash run.sh --exp_cfg 5-bpe1k_conformer-small_lr2e-3 (--ngpu x --gpus x,x)
    ```
    **Note:**   
       1. Review the comments on the top of the configuration file to ensure that your computational resources fit the configuration before training the model.  
       If your resources do not match the configuration, adjust it by `--ngpu` and `--gpus` to match your available GPU memory.  
       2. To save the experimental results outside the toolkit folder `${SPEECHAIN_ROOT}`, 
          specify your desired location by appending `--train_result_path {your-target-path}` to `bash run.sh`.  
-         In this example, `bash run.sh --exp_cfg 960-bpe5k_transformer-wide_ctc_perturb --train_result_path /a/b/c`
-         will save results to `/a/b/c/960-bpe5k_transformer-wide_ctc_perturb`.
+         In this example, `bash run.sh --exp_cfg 5-bpe1k_conformer-small_lr2e-3 --train_result_path /a/b/c`
+         will save results to `/a/b/c/5-bpe1k_conformer-small_lr2e-3`.
 
 ### Creating a new configuration for a non-existing dataset  
 
