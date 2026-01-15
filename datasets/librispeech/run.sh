@@ -1,12 +1,14 @@
-#  Author: Heli Qi
-#  Affiliation: NAIST
-#  Date: 2022.11
+# Author: Heli Qi
+# Affiliation: NAIST
+# Date: 2022.11
 
 # 2024.11.26: @bagustris added subsets of dev-clean-2, train-clean-5
 
 if [ -z "${SPEECHAIN_ROOT}" ];then
   echo "Cannot find environmental variable SPEECHAIN_ROOT.
-  Please move to the root path of the toolkit and run envir_preparation.sh there!"
+  Please set the environment variables
+  $ export SPEECHAIN_ROOT=/your/path/to/speechain
+  $ export SPEECHAIN_PYTHON=$(which python)"
   exit 1
 fi
 
@@ -75,7 +77,8 @@ txt_format=no-punc
 # LibriSpeech-specific arguments
 # which part of LibriSpeech corpus you want to dump
 # 5: train-clean-5; 100: train-clean-100; 460: train-clean-100 + train-clean-360; 960: train-clean-100 + train-clean-360 + train-other-500
-# dev-clean, dev-clean-2, dev-other, test-clean, test-other will be downloaded regardless of your input dump_part
+# dev-clean, dev-other, test-clean, test-other will be downloaded if your input not 5
+# dev-clean-2 and test-clean will be downloaded if your input is 5
 dump_part=5
 
 
@@ -234,9 +237,16 @@ case "${dump_part}" in
     exit 1
 esac
 
-# attach dev and test sets to 'subsets' arguments for any input dump_part
-subsets="${subsets} dev-clean dev-clean-2 dev-other test-clean test-other"
-subsets_args="${subsets_args}${separator}dev-clean${separator}dev-clean-2${separator}dev-other${separator}test-clean${separator}test-other"
+# attach dev and test sets to 'subsets' arguments based on dump_part
+if [ ${dump_part} == 5 ]; then
+  # For dump_part=5, only download train-clean-5, dev-clean-2, and test-clean
+  subsets="${subsets} dev-clean-2 test-clean"
+  subsets_args="${subsets_args}${separator}dev-clean-2${separator}test-clean"
+else
+  # For other dump_parts, download full dev and test sets
+  subsets="${subsets} dev-clean dev-clean-2 dev-other test-clean test-other"
+  subsets_args="${subsets_args}${separator}dev-clean${separator}dev-clean-2${separator}dev-other${separator}test-clean${separator}test-other"
+fi
 # enter extra arguments for vocab_generator.py
 vocab_generate_args=
 # number of tokens in the vocabulary

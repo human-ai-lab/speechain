@@ -76,6 +76,7 @@ visual_snapshot_interval: 5
 
 # testing-related
 test: False
+test_model: 10_valid_accuracy_average
 
 # This argument is shared by data_cfg and train_cfg
 data_root: !ref <dataset_path>/<dataset>/data
@@ -127,6 +128,22 @@ data_cfg:
 
       shuffle: False
       data_len: !ref <data_root>/<wav_format>/<valid_set>/idx2wav_len
+
+  test:
+    test-clean:
+      type: abs.Iterator
+      conf:
+        dataset_type: speech_text.SpeechTextDataset
+        dataset_conf:
+          main_data:
+            feat: !ref <data_root>/<wav_format>/test-clean/idx2wav
+            text: !ref <data_root>/<wav_format>/test-clean/idx2<txt_format>_text
+
+        data_len: !ref <data_root>/<wav_format>/test-clean/idx2wav_len
+        shuffle: False
+        group_info:
+          speaker: !ref <data_root>/<wav_format>/test-clean/idx2spk
+          gender: !ref <data_root>/<wav_format>/test-clean/idx2gen
 
 # Model Construction Configuration #
 ####################################

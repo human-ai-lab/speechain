@@ -1,6 +1,6 @@
 # Datasets (Directory)
 
-The `dataset` folder contains all the available datasets in this toolkit. 
+The `datasets` folder contains all the available datasets in this toolkit. 
 Each dataset corresponds to a sub-folder and has a uniform file system. 
 You can easily dump your target dataset to your machine by following the instructions below. 
 If you want to contribute a new dataset, we would appreciate it if you could follow our file systems and metadata formats.
@@ -17,7 +17,7 @@ If you want to contribute a new dataset, we would appreciate it if you could fol
     5. [idx2text](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2text)
     6. [idx2spk](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2spk)
     7. [idx2spk_feat](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2spk_feat)
-    8. [spk_list](https://github.com/bagustris/SpeeChain/tree/main/datasets#spk_list)
+    8. [spk_list](https://github.com/bagustris/SpeeChain/tree/main/dat/home/bagustris/github/speechain/asets#spk_list)
     9. [idx2gen](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2gen)
 3. [**How to Dump a Dataset on your Machine**](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-dump-a-dataset-on-your-machine)
 4. [**How to Extract Speaker Embedding by my own model**](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-extract-speaker-embedding-by-my-own-model)
