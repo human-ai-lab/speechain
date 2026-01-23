@@ -133,7 +133,7 @@ for (( n=0; n < ${#subsets[*]}; n++ )); do
     fi
 
     # move the unzipped data folder to the wav folder
-    echo "Move ${download_path}/data/LibriTTS/${set} to ${download_path}/data/wav/${set}"
+    echo "Moving ${download_path}/data/LibriTTS/${set} to ${download_path}/data/wav/${set}"
     # if wav doesn't exist, directly rename the folder to include those .TXT files
     if [ ! -d "${download_path}/data/wav" ]; then
       mv -f ${download_path}/data/LibriTTS ${download_path}/data/wav
@@ -141,6 +141,7 @@ for (( n=0; n < ${#subsets[*]}; n++ )); do
     else
       mv -f ${download_path}/data/LibriTTS/"${set}" ${download_path}/data/wav/
     fi
+    echo "✓ ${set} data downloading and unzipping completed~~~"
 
   else
     echo "${download_path}/data/wav/${set} has already existed. Skipping data downloading and unzipping~~~"
@@ -148,8 +149,9 @@ for (( n=0; n < ${#subsets[*]}; n++ )); do
 
   # remove the compressed data package
   if [ -f ${download_path}/data/"${set}".tar.gz ];then
-    echo "Remove the downloaded data package ${download_path}/data/${set}.tar.gz"
+    echo "Removing the downloaded data package ${download_path}/data/${set}.tar.gz"
     rm ${download_path}/data/"${set}".tar.gz
+    echo "✓ ${set} data package removed~~~"
   fi
 done
 

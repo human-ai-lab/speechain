@@ -56,9 +56,13 @@ def get_word_edit_alignment(hypo: str, real: str) -> (int, int, int, str):
             hypo_words.append(hypo_word_list[op[1]])
             real_words.append(real_word_list[op[3]])
 
+    # Create headers for each word position
+    headers = [""] + [f"Word {i+1}" for i in range(len(hypo_words))]
+    
     align_table = get_table_strings(
         contents=[hypo_words, word_ops, real_words],
         first_col=["Hypothesis", "Alignment", "Reference"],
+        headers=headers,
     )
 
     return insertion, deletion, substitution, align_table

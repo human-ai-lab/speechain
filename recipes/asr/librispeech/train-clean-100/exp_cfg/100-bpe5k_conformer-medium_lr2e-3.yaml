@@ -92,9 +92,9 @@ infer_cfg:
   exclu_args:
     # ASR-only decoding
     - ctc_weight: 0.2
-    # ASR-LM decoding
-    - ctc_weight: 0.3
-      lm_weight: 0.6
+    # ASR-LM decoding (disabled - train LM first)
+    # - ctc_weight: 0.3
+    #   lm_weight: 0.6
 
 
 ##############################
@@ -172,8 +172,9 @@ train_cfg:
         ctc_weight: !ref <ctc_weight>
         token_type: !ref <token_type>
         token_path: !ref <data_root>/<token_type>/<vocab_subset>/<token_num>/<txt_format>
-        lm_model_cfg: recipes/lm/librispeech/lm_text/exp/100-bpe5k_transformer/train_cfg.yaml
-        lm_model_path: recipes/lm/librispeech/lm_text/exp/100-bpe5k_transformer/models/5_valid_text_ppl_average.pth
+        # LM paths commented out - train LM first if you want ASR-LM decoding
+        # lm_model_cfg: recipes/lm/librispeech/lm_text/exp/100-bpe5k_transformer/train_cfg.yaml
+        # lm_model_path: recipes/lm/librispeech/lm_text/exp/100-bpe5k_transformer/models/5_valid_text_ppl_average.pth
 
     module_conf:
       frontend:
