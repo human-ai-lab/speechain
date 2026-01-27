@@ -31,7 +31,7 @@ sample_rate: 16000
 
 # tokenizer-related
 txt_format: no-punc
-vocab_set: train-clean-460
+vocab_subset: train-clean-460
 token_type: sentencepiece
 token_num: bpe5k
 
@@ -47,7 +47,6 @@ fdfwd_dim: 2048
 dropout: 0.1
 
 # optimizer-related
-peak_lr: 0.001
 warmup_steps: 16000
 
 # running-related
@@ -174,7 +173,7 @@ train_cfg:
       customize_conf:
         ctc_weight: !ref <ctc_weight>
         token_type: !ref <token_type>
-        token_path: !ref <data_root>/<token_type>/<vocab_set>/<token_num>/<txt_format>
+        token_path: !ref <data_root>/<token_type>/<vocab_subset>/<token_num>/<txt_format>
         lm_model_cfg: recipes/lm/librispeech/train-960_lm_text/exp/460-bpe5k_transformer/train_cfg.yaml
         lm_model_path: recipes/lm/librispeech/train-960_lm_text/exp/460-bpe5k_transformer/models/5_valid_text_ppl_average.pth
 
@@ -197,7 +196,7 @@ train_cfg:
         time_mask_num: 5
 
       enc_prenet:
-        type: conv2d
+        type: prenet.conv2d.Conv2dPrenet
         conf:
           conv_dims:
             - !ref <d_model>
@@ -209,7 +208,7 @@ train_cfg:
           lnr_dims: !ref <d_model>
 
       encoder:
-        type: transformer
+        type: transformer.encoder.TransformerEncoder
         conf:
           posenc_dropout: !ref <dropout>
           posenc_scale: false
@@ -226,12 +225,12 @@ train_cfg:
           layernorm_first: true
 
       dec_emb:
-        type: embed
+        type: prenet.embed.EmbedPrenet
         conf:
           embedding_dim: !ref <d_model>
 
       decoder:
-        type: transformer
+        type: transformer.decoder.TransformerDecoder
         conf:
           posenc_dropout: !ref <dropout>
           posenc_scale: false
@@ -256,7 +255,7 @@ train_cfg:
     conf:
       optim_type: Adam
       optim_conf:
-        lr: !ref <peak_lr>
+        lr: 0.002
         betas:
           - 0.9
           - 0.98

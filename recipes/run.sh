@@ -262,9 +262,9 @@ if [ -n "${exp_cfg}" ];then
   if [[ "${exp_cfg}" != *".yaml" ]];then
     exp_cfg="${exp_cfg}.yaml"
   fi
-  # convert the relative path in ${subset_root}/exp_cfg if no slash inside
-  if ! grep -q '/' <<< "${exp_cfg}";then
-    exp_cfg="${subset_root}/exp_cfg/${exp_cfg}"
+  # convert to absolute path if relative (not starting with /)
+  if [[ "${exp_cfg}" != /* ]];then
+    exp_cfg="${subset_root}/${exp_cfg}"
   fi
   args="${args} --config ${exp_cfg}"
 fi

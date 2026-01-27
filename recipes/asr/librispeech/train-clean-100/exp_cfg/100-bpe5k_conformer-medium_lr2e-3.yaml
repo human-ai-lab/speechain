@@ -12,6 +12,7 @@
 # Required GPUs: 1 × NVIDIA RTX A5000 (49GB)
 # Required Time: up to 20 hours
 # Expected WER performance (test-clean / test-other): ASR-only (7.87% / 21.36%) and ASR-LM (5.30% / 15.57%)
+# Expected WER performance (test-clean / test-other): ASR-only (8.43% / 22.98%)
 # ############################################################################
 
 

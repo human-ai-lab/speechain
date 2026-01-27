@@ -1,11 +1,11 @@
 ##############################################################################
-# Model: Conformer-ASR small version (13.79M)
-# Tokens: BPE 5k trained on train-clean-100 of LibriSpeech
-# Batching: 241 steps per epoch (25 minutes speech per batch)
-# Optimization: 16000 warming-up steps (~66 warming-up epochs) & 0.001 peak LR
+# Model: Conformer-ASR large version (116.14M)
+# Tokens: BPE 5k trained on train-clean-460 of LibriSpeech
+# Batching: ~1333 steps per epoch (20.8 minutes speech per batch)
+# Optimization: 16000 warming-up steps (~12 warming-up epochs) & 0.002 peak LR
 # Augmentation: Speech Perturbation + SpecAugment
 # losses: 0.2 Label Smooth + CTC loss
-# Training: train-clean-100 of LibriSpeech
+# Training: train-clean-460 of LibriSpeech
 # Validation: dev-clean of LibriSpeech
 # Testing: test-clean & test-other of LibriSpeech
 # Authors: Heli Qi
@@ -209,6 +209,8 @@ train_cfg:
       encoder:
         type: conformer.encoder.ConformerEncoder
         conf:
+          posenc_dropout: !ref <dropout>
+          emb_scale: False
           d_model: !ref <d_model>
           num_heads: !ref <num_heads>
           num_layers: 12
