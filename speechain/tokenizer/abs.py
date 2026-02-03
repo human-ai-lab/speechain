@@ -111,7 +111,13 @@ class Tokenizer(ABC):
             The string of the decoded sentence.
         """
         token_list = []
-        for idx in tensor.tolist():
+        # sometimes there are non-tensor also, need fix
+        if hasattr(tensor, "tolist"):
+            seq = tensor.tolist()
+        else:
+            seq = tensor
+
+        for idx in seq:
             if idx in [self.sos_eos_idx, self.ignore_idx]:
                 continue
             # the space tokens will be replaced by a blank
