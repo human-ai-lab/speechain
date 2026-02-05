@@ -61,6 +61,7 @@ venv/
 .venv/
 env/
 .env/
+build
 
 # specific folders
 recipes/
