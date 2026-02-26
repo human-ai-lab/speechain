@@ -1,8 +1,9 @@
 import unittest
+
 import torch
 
 # import torch.nn as nn
-from module.encoder.speaker import SEModule, Res2Block, EncoderClassifier
+from speechain.module.encoder.speaker import EncoderClassifier, Res2Block, SEModule
 
 
 class TestEncoderClassifier(unittest.TestCase):

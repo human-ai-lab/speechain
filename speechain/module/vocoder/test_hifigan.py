@@ -1,7 +1,9 @@
 import unittest
-import torch
+
 import numpy as np
-from module.vocoder.hifigan import HIFIGAN, ResBlock, MRF
+import torch
+
+from speechain.module.vocoder.hifigan import HIFIGAN, MRF, ResBlock
 
 
 class TestHiFiGAN(unittest.TestCase):
