@@ -948,15 +948,17 @@ class ARASR(Model):
             outputs.update(att=hypo_att)
 
         # recover the text tensors back to text strings (removing the padding and sos/eos tokens)
-        text = [
-            self.tokenizer.tensor2text(
-                real[
-                    (real != self.tokenizer.ignore_idx)
-                    & (real != self.tokenizer.sos_eos_idx)
-                ]
-            )
-            for real in text
-        ]
+        # only do this when text is available (not in decode_only mode)
+        if text is not None:
+            text = [
+                self.tokenizer.tensor2text(
+                    real[
+                        (real != self.tokenizer.ignore_idx)
+                        & (real != self.tokenizer.sos_eos_idx)
+                    ]
+                )
+                for real in text
+            ]
         # evaluation reports for all the testing instances
         (
             instance_report_dict,
@@ -967,8 +969,9 @@ class ARASR(Model):
             deletion_list,
             substitution_list,
         ) = ({}, [], [], [], [], [], [])
-        # loop each sentence
-        for i in range(len(text)):
+        # loop each sentence (use hypo_text length when text is not available)
+        num_samples = len(text) if text is not None else len(hypo_text)
+        for i in range(num_samples):
             # add the confidence into instance_reports.md
             if "Hypothesis Confidence" not in instance_report_dict.keys():
                 instance_report_dict["Hypothesis Confidence"] = []
@@ -1025,9 +1028,11 @@ class ARASR(Model):
                 instance_report_dict["Word Substitution"].append(f"{s_num}")
 
         # register the instance reports and the strings of alignment tables for generating instance_reports.md
-        self.register_instance_reports(
-            md_list_dict=instance_report_dict, extra_string_list=align_table_list
-        )
+        # only register if we have instance reports to show
+        if instance_report_dict:
+            self.register_instance_reports(
+                md_list_dict=instance_report_dict, extra_string_list=align_table_list if align_table_list else None
+            )
 
         # not return the supervised metrics in the decoding-only mode
         if not decode_only:

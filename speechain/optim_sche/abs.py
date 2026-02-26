@@ -205,6 +205,15 @@ class OptimScheduler(ABC):
                 with backward_context():
                     # average the loss for accumulation
                     loss /= self.accum_grad
+                    if not torch.isfinite(loss):
+                        if logger is not None:
+                            logger.info(
+                                f"The loss in the no.{real_step} real step is not finite. "
+                                "Skip back-propagation for this step."
+                            )
+                        if self.scaler is not None:
+                            self.scaler.update()
+                        return
                     # backward the loss in either the amp mode or the normal mode
                     (
                         self.scaler.scale(loss).backward()
@@ -235,7 +244,7 @@ class OptimScheduler(ABC):
                         norm_type=self.grad_norm_type,
                     )
 
-                    # optimize the target parameters only when the values of gradients are not infinite
+                    # optimize the target parameters only when the values of gradients are finite
                     if not torch.isfinite(grad_norm):
                         if logger is not None:
                             logger.info(
@@ -243,7 +252,7 @@ class OptimScheduler(ABC):
                                 "So, the parameters are not updated in this step."
                             )
                         if self.scaler is not None:
-                            self.scaler.step(self.optimizer)
+                            # skip optimizer.step() but still update the scaler to reduce the scale
                             self.scaler.update()
                     else:
                         if self.scaler is not None:

@@ -214,6 +214,9 @@ class FastSpeech2Decoder(Module):
         if not self.training and duration_alpha is not None:
             duration = duration * duration_alpha
 
+        if not torch.isfinite(duration).all():
+            duration = torch.nan_to_num(duration, nan=0.0, posinf=0.0, neginf=0.0)
+
         # convert the negative numbers to zeros
         duration = torch.clamp(torch.round(duration), min=0)
         duration_zero_mask = duration == 0
@@ -282,6 +285,17 @@ class FastSpeech2Decoder(Module):
                 feat, feat_len = self.feat_normalize(
                     feat, feat_len, group_ids=spk_ids, epoch=epoch
                 )
+            
+            # Check for NaN/Inf in input features (data validation)
+            if self.training and not torch.isfinite(feat).all():
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(
+                    f"[Data Validation] Input mel-spectrogram features contain NaN/Inf!\n"
+                    f"feat shape: {feat.shape}, range: [{feat.min().item():.3f}, {feat.max().item():.3f}]\n"
+                    f"This indicates a problem with feature extraction or normalization."
+                )
+                raise ValueError("NaN/Inf detected in input mel-spectrogram features")
 
             # acoustic feature length reduction
             if self.reduction_factor > 1:
@@ -440,7 +454,15 @@ class FastSpeech2Decoder(Module):
         expand_enc_text_list = []
         for i in range(len(enc_text_len)):
             # calculate the number of frames needed for each token in the current sentence
-            frame_counts = used_duration[i].long()
+            # replace NaN/inf with 0 and clamp to ensure non-negative values for repeat_interleave
+            dur = used_duration[i]
+            dur = torch.where(torch.isfinite(dur), dur, torch.zeros_like(dur))
+            frame_counts = torch.clamp(dur, min=0).long()
+            # ensure at least 3 frames to avoid conv1d kernel size errors (kernel_size=3)
+            min_frames = 3
+            total_frames = frame_counts.sum()
+            if total_frames < min_frames:
+                frame_counts[0] = frame_counts[0] + (min_frames - total_frames)
             # expand the phoneme embeddings by the number of frames for each token
             expand_enc_text_list.append(
                 enc_text[i].repeat_interleave(frame_counts, dim=0)

@@ -2,6 +2,28 @@ import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torchaudio
+
+
+class MelSpectrogramFrontend(nn.Module):
+    """Mel-spectrogram frontend for processing raw waveforms."""
+    
+    def __init__(self, sample_rate=16000, n_mels=80, n_fft=400, hop_length=160, win_length=400):
+        super().__init__()
+        self.mel_spec = torchaudio.transforms.MelSpectrogram(
+            sample_rate=sample_rate,
+            n_fft=n_fft,
+            hop_length=hop_length,
+            win_length=win_length,
+            n_mels=n_mels,
+        )
+    
+    def forward(self, x):
+        # x: (batch, time)
+        mel = self.mel_spec(x)  # (batch, n_mels, time)
+        # Apply log compression
+        mel = torch.log(mel + 1e-6)
+        return mel
 
 
 class SEModule(nn.Module):
@@ -47,6 +69,7 @@ class EncoderClassifier(nn.Module):
     def __init__(self, model_type="ecapa"):
         super().__init__()
         self.model_type = model_type
+        self.frontend = MelSpectrogramFrontend()
         self.model = self._create_model()
 
     def _create_model(self):
@@ -92,10 +115,22 @@ class EncoderClassifier(nn.Module):
         return model
 
     def encode_batch(self, wavs, wav_lens=None):
+        """Extract speaker embeddings from raw waveforms.
+        
+        Args:
+            wavs: (batch, time) raw waveform tensor
+            wav_lens: relative lengths (optional, not used currently)
+        
+        Returns:
+            (batch, embedding_dim) normalized speaker embeddings
+        """
         self.eval()
         with torch.no_grad():
-            x = wavs.transpose(1, 2)
-            embeddings = self.model(x)
+            # Convert waveforms to mel-spectrograms
+            # wavs: (batch, time) -> mel: (batch, n_mels, time)
+            mel = self.frontend(wavs)
+            # Model expects (batch, n_mels, time)
+            embeddings = self.model(mel)
             return F.normalize(embeddings, p=2, dim=1)
 
     @classmethod

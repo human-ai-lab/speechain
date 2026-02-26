@@ -760,6 +760,7 @@ class Runner(object):
                 checkpoint = torch.load(
                     os.path.join(args.train_result_path, "checkpoint.pth"),
                     map_location=model.device,
+                    weights_only=False,
                 )
                 for name in optim_sches.keys():
                     optim_sches[name].load_state_dict(checkpoint["optim_sches"][name])
@@ -797,6 +798,7 @@ class Runner(object):
             checkpoint = torch.load(
                 os.path.join(args.train_result_path, "checkpoint.pth"),
                 map_location=model.device,
+                weights_only=False,
             )
             # load the latest training epoch
             start_epoch = checkpoint["start_epoch"]
@@ -808,6 +810,7 @@ class Runner(object):
                     torch.load(
                         os.path.join(args.train_result_path, "models", "latest.pth"),
                         map_location=model.device,
+                        weights_only=False,
                     )
                 )
 
@@ -1093,6 +1096,15 @@ class Runner(object):
 
                     # whether to skip the model optimization part
                     if not args.no_optim:
+                        # skip optimization and metric logging when loss is not finite
+                        loss_value = losses.get("loss") if isinstance(losses, dict) else None
+                        if loss_value is None or not torch.isfinite(loss_value):
+                            if logger is not None:
+                                logger.warning(
+                                    f"Rank no.{args.rank} meets non-finite loss at step no.{step}! "
+                                    "The current training step will be skipped."
+                                )
+                            continue
                         # --- loss backward and optimization part --- #
                         optim_lr = dict()
                         for name, optim_sche in optim_sches.items():
@@ -1464,7 +1476,8 @@ class Runner(object):
                     # loading the existed checkpoint
                     try:
                         test_checkpoint = torch.load(
-                            os.path.join(test_rank_path, "checkpoint.pth")
+                            os.path.join(test_rank_path, "checkpoint.pth"),
+                            weights_only=False,
                         )
                         monitor.load_state_dict(test_checkpoint["monitor"])
                         start_step = test_checkpoint["start_step"]
@@ -1906,7 +1919,7 @@ class Runner(object):
                     )
 
                 # load the target model parameters
-                model.load_state_dict(torch.load(model_path, map_location=model.device))
+                model.load_state_dict(torch.load(model_path, map_location=model.device, weights_only=False))
 
                 # start the testing process
                 cls.test(

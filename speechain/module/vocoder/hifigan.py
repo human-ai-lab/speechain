@@ -152,6 +152,8 @@ class HiFiGAN(nn.Module):
     ):
         super().__init__()
 
+        self.in_channels = in_channels
+        self.out_channels = out_channels
         self.num_kernels = len(resblock_kernel_sizes)
         self.num_upsamples = len(upsample_factors)
 
@@ -309,15 +311,22 @@ class HiFiGAN(nn.Module):
         This method is compatible with SpeechBrain's interface.
 
         Args:
-            mel: Mel spectrogram tensor of shape (batch, time, mel_channels)
-                 Note: SpeechBrain uses (batch, time, channels) format
+            mel: Mel spectrogram tensor of shape (batch, time, mel_channels) or (batch, mel_channels, time)
 
         Returns:
             Audio waveform tensor
         """
-        # Transpose from (batch, time, channels) to (batch, channels, time)
-        if mel.dim() == 3 and mel.size(-1) == self.in_channels:
-            mel = mel.transpose(1, 2)
+        # Check if we need to transpose from (batch, time, channels) to (batch, channels, time)
+        if mel.dim() == 3:
+            # If last dimension is in_channels, it's (batch, time, channels) format - need transpose
+            if mel.size(-1) == self.in_channels:
+                mel = mel.transpose(1, 2)
+            # If second dimension is in_channels, it's already (batch, channels, time) - use as-is
+            elif mel.size(1) == self.in_channels:
+                pass  # Already in correct format
+            else:
+                raise ValueError(f"Mel spectrogram has unexpected shape: {mel.shape}. "
+                               f"Expected (batch, {self.in_channels}, time) or (batch, time, {self.in_channels})")
 
         with torch.no_grad():
             audio = self.forward(mel)

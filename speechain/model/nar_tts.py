@@ -67,10 +67,14 @@ class FastSpeech2(Model):
             self.tokenizer = GraphemeToPhonemeTokenizer(
                 token_path, copy_path=self.result_path
             )
+        elif token_type == "g2p":
+            self.tokenizer = GraphemeToPhonemeTokenizer(
+                token_path, copy_path=self.result_path
+            )
         else:
             raise ValueError(
                 f"Unknown token type {token_type}. "
-                f"Currently, {self.__class__.__name__} supports one of ['char', 'mfa']."
+                f"Currently, {self.__class__.__name__} supports one of ['char', 'mfa', 'g2p']."
             )
 
         # initialize the speaker list if given
@@ -422,6 +426,38 @@ class FastSpeech2(Model):
             energy_alpha=energy_alpha,
             pitch_alpha=pitch_alpha,
         )
+
+        # Check for NaN/Inf in model outputs (early detection for numerical instability)
+        if self.training:
+            nan_detected = False
+            nan_info = []
+            if not torch.isfinite(pred_feat_before).all():
+                nan_detected = True
+                nan_info.append("pred_feat_before")
+            if not torch.isfinite(pred_feat_after).all():
+                nan_detected = True
+                nan_info.append("pred_feat_after")
+            if not torch.isfinite(pred_pitch).all():
+                nan_detected = True
+                nan_info.append("pred_pitch")
+            if not torch.isfinite(pred_energy).all():
+                nan_detected = True
+                nan_info.append("pred_energy")
+            if not torch.isfinite(pred_duration).all():
+                nan_detected = True
+                nan_info.append("pred_duration")
+            
+            if nan_detected:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(
+                    f"[NaN Detection] Model outputs contain NaN/Inf in: {', '.join(nan_info)}\n"
+                    f"pred_feat_before range: [{pred_feat_before.min().item():.3f}, {pred_feat_before.max().item():.3f}]\n"
+                    f"pred_feat_after range: [{pred_feat_after.min().item():.3f}, {pred_feat_after.max().item():.3f}]\n"
+                    f"pred_pitch range: [{pred_pitch.min().item():.3f}, {pred_pitch.max().item():.3f}]\n"
+                    f"pred_energy range: [{pred_energy.min().item():.3f}, {pred_energy.max().item():.3f}]\n"
+                    f"pred_duration range: [{pred_duration.min().item():.3f}, {pred_duration.max().item():.3f}]"
+                )
 
         # initialize the TTS output to be the decoder predictions
         outputs = dict(

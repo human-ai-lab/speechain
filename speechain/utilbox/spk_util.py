@@ -108,7 +108,10 @@ def extract_spk_feat(
             wav, sample_rate = read_data_by_path(
                 wav_path, return_tensor=True, return_sample_rate=True
             )
-            wav = wav.squeeze(-1).to(device)
+            # Ensure wav is 1D (time,) by squeezing any extra dimensions
+            wav = wav.squeeze().to(device)
+            if wav.dim() == 0:
+                wav = wav.unsqueeze(0)  # Handle edge case of single sample
             if sample_rate > 16000:
                 if sample_rate not in resamplers.keys():
                     resamplers[sample_rate] = torchaudio.transforms.Resample(
@@ -149,7 +152,9 @@ def extract_spk_feat(
                 wav, sample_rate = read_data_by_path(
                     wav_dict[wav_idx], return_tensor=True, return_sample_rate=True
                 )
-                wav = wav.squeeze(-1).to(device)
+                wav = wav.squeeze().to(device)
+                if wav.dim() == 0:
+                    wav = wav.unsqueeze(0)
                 if sample_rate > 16000:
                     wav = resamplers[sample_rate](wav)
                 curr_batch.append([wav_idx, wav])
