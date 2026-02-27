@@ -1,9 +1,10 @@
 import unittest
+
 from speechain.utilbox.humanfriendly import (
-    round_number,
+    format_size,
     pluralize,
     pluralize_raw,
-    format_size,
+    round_number,
 )
 
 
