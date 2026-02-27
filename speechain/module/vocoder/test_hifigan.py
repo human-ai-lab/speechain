@@ -3,9 +3,8 @@ import unittest
 import numpy as np
 import torch
 
-from speechain.module.vocoder.hifigan import HIFIGAN, MRF, ResBlock
-
-
+from speechain.module.vocoder import HIFIGAN
+from speechain.module.vocoder.hifigan import MRF, ResBlock
 class TestHiFiGAN(unittest.TestCase):
     def setUp(self):
         self.model = HIFIGAN()
