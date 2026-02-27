@@ -14,7 +14,7 @@ from unittest.mock import MagicMock
 def _mock_lib(name: str) -> None:
     """Insert a MagicMock for *name* and ensure parent packages know about it."""
     mock = MagicMock()
-    sys.modules.setdefault(name, mock)
+    sys.modules[name] = mock
     parts = name.split(".")
     if len(parts) > 1:
         parent_name = ".".join(parts[:-1])
