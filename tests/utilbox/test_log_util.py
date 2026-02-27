@@ -9,9 +9,11 @@ import pytest
 
 torch = pytest.importorskip("torch")
 
-# Mock heavy optional dependencies that log_util pulls in transitively
-for _mod in ("GPUtil", "speechain.model.abs"):
-    sys.modules.setdefault(_mod, MagicMock())
+# Mock heavy optional third-party dependency GPUtil only
+try:
+    import GPUtil  # noqa: F401
+except (ImportError, OSError):
+    sys.modules["GPUtil"] = MagicMock()
 
 from speechain.utilbox.log_util import distributed_zero_first, logger_stdout_file
 

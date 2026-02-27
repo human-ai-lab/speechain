@@ -1,3 +1,8 @@
+import pytest
+
+torch = pytest.importorskip("torch")
+
+
 class TestEmptyFileCheckerImport:
     def test_module_importable(self):
         import speechain.pyscripts.empty_file_checker as efc

@@ -1,17 +1,18 @@
 import pytest
 
 try:
-    import torchaudio
     from unittest.mock import MagicMock
+
+    import torchaudio
 
     if isinstance(torchaudio, MagicMock):
         raise ImportError("torchaudio is mocked")
-    from speechain.module.frontend.speech2mel import Speech2MelSpec
+    from speechain.module.frontend.speech2linear import Speech2LinearSpec
 
     HAS_TORCHAUDIO = True
 except (ImportError, OSError):
     HAS_TORCHAUDIO = False
-    Speech2MelSpec = None  # type: ignore[assignment,misc]
+    Speech2LinearSpec = None  # type: ignore[assignment,misc]
 
 torch = pytest.importorskip("torch")
 
@@ -20,11 +21,11 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-class TestSpeech2MelSpec:
+class TestSpeech2LinearSpec:
     def _make_module(self, **kwargs):
-        defaults = dict(n_mels=80, hop_length=160, win_length=400, sr=16000)
+        defaults = dict(hop_length=160, win_length=400, sr=16000)
         defaults.update(kwargs)
-        return Speech2MelSpec(**defaults)
+        return Speech2LinearSpec(**defaults)
 
     def _make_speech(self, batch=2, length=16000):
         speech = torch.randn(batch, length)
@@ -36,26 +37,24 @@ class TestSpeech2MelSpec:
         speech, speech_len = self._make_speech()
         feat, feat_len = module(speech, speech_len)
         assert feat.ndim == 3
-        assert feat.shape[-1] == 80
+        assert feat.shape[-1] == 201  # n_fft//2 + 1 = 400//2 + 1
         assert feat.shape[0] == 2
 
     def test_output_size(self):
-        module = self._make_module(n_mels=40)
-        assert module.output_size == 40
+        module = self._make_module()
+        assert module.output_size == 201
 
-    def test_delta_order_1(self):
-        module = self._make_module(delta_order=1)
-        assert module.output_size == 160  # 80 * 2
+    def test_mag_spec(self):
+        module = self._make_module(mag_spec=True)
         speech, speech_len = self._make_speech()
-        feat, _ = module(speech, speech_len)
-        assert feat.shape[-1] == 160
+        feat, feat_len = module(speech, speech_len)
+        assert feat.shape[-1] == 201
 
-    def test_delta_order_2(self):
-        module = self._make_module(delta_order=2)
-        assert module.output_size == 240  # 80 * 3
+    def test_logging(self):
+        module = self._make_module(logging=True, log_base=10.0)
         speech, speech_len = self._make_speech()
-        feat, _ = module(speech, speech_len)
-        assert feat.shape[-1] == 240
+        feat, feat_len = module(speech, speech_len)
+        assert feat.shape[-1] == 201
 
     def test_return_energy(self):
         module = self._make_module(return_energy=True)
@@ -63,9 +62,16 @@ class TestSpeech2MelSpec:
         result = module(speech, speech_len)
         assert len(result) == 4
         feat, feat_len, energy, energy_len = result
-        assert feat.shape[-1] == 80
+        assert energy.ndim == 2
+        assert energy.shape[0] == 2
+
+    def test_custom_n_fft(self):
+        module = self._make_module(n_fft=512)
+        speech, speech_len = self._make_speech()
+        feat, _ = module(speech, speech_len)
+        assert feat.shape[-1] == 257  # 512//2 + 1
 
     def test_repr(self):
         module = self._make_module()
         r = repr(module)
-        assert "Speech2MelSpec" in r
+        assert "Speech2LinearSpec" in r

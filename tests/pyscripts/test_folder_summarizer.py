@@ -1,3 +1,8 @@
+import pytest
+
+torch = pytest.importorskip("torch")
+
+
 class TestFolderSummarizerImport:
     def test_module_importable(self):
         import speechain.pyscripts.folder_summarizer as fs

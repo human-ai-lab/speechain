@@ -1,4 +1,8 @@
+import inspect
+
 import pytest
+
+torch = pytest.importorskip("torch")
 
 
 class TestBlockIteratorImport:
@@ -8,8 +12,6 @@ class TestBlockIteratorImport:
         assert BlockIterator is not None
 
     def test_is_class(self):
-        import inspect
-
         from speechain.iterator.block import BlockIterator
 
         assert inspect.isclass(BlockIterator)

@@ -1,8 +1,9 @@
 import pytest
 
 try:
-    import torchaudio  # noqa: F401
     from unittest.mock import MagicMock
+
+    import torchaudio  # noqa: F401
 
     if isinstance(torchaudio, MagicMock):
         raise ImportError("torchaudio is mocked")

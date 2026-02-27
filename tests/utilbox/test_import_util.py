@@ -64,7 +64,7 @@ class TestGetIdlePort:
 
 class TestGetIdleGpu:
     def test_skip_if_no_gpu(self):
-        import torch
+        torch = pytest.importorskip("torch")
 
         if not torch.cuda.is_available():
             pytest.skip("No GPU available")

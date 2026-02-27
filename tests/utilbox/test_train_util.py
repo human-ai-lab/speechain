@@ -1,15 +1,8 @@
 """Tests for speechain/utilbox/train_util.py"""
 
-import sys
-from unittest.mock import MagicMock
-
 import pytest
 
 torch = pytest.importorskip("torch")
-
-# Mock speechain.criterion.abs before importing train_util, since it may pull in
-# heavy dependencies not required for the functions under test.
-sys.modules.setdefault("speechain.criterion.abs", MagicMock())
 
 from speechain.utilbox.train_util import (
     float_near_round,

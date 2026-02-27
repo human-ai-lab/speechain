@@ -13,7 +13,7 @@ from unittest.mock import MagicMock
 import pytest
 
 
-def pytest_collection_modifyitems(items):
+def pytest_collection_modifyitems(config, items):
     torchaudio_mocked = isinstance(sys.modules.get("torchaudio"), MagicMock)
     if torchaudio_mocked:
         skip_marker = pytest.mark.skip(
