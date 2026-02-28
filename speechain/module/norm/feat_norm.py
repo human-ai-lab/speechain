@@ -472,7 +472,7 @@ class FeatureNormalization(Module):
         if epoch is None or not hasattr(self, f"{prefix}_batch"):
             self.register_buffer(
                 f"{prefix}_batch",
-                torch.LongTensor([1]).cuda(device=curr_aver_mean.device),
+                torch.LongTensor([1]).to(device=curr_aver_mean.device),
             )
         elif epoch <= self.max_epoch_num:
             self.register_buffer(

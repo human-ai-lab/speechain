@@ -65,7 +65,7 @@ class TestARTTSDecoder:
         batch, feat_len_val, feat_dim = 2, 20, 80
         feat = torch.randn(batch, feat_len_val, feat_dim)
         feat_len = torch.tensor([feat_len_val, feat_len_val // 2])
-        enc_text = torch.randn(batch, 15, 64)
+        enc_text = torch.randn(batch, 15, 80)  # 80 = n_mels = actual d_model after input_size override
         enc_text_mask = torch.ones(batch, 1, 15, dtype=torch.bool)
         (
             pred_stop,

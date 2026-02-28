@@ -41,9 +41,8 @@ class TestEncoderClassifier:
 
     def test_encode_batch(self):
         batch_size = 2
-        seq_len = 100
-        mel_channels = 80
-        x = torch.randn(batch_size, seq_len, mel_channels)
+        seq_len = 16000  # 1 second of raw waveform at 16kHz (encode_batch expects raw waveforms)
+        x = torch.randn(batch_size, seq_len)
         out = self.ecapa_model.encode_batch(x)
         assert out.shape == (batch_size, 192)
         assert torch.allclose(torch.norm(out, p=2, dim=1), torch.ones(batch_size))

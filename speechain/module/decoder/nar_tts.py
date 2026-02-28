@@ -222,15 +222,18 @@ class FastSpeech2Decoder(Module):
         duration_zero_mask = duration == 0
 
         # round the phoneme duration to the nearest integer
-        duration = torch.clamp(
-            duration,
-            min=round(min_frame_num / self.reduction_factor),
-            max=(
-                None
-                if max_frame_num is None
-                else round(max_frame_num / self.reduction_factor)
-            ),
+        clamp_min = (
+            None
+            if min_frame_num is None
+            else round(min_frame_num / self.reduction_factor)
         )
+        clamp_max = (
+            None
+            if max_frame_num is None
+            else round(max_frame_num / self.reduction_factor)
+        )
+        if clamp_min is not None or clamp_max is not None:
+            duration = torch.clamp(duration, min=clamp_min, max=clamp_max)
         duration = torch.where(duration_zero_mask, 0, duration)
         return duration
 
