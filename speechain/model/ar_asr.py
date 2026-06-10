@@ -1031,7 +1031,8 @@ class ARASR(Model):
         # only register if we have instance reports to show
         if instance_report_dict:
             self.register_instance_reports(
-                md_list_dict=instance_report_dict, extra_string_list=align_table_list if align_table_list else None
+                md_list_dict=instance_report_dict,
+                extra_string_list=align_table_list if align_table_list else None,
             )
 
         # not return the supervised metrics in the decoding-only mode

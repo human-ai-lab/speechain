@@ -26,6 +26,7 @@ class SpeechBrainWrapper(object):
         # Check for NaN/Inf in features - if present, this indicates a problem with the model
         if not torch.isfinite(feat).all():
             import warnings
+
             warnings.warn(
                 "Non-finite values (NaN/Inf) detected in mel-spectrogram features! "
                 "This indicates numerical instability in the TTS model. "
@@ -33,7 +34,7 @@ class SpeechBrainWrapper(object):
             )
             # Convert NaN to zero as a last resort to avoid crashing
             feat = torch.nan_to_num(feat, nan=0.0, posinf=0.0, neginf=0.0)
-        
+
         wav = self.vocoder.decode_batch(feat.transpose(-2, -1))
         # wav output is (batch, time) after decode_batch
         # add channel dimension back: (batch, time) -> (batch, time, 1)

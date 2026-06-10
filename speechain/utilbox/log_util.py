@@ -13,9 +13,8 @@ from contextlib import contextmanager
 import numpy as np
 import torch
 
-from speechain.utilbox import humanfriendly
-
 from speechain.model.abs import Model
+from speechain.utilbox import humanfriendly
 
 
 @contextmanager

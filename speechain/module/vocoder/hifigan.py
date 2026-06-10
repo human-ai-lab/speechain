@@ -11,11 +11,11 @@ Authors:
 """
 
 import os
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn.utils import weight_norm, remove_weight_norm
-
+from torch.nn.utils import remove_weight_norm, weight_norm
 
 # Default HiFi-GAN configuration (LJSpeech)
 HIFIGAN_DEFAULT_CONFIG = {
@@ -325,8 +325,10 @@ class HiFiGAN(nn.Module):
             elif mel.size(1) == self.in_channels:
                 pass  # Already in correct format
             else:
-                raise ValueError(f"Mel spectrogram has unexpected shape: {mel.shape}. "
-                               f"Expected (batch, {self.in_channels}, time) or (batch, time, {self.in_channels})")
+                raise ValueError(
+                    f"Mel spectrogram has unexpected shape: {mel.shape}. "
+                    f"Expected (batch, {self.in_channels}, time) or (batch, time, {self.in_channels})"
+                )
 
         with torch.no_grad():
             audio = self.forward(mel)

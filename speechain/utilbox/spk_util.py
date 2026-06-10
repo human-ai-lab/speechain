@@ -4,11 +4,10 @@ from typing import Dict, Tuple
 import numpy as np
 import torch
 import torchaudio
+from tqdm import tqdm
 
 # from speechbrain.pretrained import EncoderClassifier
 from speechain.module.encoder.speaker import EncoderClassifier  # New module
-from tqdm import tqdm
-
 from speechain.utilbox.data_loading_util import read_data_by_path
 from speechain.utilbox.data_saving_util import save_data_by_format
 from speechain.utilbox.import_util import parse_path_args

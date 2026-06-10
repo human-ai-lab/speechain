@@ -288,10 +288,11 @@ class FastSpeech2Decoder(Module):
                 feat, feat_len = self.feat_normalize(
                     feat, feat_len, group_ids=spk_ids, epoch=epoch
                 )
-            
+
             # Check for NaN/Inf in input features (data validation)
             if self.training and not torch.isfinite(feat).all():
                 import logging
+
                 logger = logging.getLogger(__name__)
                 logger.error(
                     f"[Data Validation] Input mel-spectrogram features contain NaN/Inf!\n"

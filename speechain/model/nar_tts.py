@@ -446,9 +446,10 @@ class FastSpeech2(Model):
             if not torch.isfinite(pred_duration).all():
                 nan_detected = True
                 nan_info.append("pred_duration")
-            
+
             if nan_detected:
                 import logging
+
                 logger = logging.getLogger(__name__)
                 logger.error(
                     f"[NaN Detection] Model outputs contain NaN/Inf in: {', '.join(nan_info)}\n"

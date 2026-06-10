@@ -1097,7 +1097,9 @@ class Runner(object):
                     # whether to skip the model optimization part
                     if not args.no_optim:
                         # skip optimization and metric logging when loss is not finite
-                        loss_value = losses.get("loss") if isinstance(losses, dict) else None
+                        loss_value = (
+                            losses.get("loss") if isinstance(losses, dict) else None
+                        )
                         if loss_value is None or not torch.isfinite(loss_value):
                             if logger is not None:
                                 logger.warning(
@@ -1919,7 +1921,11 @@ class Runner(object):
                     )
 
                 # load the target model parameters
-                model.load_state_dict(torch.load(model_path, map_location=model.device, weights_only=False))
+                model.load_state_dict(
+                    torch.load(
+                        model_path, map_location=model.device, weights_only=False
+                    )
+                )
 
                 # start the testing process
                 cls.test(
