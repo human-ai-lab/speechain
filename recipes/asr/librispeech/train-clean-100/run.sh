@@ -9,10 +9,11 @@ if [ -z "${SPEECHAIN_ROOT}" ] || [ -z "${SPEECHAIN_PYTHON}" ];then
 fi
 recipe_run_root=${SPEECHAIN_ROOT}/recipes/run.sh
 
-# please manually change the following arguments everytime you dump a new dataset
-task=asr
-dataset=librispeech
-subset='train-clean-100'
+# Automatically detect task, dataset, and subset from current script location
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+subset=$(basename "${SCRIPT_DIR}")
+dataset=$(basename "$(dirname "${SCRIPT_DIR}")")
+task=$(basename "$(dirname "$(dirname "${SCRIPT_DIR}")")")
 
 
 function print_help_message {
@@ -34,7 +35,7 @@ function print_help_message {
     [--ngpu NGPU] \\                                        # The value of 'ngpu' given to runner.py (default: none)
     [--gpus GPUS] \\                                        # The value of 'gpus' given to runner.py (default: none)
     --train TRAIN \\                                        # Whether to activate training mode (default: false)
-    --test TEST                                            # Whether to activate testing mode (default: false)" >&2
+    --test TEST                                             # Whether to activate testing mode (default: false)" >&2
   exit 1
 }
 

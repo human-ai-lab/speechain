@@ -59,8 +59,60 @@ def remove_representer(parent_node, reference, curr_key=None):
     """
 
     def get_reference_value(_ref: str):
-        # Get the reference key
+        import re
+
+        # Get the reference key (strip the angle brackets)
         ref_key = _ref[1:-1]
+
+        # Check for arithmetic expressions (containing operators with spaces)
+        arithmetic_pattern = r"^(.+?)\s*([+\-*/])\s*(.+)$"
+        arithmetic_match = re.match(arithmetic_pattern, ref_key)
+
+        if arithmetic_match:
+            # Handle arithmetic expression like "1 - ctc_weight" or "ctc_weight * 2"
+            left_operand = arithmetic_match.group(1).strip()
+            operator = arithmetic_match.group(2)
+            right_operand = arithmetic_match.group(3).strip()
+
+            # Resolve left operand (could be a number or a reference)
+            try:
+                left_value = float(left_operand)
+            except ValueError:
+                if left_operand not in reference:
+                    raise KeyError(
+                        f"Reference key '{left_operand}' not found in config"
+                    )
+                left_value = reference[left_operand]
+                if hasattr(left_value, "tag"):
+                    raise AssertionError(
+                        f"{left_operand} should be clarified before {ref_key}!"
+                    )
+
+            # Resolve right operand (could be a number or a reference)
+            try:
+                right_value = float(right_operand)
+            except ValueError:
+                if right_operand not in reference:
+                    raise KeyError(
+                        f"Reference key '{right_operand}' not found in config"
+                    )
+                right_value = reference[right_operand]
+                if hasattr(right_value, "tag"):
+                    raise AssertionError(
+                        f"{right_operand} should be clarified before {ref_key}!"
+                    )
+
+            # Evaluate the arithmetic expression
+            if operator == "+":
+                return left_value + right_value
+            elif operator == "-":
+                return left_value - right_value
+            elif operator == "*":
+                return left_value * right_value
+            elif operator == "/":
+                return left_value / right_value
+
+        # Handle indexed references like "key[0][1]"
         if "[" in ref_key and "]" in ref_key:
             assert ref_key.count("[") == ref_key.count(
                 "]"
@@ -81,6 +133,9 @@ def remove_representer(parent_node, reference, curr_key=None):
                 ), f"{ref_key_indices} should be clarified before {ref_key}!"
                 reference_value = reference_value[idx]
         else:
+            # Simple key reference
+            if ref_key not in reference:
+                raise KeyError(f"Reference key '{ref_key}' not found in config")
             assert not hasattr(
                 reference[ref_key], "tag"
             ), f"{reference[ref_key]} should be clarified before {ref_key}!"

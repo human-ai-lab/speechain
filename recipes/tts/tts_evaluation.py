@@ -99,6 +99,9 @@ def calculate_metric(idx2hypo_refer_list: List[str], tgt_metric: str = 'mcd'):
         elif tgt_metric == 'log-f0':
             hypo_feat = convert_wav_to_pitch(hypo_wav, sr=hypo_sample_rate, hop_length=0.0125, continuous_f0=False)
             refer_feat = convert_wav_to_pitch(refer_wav, sr=refer_sample_rate, hop_length=0.0125, continuous_f0=False)
+            # Reshape to 2D for DTW (fastdtw expects 2D arrays)
+            hypo_feat = hypo_feat.reshape(-1, 1)
+            refer_feat = refer_feat.reshape(-1, 1)
         else:
             raise NotImplementedError
 
@@ -111,6 +114,9 @@ def calculate_metric(idx2hypo_refer_list: List[str], tgt_metric: str = 'mcd'):
             coeff = 10 / np.log(10) * np.sqrt(2)
             output[idx] = coeff * np.mean(np.sqrt(np.sum((hypo_feat - refer_feat) ** 2, axis=1)))
         else:
+            # Flatten back to 1D for log-f0 calculation
+            hypo_feat = hypo_feat.flatten()
+            refer_feat = refer_feat.flatten()
             try:
                 # Get voiced part of log-f0
                 nonzero_idxs = np.where((hypo_feat != 0) & (refer_feat != 0))[0]

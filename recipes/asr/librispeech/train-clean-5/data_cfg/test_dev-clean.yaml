@@ -1,7 +1,7 @@
 ##############################################################################
-# Testing: dev-clean of LibriSpeech
-# Authors: Heli Qi
-# Description: This configuration is used to replace data_cfg in exp_cfg for tuning the inference hyperparamters on dev-clean-2
+# Testing: dev-clean-2 of LibriSpeech
+# Authors: Bagus Tris Atmaja
+# Description: This configuration is used to replace data_cfg in exp_cfg for tuning the inference hyperparameters on dev-clean-2
 # ############################################################################
 
 

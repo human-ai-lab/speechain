@@ -171,6 +171,12 @@ More details on how to dump a dataset can be found [here](https://github.com/bag
          specify your desired location by appending `--train_result_path {your-target-path}` to `bash run.sh`.  
          In this example, `bash run.sh --exp_cfg 5-bpe1k_conformer-small_lr2e-3 --train_result_path /a/b/c`
          will save results to `/a/b/c/5-bpe1k_conformer-small_lr2e-3`.
+      3. Dev-clean is not calculated by default (to save computation time). After training has completed, run evaluation on `dev-clean`:
+         ```bash
+         cd ${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-clean-100
+         bash run.sh --train false --exp_cfg exp_cfg/100-bpe5k_conformer-large_lr2e-3 \
+             --data_cfg data_cfg/test_dev-clean.yaml
+         ```
 
 ### Creating a new configuration for a non-existing dataset  
 

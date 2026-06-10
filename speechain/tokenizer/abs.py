@@ -93,7 +93,7 @@ class Tokenizer(ABC):
         """
         pass
 
-    def tensor2text(self, tensor: torch.LongTensor) -> str:
+    def tensor2text(self, tensor: any) -> str:
         """This functions decodes a text tensor into a human-friendly string.
 
         The default implementation transforms each token index in the input tensor to the token string by `
@@ -104,14 +104,19 @@ class Tokenizer(ABC):
         to decode the input tensor rather than the built-in `self.idx2token`, please override this function.
 
         Args:
-            tensor: torch.LongTensor
-                1D integer torch.Tensor that contains the token indices of the sentence to be decoded.
+            tensor: torch.LongTensor or list
+                1D integer torch.Tensor or list that contains the token indices of the sentence to be decoded.
 
         Returns:
             The string of the decoded sentence.
         """
         token_list = []
-        for idx in tensor.tolist():
+        if hasattr(tensor, "tolist"):
+            seq = tensor.tolist()
+        else:
+            seq = tensor
+
+        for idx in seq:
             if idx in [self.sos_eos_idx, self.ignore_idx]:
                 continue
             # the space tokens will be replaced by a blank

@@ -34,7 +34,7 @@ function print_help_message {
     [--character_coverage CHARACTER_COVERAGE] \\          # The character_coverage argument for building sentencepiece tokenizer model. (default: 1.0)
     [--split_by_whitespace SPLIT_BY_WHITESPACE] \\        # The split_by_whitespace argument for building sentencepiece tokenizer model. (default: true)
     [--separator SEPARATOR] \\                            # The separator used to separate the 'subsets' arguments from a string into an array of string. (default: ',')
-    [--dump_part DUMP_PART]                              # Which part of LibriSpeech you would like to dump. '100' means 'train-clean-100'; '460' means 'train-clean-100' + 'train-clean-360'; '960' means 'train-clean-100' + 'train-clean-360' + 'train-other-500'. 'dev-clean', 'dev-clean-5', 'dev-other', 'test-clean', 'test-clean-5', test-other' will be dumped for all options. (default: '960')" >&2
+    [--dump_part DUMP_PART]                               # Which part of LibriSpeech you would like to dump. '100' means 'train-clean-100'; '460' means 'train-clean-100' + 'train-clean-360'; '960' means 'train-clean-100' + 'train-clean-360' + 'train-other-500'. 'dev-clean', 'dev-clean-5', 'dev-other', 'test-clean', 'test-clean-5', test-other' will be dumped for all options. (default: '960')" >&2
   exit 1
 }
 
@@ -223,7 +223,7 @@ case "${dump_part}" in
     ;;
   960)
     subsets="train-clean-100 train-clean-360 train-other-500"
-    subsets_args="train-clean-100${separator}train-clean-360${separator}train-other-500${separator}"
+    subsets_args="train-clean-100${separator}train-clean-360${separator}train-other-500"
     vocab_src_subsets="${subsets} train-clean-460 train-960 dev-clean dev-clean-2 dev-other dev test-clean test-other"
 
     if [ ${token_type} == 'sentencepiece' ] && [ -z ${vocab_size} ]; then
