@@ -465,7 +465,7 @@ class FastSpeech2Decoder(Module):
             # ensure at least 3 frames to avoid conv1d kernel size errors (kernel_size=3)
             min_frames = 3
             total_frames = frame_counts.sum()
-            if total_frames < min_frames:
+            if frame_counts.numel() > 0 and total_frames < min_frames:
                 frame_counts[0] = frame_counts[0] + (min_frames - total_frames)
             # expand the phoneme embeddings by the number of frames for each token
             expand_enc_text_list.append(

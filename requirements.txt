@@ -16,4 +16,4 @@ torchaudio
 torchvision
 tqdm
 textgrid
-editdistance
+edit-distance

@@ -1096,11 +1096,20 @@ class Runner(object):
 
                     # whether to skip the model optimization part
                     if not args.no_optim:
-                        # skip optimization and metric logging when loss is not finite
-                        loss_value = (
-                            losses.get("loss") if isinstance(losses, dict) else None
-                        )
-                        if loss_value is None or not torch.isfinite(loss_value):
+                        # skip optimization when any optimized loss is non-finite
+                        # respect each scheduler's optim_loss key (defaults to 'loss')
+                        if isinstance(losses, dict):
+                            loss_values = [
+                                losses.get(
+                                    sche.optim_loss
+                                    if sche.optim_loss is not None
+                                    else "loss"
+                                )
+                                for sche in optim_sches.values()
+                            ]
+                        else:
+                            loss_values = [None]
+                        if any(v is None or not torch.isfinite(v) for v in loss_values):
                             if logger is not None:
                                 logger.warning(
                                     f"Rank no.{args.rank} meets non-finite loss at step no.{step}! "

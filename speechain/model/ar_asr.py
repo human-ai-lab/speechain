@@ -987,7 +987,7 @@ class ARASR(Model):
             )
 
             # --- 4. Supervised Metrics Calculation (Reference is involved here)  --- #
-            if not decode_only:
+            if not decode_only and text is not None:
                 # obtain the cer and wer metrics
                 cer, wer = self.error_rate(hypo_text=hypo_text[i], real_text=text[i])
                 i_num, d_num, s_num, align_table = get_word_edit_alignment(

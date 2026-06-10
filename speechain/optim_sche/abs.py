@@ -213,6 +213,7 @@ class OptimScheduler(ABC):
                             )
                         if self.scaler is not None:
                             self.scaler.update()
+                        self.optimizer.zero_grad()
                         return
                     # backward the loss in either the amp mode or the normal mode
                     (
