@@ -1,0 +1,216 @@
+
+###################################
+# Experiment Parameters and setup #
+###################################
+# dataset-related
+dataset_path: /home/ldap-users-2/veton-lu/data
+dataset: albanian_asr
+train_set: train_full
+valid_set: dev_full
+
+# waveform-related
+wav_format: meta
+sample_rate: 16000
+
+# tokenizer-related
+txt_format: no-punc
+vocab_subset: train_full
+token_type: char
+token_num: char
+
+# batch-related
+batch_len: 3.0e5
+
+# model-related
+ctc_weight: 0.5
+label_smoothing: 0.05
+d_model: 128
+num_heads: 4
+fdfwd_dim: 512
+dropout: 0.2
+
+# optimizer-related
+warmup_steps: 2000
+
+# running-related
+seed: 0
+num_workers: 1
+pin_memory: False
+non_blocking: False
+
+# gradient-related
+accum_grad: 2
+ft_factor: 1.0
+grad_clip: 5.0
+
+# multi-GPU-related
+ngpu: 1 # please change ngpu based on the situation of your machine
+gpus: null # null means the GPUs with the largest free memory will be
+# training-related
+train: True
+best_model_selection: !tuple (valid, accuracy, max, 10)
+early_stopping_patience: 15
+num_epochs: 100
+
+# snapshot-related
+visual_snapshot_number: 3
+visual_snapshot_interval: 5
+
+# testing-related
+test: False
+test_model: 10_valid_accuracy_average
+
+# This argument is shared by data_cfg and train_cfg
+data_root: /home/ldap-users-2/veton-lu/data/albanian_asr
+
+
+
+#################################
+# Model Inference Configuration #
+#################################
+infer_cfg:
+  shared_args:
+    beam_size: 16
+  exclu_args:
+    - ctc_weight: 0.2
+      lm_weight: 0.1
+    - ctc_weight: 0.2
+      lm_weight: 0.2
+    - ctc_weight: 0.2
+      lm_weight: 0.4
+    - ctc_weight: 0.2
+      lm_weight: 0.6
+
+
+# Data Loading Configuration
+data_cfg:
+  train:
+    type: block.BlockIterator
+    conf:
+      dataset_type: speech_text.SpeechTextDataset
+      dataset_conf:
+        main_data:
+          feat: !ref <data_root>/<wav_format>/<train_set>/idx2wav
+          text: !ref <data_root>/<wav_format>/<train_set>/idx2<txt_format>_text
+        use_speed_perturb: True
+
+      data_len: !ref <data_root>/<wav_format>/<train_set>/idx2wav_len
+      shuffle: True
+      is_descending: True
+      batch_len: !ref <batch_len>
+
+  valid:
+    type: abs.Iterator
+    conf:
+      dataset_type: speech_text.SpeechTextDataset
+      dataset_conf:
+        main_data:
+          feat: !ref <data_root>/<wav_format>/<valid_set>/idx2wav
+          text: !ref <data_root>/<wav_format>/<valid_set>/idx2<txt_format>_text
+
+      shuffle: False
+      data_len: !ref <data_root>/<wav_format>/<valid_set>/idx2wav_len
+
+  test:
+    test_full:
+      type: abs.Iterator
+      conf:
+        dataset_type: speech_text.SpeechTextDataset
+        dataset_conf:
+          main_data:
+            feat: !ref <data_root>/<wav_format>/test_full/idx2wav
+            text: !ref <data_root>/<wav_format>/test_full/idx2<txt_format>_text
+
+        data_len: !ref <data_root>/<wav_format>/test_full/idx2wav_len
+        shuffle: False
+
+
+# Model Construction Configuration
+train_cfg:
+  model:
+    model_type: ar_asr.ARASR
+    model_conf:
+      customize_conf:
+        ctc_weight: !ref <ctc_weight>
+        token_type: !ref <token_type>
+        token_path: !ref <data_root>/<token_type>/<vocab_subset>/<token_num>/<txt_format>
+
+    module_conf:
+      frontend:
+        type: frontend.speech2mel.Speech2MelSpec
+        conf:
+          sr: !ref <sample_rate>
+          preemphasis: 0.97
+          hop_length: 0.010
+          win_length: 0.025
+          n_mels: 80
+
+      normalize:
+        norm_type: utterance
+        mean_norm: True
+        std_norm: True
+
+      enc_prenet:
+        type: prenet.conv2d.Conv2dPrenet
+        conf:
+          conv_dims:
+            - !ref <d_model>
+            - !ref <d_model>
+          conv_kernel: 3
+          conv_stride: 2
+          conv_batchnorm: true
+          conv_activation: LeakyReLU
+          lnr_dims: !ref <d_model>
+
+      encoder:
+        type: conformer.encoder.ConformerEncoder
+        conf:
+          posenc_dropout: !ref <dropout>
+          emb_scale: False
+          d_model: !ref <d_model>
+          num_heads: !ref <num_heads>
+          num_layers: 8
+          att_dropout: !ref <dropout>
+          fdfwd_dim: !ref <fdfwd_dim>
+          fdfwd_activation: GELU
+          fdfwd_dropout: !ref <dropout>
+          res_dropout: !ref <dropout>
+          layernorm_first: true
+
+      dec_emb:
+        type: prenet.embed.EmbedPrenet
+        conf:
+          embedding_dim: !ref <d_model>
+
+      decoder:
+        type: transformer.decoder.TransformerDecoder
+        conf:
+          posenc_dropout: !ref <dropout>
+          posenc_scale: false
+          emb_layernorm: true
+          emb_scale: false
+          d_model: !ref <d_model>
+          num_heads: !ref <num_heads>
+          num_layers: 4
+          att_dropout: !ref <dropout>
+          fdfwd_dim: !ref <fdfwd_dim>
+          fdfwd_activation: GELU
+          fdfwd_dropout: !ref <dropout>
+          res_dropout: !ref <dropout>
+          layernorm_first: true
+
+    criterion_conf:
+      ce_loss:
+        label_smoothing: !ref <label_smoothing>
+
+  optim_sches:
+    type: noam.Noamlr
+    conf:
+      optim_type: Adam
+      optim_conf:
+        lr: 0.002
+        betas:
+          - 0.9
+          - 0.98
+        eps: 1.0e-9
+      warmup_steps: !ref <warmup_steps>

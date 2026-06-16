@@ -1,0 +1,138 @@
+###############################################################################
+# Model: Transformer Character LM
+# Language: Albanian
+# Training text: Wikipedia external text + oversampled Common Voice train text
+###############################################################################
+
+data_root: /home/ldap-users-2/veton-lu/data/albanian_asr
+lm_train_set: wiki300k_cvtrainx20
+valid_set: dev_full
+test_set: test_full
+
+txt_format: no-punc
+token_type: char
+token_num: char
+vocab_subset: train_full
+
+batch_len: 12000
+
+label_smoothing: 0.0
+length_normalized: true
+d_model: 256
+num_heads: 4
+fdfwd_dim: 1024
+enc_layer_num: 6
+dropout: 0.1
+
+warmup_steps: 4000
+
+seed: 0
+train_num_workers: 0
+valid_num_workers: 0
+pin_memory: False
+non_blocking: False
+
+accum_grad: 2
+ft_factor: 1.0
+grad_clip: 5.0
+
+ngpu: 1
+gpus: null
+
+train: True
+best_model_selection:
+  - !tuple (valid, text_ppl, min, 5)
+  - !tuple (valid, loss, min, 5)
+early_stopping_patience: 4
+num_epochs: 15
+
+visual_snapshot_number: 3
+visual_snapshot_interval: 5
+
+test: False
+test_model: 5_valid_text_ppl_average
+
+##############################
+# Data Loading Configuration #
+##############################
+
+data_cfg:
+  train:
+    type: block.BlockIterator
+    conf:
+      dataset_type: speech_text.SpeechTextDataset
+      dataset_conf:
+        main_data:
+          text: !ref <data_root>/lm_text/<lm_train_set>_lm_text
+      shuffle: True
+      is_descending: True
+      batch_len: !ref <batch_len>
+
+  valid:
+    type: abs.Iterator
+    conf:
+      dataset_type: speech_text.SpeechTextDataset
+      dataset_conf:
+        main_data:
+          text: !ref <data_root>/lm_text/<valid_set>_lm_text
+      shuffle: False
+
+  test:
+    test_full:
+      type: abs.Iterator
+      conf:
+        dataset_type: speech_text.SpeechTextDataset
+        dataset_conf:
+          main_data:
+            text: !ref <data_root>/lm_text/<test_set>_lm_text
+        shuffle: False
+
+####################################
+# Model Construction Configuration #
+####################################
+
+train_cfg:
+  model:
+    model_type: lm.LM
+
+    model_conf:
+      customize_conf:
+        token_type: !ref <token_type>
+        token_path: !ref <data_root>/<token_type>/<vocab_subset>/<token_num>/<txt_format>
+
+    module_conf:
+      emb:
+        type: embed
+        conf:
+          embedding_dim: !ref <d_model>
+
+      encoder:
+        type: transformer
+        conf:
+          posenc_dropout: !ref <dropout>
+          posenc_scale: false
+          emb_layernorm: true
+          emb_scale: false
+          d_model: !ref <d_model>
+          num_heads: !ref <num_heads>
+          num_layers: !ref <enc_layer_num>
+          att_dropout: !ref <dropout>
+          fdfwd_dim: !ref <fdfwd_dim>
+          fdfwd_dropout: !ref <dropout>
+          res_dropout: !ref <dropout>
+          layernorm_first: true
+
+    criterion_conf:
+      length_normalized: !ref <length_normalized>
+      label_smoothing: !ref <label_smoothing>
+
+  optim_sches:
+    type: noam.Noamlr
+    conf:
+      optim_type: Adam
+      optim_conf:
+        betas:
+          - 0.9
+          - 0.98
+        eps: 1.0e-9
+      warmup_steps: !ref <warmup_steps>
