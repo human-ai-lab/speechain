@@ -1,17 +1,15 @@
-##############################################################################
-# Testing: dev-clean of LibriSpeech
-# Authors: Heli Qi
-# Description: This configuration is used to replace data_cfg in exp_cfg for tuning the inference hyperparamters on dev-clean
-# ############################################################################
+################################################################################
+# Testing: test_full of Albanian ASR
+# Description: This configuration is used to evaluate the final ASR model on the Albanian test split.
+################################################################################
 
 
 ###################################
 # Experiment Parameters and setup #
 ###################################
-# if your dumped dataset is outside the toolkit folder, please change dataset_path. There should be a folder named 'libritts' in dataset_path
 dataset_path: datasets/
-dataset: librispeech
-valid_dset: &valid_dset test-clean
+dataset: albanian_asr
+valid_dset: &valid_dset test_full
 
 wav_format: wav
 txt_format: no-punc

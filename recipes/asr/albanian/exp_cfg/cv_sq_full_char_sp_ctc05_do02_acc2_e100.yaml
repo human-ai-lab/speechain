@@ -3,7 +3,7 @@
 # Experiment Parameters and setup #
 ###################################
 # dataset-related
-dataset_path: /home/ldap-users-2/veton-lu/data
+dataset_path: datasets
 dataset: albanian_asr
 train_set: train_full
 valid_set: dev_full
@@ -61,7 +61,7 @@ test: False
 test_model: 10_valid_accuracy_average
 
 # This argument is shared by data_cfg and train_cfg
-data_root: /home/ldap-users-2/veton-lu/data/albanian_asr
+data_root: !ref <dataset_path>/<dataset>
 
 
 

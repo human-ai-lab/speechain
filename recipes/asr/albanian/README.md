@@ -22,8 +22,8 @@ Prepared splits:
 
 The dataset itself is not included in this repository.
 
-Local data root used during the experiments:
-/home/ldap-users-2/veton-lu/data/albanian_asr
+Recommended data root directory:
+datasets/albanian_asr
 
 ## ASR Model
 
