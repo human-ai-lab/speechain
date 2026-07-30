@@ -43,7 +43,7 @@ Anytime you encounter problems when using our toolkit, please don't hesitate to 
     - Gradient accumulation for mimicking the large-batch gradients by the ones on several small batches.  
     - Easy-to-set finetuning factor to scale down the learning rates without any modification of the scheduler configuration.  
 * **Model Evaluation:**
-    - Multi-level _.md_ evaluation reports (overall-level, group-level model, and sample-level) without any - yout misplacement.  
+    - Multi-level _.md_ evaluation reports (overall-level, group-level model, and sample-level) without any layout misplacement.  
     - Histogram visualization for the distribution of evaluation metrics.  
     - Top N bad case analysis for better model diagnosis.
 * **Model Inference:**
