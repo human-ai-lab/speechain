@@ -78,6 +78,7 @@ speechain/
 ├── snapshooter.py       # Figure generation for visualization
 ├── criterion/           # Loss functions
 ├── dataset/             # Data loading classes
+├── datasets/            # Shared dataset-dumping base classes & pyscripts
 ├── infer_func/          # Inference functions (beam search, TTS decoding)
 ├── iterator/            # Data batching iterators
 ├── model/               # Model definitions (ASR, TTS, LM)

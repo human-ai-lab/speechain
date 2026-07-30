@@ -352,7 +352,7 @@ Folder architecture is shown below:
         /tts        # Configuration files for TTS inference
             default.yaml          # Default generation with the HiFi-GAN vocoder
 ```
-For more details about the configuration files in `${SPEECHAIN_ROOT}/config/feat/`, please refer to the docstring of [${SPEECHAIN_ROOT}/datasets/pyscripts/feat_extractor.py](https://github.com/bagustris/SpeeChain/blob/main/datasets/pyscripts/feat_extractor.py).
+For more details about the configuration files in `${SPEECHAIN_ROOT}/config/feat/`, please refer to the docstring of [${SPEECHAIN_ROOT}/speechain/datasets/pyscripts/feat_extractor.py](https://github.com/bagustris/SpeeChain/blob/main/speechain/datasets/pyscripts/feat_extractor.py).
 
 For more details about the configuration files in `${SPEECHAIN_ROOT}/config/infer/`, please refer to the docstring of the corresponding inference function in [${SPEECHAIN_ROOT}/speechain/infer_func/](https://github.com/bagustris/SpeeChain/tree/main/config/infer).
 

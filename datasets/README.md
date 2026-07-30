@@ -24,12 +24,10 @@ If you want to contribute a new dataset, we would appreciate it if you could fol
 6. [**How to Contribute a New Dataset**](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-contribute-a-new-dataset)
 
 ## File System
-```
+**Note:** The shared Python code used by the dumping pipeline — the abstract base classes `meta_generator.py` & `meta_post_processor.py` and the fixed executable scripts in `pyscripts/` — is placed in [`${SPEECHAIN_ROOT}/speechain/datasets/`](https://github.com/bagustris/SpeeChain/tree/main/speechain/datasets) instead of this folder, so that it is installed together with the `speechain` package and covered by the CI checks.
+
 /datasets
-    /pyscripts                  # fixed .py scripts provided by the toolkit
     data_dumping.sh             # the shared .sh script across all the speech-text datasets. It contains the complete pipeline of data dumping.
-    meta_generator.py           # the abstract .py script used by each dataset to decide their own meta generation logic.
-    meta_post_processor.py      # the abstract .py script used by each dataset to decide their own meta post-processing logic.
     /{dataset_name}             # root folder of each dataset
         /data                       # main folder of each dataset (the folder name 'data' is shared across all the datasets)
             /wav                        # waveform folder (the folder name 'wav' is shared across all the datasets)
@@ -266,10 +264,10 @@ you could make the dumping pipeline of your target dataset by the following inst
 2. Run `bash data_dumping.sh --help` to familiarize yourself with the involved arguments.  
 3. Make a new folder in `${SPEECHAIN_ROOT}/datasets/` with the name as your target dataset.  
 4. Make a new ***data_download.sh*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to download your target dataset from the internet. Please download the dataset into `${SPEECHAIN_ROOT}/datasets/{dataset_name}/data/wav`.
-5. Make a new ***meta_generator.py*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to extract the metadata files of your target dataset. Please refer to `${SPEECHAIN_ROOT}/datasets/meta_generator.py` for instructions of how to override the pipeline of metadata generation.  
+5. Make a new ***meta_generator.py*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to extract the metadata files of your target dataset. Please refer to `${SPEECHAIN_ROOT}/speechain/datasets/meta_generator.py` for instructions of how to override the pipeline of metadata generation.  
 6. If needed, make a new ***meta_post_processor.py*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to post-process the extracted metadata files of all the subsets.   
 (e.g. combine _train-clean-100_ and _train-clean-360_ of _LibriSpeech_ into _train-clean-460_)
-Please refer to `${SPEECHAIN_ROOT}/datasets/meta_post_processor.py` for instructions of how to override the pipeline of metadata post-processing.  
+Please refer to `${SPEECHAIN_ROOT}/speechain/datasets/meta_post_processor.py` for instructions of how to override the pipeline of metadata post-processing.  
 7. Make a new ***run.sh*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to manipulate the dumping pipeline of your target dataset.   
 You could refer to the ones in the existing dataset folders as a template.
 

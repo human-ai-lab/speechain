@@ -11,16 +11,15 @@ from typing import Dict, List
 
 from tqdm import tqdm
 
-# Add parent directory and SPEECHAIN_ROOT to path to enable imports
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-speechain_root = os.path.dirname(parent_dir)
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
+# Add SPEECHAIN_ROOT to the path so that the speechain package can be imported
+# even when the toolkit is not installed into the current environment
+speechain_root = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 if speechain_root not in sys.path:
     sys.path.insert(0, speechain_root)
 
-from meta_generator import SpeechTextMetaGenerator
+from speechain.datasets.meta_generator import SpeechTextMetaGenerator
 from speechain.utilbox.data_loading_util import search_file_in_subfolder
 from speechain.utilbox.dump_util import en_text_process
 from speechain.utilbox.type_util import str2list

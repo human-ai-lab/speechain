@@ -180,7 +180,7 @@ if [ ! -d ${textgrid_path} ] || [ -z "$(ls -A ${textgrid_path})" ];then
   fi
 
   # Prepare .lab files
-  ${SPEECHAIN_PYTHON} "${SPEECHAIN_ROOT}"/datasets/pyscripts/lab_file_generator.py \
+  ${SPEECHAIN_PYTHON} "${SPEECHAIN_ROOT}"/speechain/datasets/pyscripts/lab_file_generator.py \
     --corpus_path ${corpus_path} \
     --lab_cover_flag ${lab_cover_flag} \
     --ncpu ${ncpu}
@@ -246,7 +246,7 @@ if [ -d ${textgrid_path} ] && [ -n "$(ls -A ${textgrid_path})" ];then
   fi
 
   # --- Generate idx2duration.json by .TextGrid Files --- #
-  ${SPEECHAIN_PYTHON} "${SPEECHAIN_ROOT}"/datasets/pyscripts/duration_calculator.py \
+  ${SPEECHAIN_PYTHON} "${SPEECHAIN_ROOT}"/speechain/datasets/pyscripts/duration_calculator.py \
       --data_path ${tgt_path}/${dataset_name}/data \
       --save_path ${tgt_path}/${dataset_name}/data/mfa/${save_folder_name} \
       --save_folder_name ${save_folder_name} \

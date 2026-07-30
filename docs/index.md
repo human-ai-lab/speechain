@@ -66,8 +66,6 @@ Anytime you encounter problems when using our toolkit, please don't hesitate to 
 │   ├── librispeech
 │   ├── libritts
 │   ├── ljspeech
-│   ├── meta_generator.py
-│   ├── meta_post_processor.py
 │   ├── mfa_preparation.sh
 │   └── vctk
 ├── docs                  # folder to build docs
@@ -87,6 +85,7 @@ Anytime you encounter problems when using our toolkit, please don't hesitate to 
 └── speechain             # directory for speechain toolkit code
     ├── criterion
     ├── dataset
+    ├── datasets            # shared dataset-dumping code (base classes & pyscripts)
     ├── infer_func
     ├── inference.py        # standalone inference engine for trained ASR/TTS models
     ├── iterator

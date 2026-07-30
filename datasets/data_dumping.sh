@@ -21,7 +21,7 @@ function print_help_message {
       [--sample_rate SAMPLE_RATE] \\                        # The sampling rate you want the waveforms to have. (default: none)
       [--spk_emb_model SPK_EMB_MODEL] \\                    # The model you want to use to extractor speaker embeddings from the raw waveforms. (default: none)
       [--token_type TOKEN_TYPE] \\                          # The type of the token you want your tokenizer to have. (default: char)
-      [--txt_format TXT_FORMAT] \\                          # The text processing format for the transcripts in the dataset. (default: normal)
+      [--txt_format TXT_FORMAT] \\                          # The text processing format for the transcripts in the dataset. (default: no-punc)
       [--ncpu NCPU] \\                                      # The number of processes used for all the multiprocessing jobs. (default: 8)
       [--ngpu NGPU] \\                                      # The number of GPUs used only for speaker embedding extraction. (default: 1)
       --dataset_name DATASET_NAME \\                        # The name of the dataset folder you want to dump.
@@ -38,7 +38,7 @@ function print_help_message {
 # --- Absolute Path References --- #
 # the following path don't need to be changed #
 # the absolute path of the toolkit main folder
-pyscript_root=${SPEECHAIN_ROOT}/datasets/pyscripts
+pyscript_root=${SPEECHAIN_ROOT}/speechain/datasets/pyscripts
 # the absolute path of the toolkit config folder
 config_root=${SPEECHAIN_ROOT}/config/feat
 # the absolute path of the current dataset folder

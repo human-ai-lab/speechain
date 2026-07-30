@@ -6,14 +6,14 @@
 import os
 import sys
 
-# Add parent directory and SPEECHAIN_ROOT to path to enable imports
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-speechain_root = os.path.dirname(parent_dir)
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
-if speechain_root not in sys.path:
-    sys.path.insert(0, speechain_root)
+# Add SPEECHAIN_ROOT and the datasets folder to the path so that the speechain
+# package and the sibling dataset scripts can be imported even when the toolkit
+# is not installed into the current environment
+datasets_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+speechain_root = os.path.dirname(datasets_dir)
+for _path in (speechain_root, datasets_dir):
+    if _path not in sys.path:
+        sys.path.insert(0, _path)
 
 from librispeech.meta_post_processor import LibriSpeechMetaPostProcessor
 

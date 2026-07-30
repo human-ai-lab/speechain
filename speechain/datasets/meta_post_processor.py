@@ -1,8 +1,9 @@
 """
-    Author: Heli Qi
-    Affiliation: NAIST
-    Date: 2022.11
+Author: Heli Qi
+Affiliation: NAIST
+Date: 2022.11
 """
+
 import argparse
 from abc import ABC, abstractmethod
 
@@ -21,10 +22,16 @@ class SpeechTextMetaPostProcessor(ABC):
         There is one shared general argument here: 'src_path'.
 
         """
-        parser = argparse.ArgumentParser(description='params')
-        group = parser.add_argument_group("General Arguments for Statistical Information Generation.")
-        group.add_argument('--src_path', type=str, required=True,
-                           help="The path where the original dataset is placed.")
+        parser = argparse.ArgumentParser(description="params")
+        group = parser.add_argument_group(
+            "General Arguments for Statistical Information Generation."
+        )
+        group.add_argument(
+            "--src_path",
+            type=str,
+            required=True,
+            help="The path where the original dataset is placed.",
+        )
         # Add customized arguments if needed
         parser = self.add_parse(parser)
         return parser.parse_args()
@@ -68,7 +75,7 @@ class SpeechTextMetaPostProcessor(ABC):
         """
         # --- 0. Argument Initialization --- #
         args = vars(self.parse())
-        src_path = args.pop('src_path')
+        src_path = args.pop("src_path")
 
         # --- 1. Metadata Post-processing --- #
         self.meta_post_process(src_path, **args)
@@ -76,5 +83,5 @@ class SpeechTextMetaPostProcessor(ABC):
 
 # For your personal stat_post_processor.py, please call the main function of your SpeechTextPostProcessor in the main
 # branch like the way below. (Note: don't forget to change SpeechTextPostProcessor() to YourPostProcessor())
-if __name__ == '__main__':
+if __name__ == "__main__":
     SpeechTextMetaPostProcessor().main()

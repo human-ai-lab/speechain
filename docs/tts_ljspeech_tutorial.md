@@ -142,7 +142,7 @@ python meta_post_processor.py
 ## Step 6: Generate Duration Data
 
 ```bash
-cd $SPEECHAIN_ROOT/datasets/pyscripts
+cd $SPEECHAIN_ROOT/speechain/datasets/pyscripts
 
 # Generate duration files for training
 python duration_calculator.py \
