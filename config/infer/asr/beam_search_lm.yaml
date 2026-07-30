@@ -1,0 +1,12 @@
+##############################################################################
+# ASR inference configuration: beam-search decoding with CTC & LM joint scoring (ASR-LM shallow fusion)
+# Note: using this configuration requires the language model used by your ASR model to be available
+# (i.e., 'lm_model_cfg' and 'lm_model_path' in model['customize_conf'] of your exp_cfg or the built-in
+# 'lm_model_cfg.yaml' and 'lm_model.pth' in your train_result_path).
+# Usage: bash run.sh --train false --exp_cfg {your-exp_cfg} --infer_cfg config/infer/asr/beam_search_lm.yaml
+# For the details of all available arguments, please refer to speechain/infer_func/beam_search.py
+# ############################################################################
+
+beam_size: 16
+ctc_weight: 0.3
+lm_weight: 0.6

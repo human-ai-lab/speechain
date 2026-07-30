@@ -1,0 +1,7 @@
+##############################################################################
+# ASR inference configuration: greedy decoding (ASR-only, no CTC/LM joint decoding)
+# Usage: bash run.sh --train false --exp_cfg {your-exp_cfg} --infer_cfg config/infer/asr/greedy_decoding.yaml
+# For the details of all available arguments, please refer to speechain/infer_func/beam_search.py
+# ############################################################################
+
+beam_size: 1

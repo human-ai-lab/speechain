@@ -8,7 +8,8 @@ ASR (Automatic Speech Recognition) is a technology that converts spoken language
 1. [Available Backbones](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#available-backbones)
 2. [Pretrained Models for Reproducibility](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#pretrained-models-for-reproducibility)
 3. [Training an ASR model](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#training-an-asr-model)
-4. [Creating your own ASR model](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#creating-your-own-asr-model)
+4. [Transcribing your own audio](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#transcribing-your-own-audio)
+5. [Creating your own ASR model](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#creating-your-own-asr-model)
 
 ## Available Backbones (WER with/without LM)
 <table>
@@ -257,6 +258,27 @@ More details on how to dump a dataset can be found [here](https://github.com/bag
       3. To access experimental results saved outside `${SPEECHAIN_ROOT}`, append `--train_result_path {your-target-path}` to `bash run.sh`.
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#table-of-contents)
+
+## Transcribing your own audio
+Once your ASR model is trained, you can transcribe your own audio files (wav/flac) directly with the standalone inference engine, without preparing any dataset metadata:
+```bash
+python speechain/inference.py \
+    --exp_path ${SPEECHAIN_ROOT}/recipes/asr/librispeech/train-clean-100/exp/100-bpe5k_conformer-small_lr2e-3 \
+    --test_model 10_valid_accuracy_average \
+    --infer_cfg "beam_size:16,ctc_weight:0.3" \
+    --audio /path/to/utterance1.wav /path/to/utterance2.flac \
+    --output_path ./transcripts
+```
+**Note:**  
+   1. `--exp_path` only needs to point to the experiment folder of your trained model (i.e., the folder containing `exp_cfg.yaml` and `models/`).  
+   2. `--infer_cfg` accepts either an inline _Dict_ string (as above) or an off-the-shelf configuration file such as `config/infer/asr/greedy_decoding.yaml`, `config/infer/asr/beam_search.yaml`, and `config/infer/asr/beam_search_lm.yaml`. If not given, the `infer_cfg` recorded in your `exp_cfg.yaml` is used.  
+   3. Multi-channel audio is downmixed to one channel, and the audio whose sampling rate is different from the model is resampled on the fly.  
+   4. The transcripts are printed in the terminal and, if `--output_path` is given, also saved to `transcripts.txt` in that folder.  
+
+For more details, please refer to [the standalone inference document](./inference.md).
+
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#table-of-contents)
+
 
 # How to create your own ASR model
 The detailed instructions for creating your own ASR model using SpeeChain are coming soon.

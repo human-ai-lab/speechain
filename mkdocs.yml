@@ -54,6 +54,7 @@ nav:
   - recipes.md
   - asr.md
   - tts.md
+  - inference.md
   - criterion.md
   - dataset.md
   - iterator.md

@@ -4,8 +4,10 @@ Affiliation: NAIST
 Date: 2022.07
 """
 
+import filecmp
 import os
 import shutil
+import warnings
 from typing import List
 
 import sentencepiece as spm
@@ -48,12 +50,22 @@ class SentencePieceTokenizer(Tokenizer):
         self.sp_model = spm.SentencePieceProcessor()
         self.sp_model.load(token_model)
 
-        # save the backup if copy_path is given
+        # save the backup if copy_path is given. the backup is only (re)made when it is absent or outdated
+        # so that the jobs which merely read the tokenizer model (e.g., standalone inference) don't keep
+        # rewriting it and are not interrupted by a read-only or shared copy_path.
         if copy_path is not None:
-            try:
-                shutil.copy(src=token_model, dst=os.path.join(copy_path, "token_model"))
-            except shutil.SameFileError:
-                pass
+            backup_model = os.path.join(parse_path_args(copy_path), "token_model")
+            if not os.path.exists(backup_model) or not filecmp.cmp(
+                token_model, backup_model, shallow=False
+            ):
+                try:
+                    shutil.copy(src=token_model, dst=backup_model)
+                # SameFileError is a subclass of OSError, so it is covered here as well
+                except OSError as save_error:
+                    warnings.warn(
+                        f"The backup of the sentencepiece model cannot be saved into {copy_path} "
+                        f"({save_error}), but the ongoing job is not affected."
+                    )
 
     def tensor2text(self, tensor: torch.LongTensor or List):
         """

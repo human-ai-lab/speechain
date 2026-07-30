@@ -5,6 +5,7 @@ Date: 2022.07
 """
 
 import os
+import warnings
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -64,13 +65,26 @@ class Tokenizer(ABC):
         else:
             self.space_idx = None
 
-        # save the backup if copy_path is given
+        # save the backup if copy_path is given. the backup is only (re)written when it is absent or
+        # outdated so that the jobs which merely read the vocabulary (e.g., standalone inference) don't
+        # keep rewriting it and are not interrupted by a read-only or shared copy_path.
         if copy_path is not None:
-            np.savetxt(
-                os.path.join(copy_path, "token_vocab"),
-                list(self.token2idx.keys()),
-                fmt="%s",
-            )
+            token_list = list(self.token2idx.keys())
+            backup_vocab = os.path.join(parse_path_args(copy_path), "token_vocab")
+            try:
+                with open(backup_vocab, mode="r", encoding="utf-8") as f:
+                    backup_is_updated = f.read().splitlines() == token_list
+            except OSError:
+                backup_is_updated = False
+
+            if not backup_is_updated:
+                try:
+                    np.savetxt(backup_vocab, token_list, fmt="%s")
+                except OSError as save_error:
+                    warnings.warn(
+                        f"The backup of the token vocabulary cannot be saved into {copy_path} "
+                        f"({save_error}), but the ongoing job is not affected."
+                    )
 
         # call the hook function for customized initialization
         self.tokenizer_init_fn(

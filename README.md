@@ -41,6 +41,10 @@ Below are the simple, most important features that SpeeChain can do. You may che
   * Multi-level _.md_ evaluation reports (overall-level, group-level model, and sample-level) without any layout misplacement. 
   * Histogram visualization for the distribution of evaluation metrics
   * TopN bad case analysis for better model diagnosis.
+* **Model Inference:**
+  * Standalone inference engine (`speechain/inference.py`) that applies a trained ASR/TTS model directly to your own inputs: transcribe your audio files (wav/flac) or synthesize your raw sentences with only the experiment folder of a trained model.
+  * Off-the-shelf inference configurations under `config/infer/` (greedy/beam-search/CTC-LM joint decoding for ASR; HiFi-GAN/Griffin-Lim vocoding for TTS) shared across recipes.
+  * Safe checkpoint loading by default (`torch.load` with `weights_only=True`) with an opt-in `--trust_checkpoint` fallback for legacy checkpoints.
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain#table-of-contents)
 

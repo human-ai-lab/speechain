@@ -28,6 +28,7 @@ from speechain.module.postnet.token import TokenPostnet
 from speechain.module.standalone.lm import LanguageModel
 from speechain.tokenizer.char import CharTokenizer
 from speechain.tokenizer.sp import SentencePieceTokenizer
+from speechain.utilbox.data_loading_util import load_model_state_dict
 from speechain.utilbox.eval_util import get_word_edit_alignment
 from speechain.utilbox.import_util import parse_path_args
 from speechain.utilbox.tensor_util import to_cpu
@@ -814,36 +815,46 @@ class ARASR(Model):
                 if "module_conf" in self.lm_model_cfg.keys():
                     self.lm_model_cfg = self.lm_model_cfg["module_conf"]
 
-                # update the built-in configuration yaml file
-                with open(
-                    os.path.join(self.result_path, "lm_model_cfg.yaml"),
-                    "w",
-                    encoding="utf-8",
-                ) as f:
-                    yaml.dump(self.lm_model_cfg, f, sort_keys=False)
+                # the lm must be placed on the same device as the asr model, which is not necessarily a GPU
                 self.lm = LanguageModel(
                     vocab_size=self.tokenizer.vocab_size, **self.lm_model_cfg
-                ).cuda(self.device)
+                ).to(self.device)
 
                 # use the built-in lm model if lm_model_path is not given
                 if self.lm_model_path is None:
                     self.lm_model_path = os.path.join(self.result_path, "lm_model.pth")
 
                 # load the parameters of the target lm
-                _lm_model_para = torch.load(
-                    parse_path_args(self.lm_model_path), map_location=self.device
+                _lm_model_para = load_model_state_dict(
+                    parse_path_args(self.lm_model_path),
+                    map_location=self.device,
+                    trust_checkpoint=True,
                 )
                 lm_model_para = OrderedDict()
                 for key, para in _lm_model_para.items():
                     if key.startswith("lm."):
                         key = key.replace("lm.", "", 1)
                     lm_model_para[key] = para
-
-                # update the built-in lm parameters and load them into the lm for inference
-                torch.save(
-                    lm_model_para, os.path.join(self.result_path, "lm_model.pth")
-                )
                 self.lm.load_state_dict(lm_model_para)
+
+                # keep the built-in copies of the lm configuration and parameters so that the following
+                # ASR-LM joint decoding jobs can find the lm without lm_model_cfg & lm_model_path.
+                # the copies are only made when they don't exist because re-dumping the parameters in every
+                # job is time-consuming (the checkpoint of an lm is usually large), and their failure
+                # (e.g., a read-only result_path) should not interrupt the ongoing inference.
+                _builtin_cfg_path = os.path.join(self.result_path, "lm_model_cfg.yaml")
+                _builtin_lm_path = os.path.join(self.result_path, "lm_model.pth")
+                try:
+                    if not os.path.exists(_builtin_cfg_path):
+                        with open(_builtin_cfg_path, "w", encoding="utf-8") as f:
+                            yaml.dump(self.lm_model_cfg, f, sort_keys=False)
+                    if not os.path.exists(_builtin_lm_path):
+                        torch.save(lm_model_para, _builtin_lm_path)
+                except OSError as save_error:
+                    warnings.warn(
+                        f"The built-in copies of the lm cannot be saved into {self.result_path} "
+                        f"({save_error}), but the ongoing inference is not affected."
+                    )
 
         outputs = dict()
         # --- 1. The 1st Pass: ASR Decoding by Beam Searching --- #

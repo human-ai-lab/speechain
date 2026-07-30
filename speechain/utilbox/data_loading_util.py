@@ -303,6 +303,52 @@ def search_file_in_subfolder(
     return sorted(candidates) if return_sorted else candidates
 
 
+def load_model_state_dict(
+    model_path: str,
+    map_location: Any = None,
+    trust_checkpoint: bool = False,
+) -> Dict[str, torch.Tensor]:
+    """Load the parameters of a model from a checkpoint file on the disk.
+
+    The checkpoints dumped by `speechain.monitor.Monitor` only contain the `state_dict()` of a Model
+    object, so they can be loaded in the safe mode of `torch.load()` (`weights_only=True`) where no
+    pickled Python object is executed. Loading a checkpoint in the unsafe mode is equivalent to running
+    the code embedded in it, so it is only done for the checkpoints that the caller declares trustworthy.
+
+    Args:
+        model_path (str):
+            The path of the checkpoint file to be loaded.
+        map_location (str or torch.device, optional):
+            The device where the loaded parameters are placed. Defaults to None.
+        trust_checkpoint (bool, optional):
+            Whether the checkpoint is allowed to be loaded in the unsafe mode if the safe mode fails.
+            Only set it to True for the checkpoints whose source you trust. Defaults to False.
+
+    Returns:
+        Dict[str, torch.Tensor]: The parameters of the model recorded in the given checkpoint.
+
+    Raises:
+        RuntimeError: If the checkpoint cannot be loaded safely and `trust_checkpoint` is False.
+    """
+    try:
+        return torch.load(model_path, map_location=map_location, weights_only=True)
+    except Exception as safe_load_error:
+        if not trust_checkpoint:
+            raise RuntimeError(
+                f"{model_path} cannot be loaded in the safe mode of torch.load(): {safe_load_error}\n"
+                f"It may be a checkpoint in an old format that contains pickled Python objects. "
+                f"Loading such a file executes the code inside it, so please make sure that you trust "
+                f"where it comes from and then enable the trust_checkpoint option "
+                f"(e.g., --trust_checkpoint for speechain/inference.py)."
+            ) from safe_load_error
+
+        warnings.warn(
+            f"{model_path} cannot be loaded in the safe mode of torch.load() ({safe_load_error}), "
+            f"so it is loaded in the unsafe mode where the pickled Python objects inside it are executed."
+        )
+        return torch.load(model_path, map_location=map_location, weights_only=False)
+
+
 def get_file_birthtime(file_path: str, readable_time: bool = False):
     """Get the creation time of a file.
 

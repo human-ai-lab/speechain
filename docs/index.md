@@ -43,17 +43,22 @@ Anytime you encounter problems when using our toolkit, please don't hesitate to 
     - Gradient accumulation for mimicking the large-batch gradients by the ones on several small batches.  
     - Easy-to-set finetuning factor to scale down the learning rates without any modification of the scheduler configuration.  
 * **Model Evaluation:**
-    - Multi-level _.md_ evaluation reports (overall-level, group-level model, and sample-level) without any - yout misplacement.  
+    - Multi-level _.md_ evaluation reports (overall-level, group-level model, and sample-level) without any layout misplacement.  
     - Histogram visualization for the distribution of evaluation metrics.  
     - Top N bad case analysis for better model diagnosis.
+* **Model Inference:**
+    - Standalone inference engine (`speechain/inference.py`) that applies a trained ASR/TTS model directly to your own inputs (audio files for ASR, raw sentences for TTS) with only the experiment folder of the model.  
+    - Off-the-shelf inference configurations under `config/infer/` (greedy/beam-search/CTC-LM joint decoding for ASR; HiFi-GAN/Griffin-Lim vocoding for TTS).  
+    - Safe checkpoint loading by default with an opt-in `--trust_checkpoint` fallback for legacy checkpoints.
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain#table-of-contents)
 
 ## Directory Structure
 
 ```shell
-├── config                # configuration for feature extraction
-│   └── feat
+├── config                # shared off-the-shelf configurations
+│   ├── feat              # configuration for acoustic feature extraction
+│   └── infer             # configuration for model inference (ASR decoding & TTS vocoding)
 ├── CONTRIBUTING.md       # convention for contributor
 ├── create_env.sh         # bash shell to create environment
 ├── datasets              # dataset folder, put data here, make softlink, or set in config file
@@ -83,6 +88,7 @@ Anytime you encounter problems when using our toolkit, please don't hesitate to 
     ├── criterion
     ├── dataset
     ├── infer_func
+    ├── inference.py        # standalone inference engine for trained ASR/TTS models
     ├── iterator
     ├── model
     ├── module

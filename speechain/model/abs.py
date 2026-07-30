@@ -17,7 +17,7 @@ import torch
 
 from speechain.module.abs import Module
 from speechain.module.transformer.pos_enc import PositionalEncoding
-from speechain.utilbox.data_loading_util import parse_path_args
+from speechain.utilbox.data_loading_util import load_model_state_dict, parse_path_args
 from speechain.utilbox.md_util import get_list_strings
 from speechain.utilbox.train_util import spk2tensor, text2tensor_and_len
 from speechain.utilbox.yaml_util import load_yaml
@@ -184,25 +184,29 @@ class Model(torch.nn.Module, ABC):
             for ptm in pretrained_model:
                 # argument checking
                 if isinstance(ptm, str):
-                    ptm = dict(path=parse_path_args(ptm))
+                    ptm = dict(path=ptm)
                 elif isinstance(ptm, Dict):
                     assert "path" in ptm.keys(), (
                         "If model['model_conf']['pretrained_model'] is given as a Dict, "
                         "please give a key named 'path' to specify where your pretrained model is placed."
                     )
-                    if os.path.exists(ptm["path"]):
-                        raise RuntimeError(
-                            f"The specified path of your pretrained model {ptm['path']} doesn't exist! "
-                            f"Please check the input path."
-                        )
+                    # copy the Dict to avoid modifying the input configuration in-place
+                    ptm = dict(ptm)
                 else:
                     raise TypeError(
                         f"The elements in model['model_conf']['pretrained_model'] must be either a string "
                         f"or a Dict, but got {ptm}"
                     )
 
-                _pt_model = torch.load(
-                    parse_path_args(ptm["path"]), map_location=self.device
+                ptm["path"] = parse_path_args(ptm["path"])
+                if not os.path.exists(ptm["path"]):
+                    raise RuntimeError(
+                        f"The specified path of your pretrained model {ptm['path']} doesn't exist! "
+                        f"Please check the input path."
+                    )
+
+                _pt_model = load_model_state_dict(
+                    ptm["path"], map_location=self.device, trust_checkpoint=True
                 )
                 mapping = ptm["mapping"] if "mapping" in ptm.keys() else None
                 if mapping is None:
