@@ -88,7 +88,7 @@ Runner (speechain/runner.py)          ← main entry point
   │     ├── Module (speechain/module/) ← encoder/, decoder/, frontend/, vocoder/, etc.
   │     └── Criterion (speechain/criterion/) ← loss functions, metrics
   ├── Iterator (speechain/iterator/)  ← batching by sequence length
-  │     └── Dataset (speechain/dataset/)
+  │     └── Dataset (speechain/datasets/)
   ├── OptimScheduler (speechain/optim_sche/) ← Noam, exponential decay
   └── Monitor (speechain/monitor.py)  ← TensorBoard, checkpointing, reports
 ```

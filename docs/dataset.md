@@ -1,1 +1,1 @@
-../speechain/dataset/README.md
+../speechain/datasets/README.md

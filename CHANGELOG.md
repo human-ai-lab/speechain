@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 ### ♻️ Code Refactoring
 
 - Move all the shared dataset-dumping Python code from the top-level `datasets/` folder into `speechain/datasets/` (issue #2): the abstract base classes (`meta_generator.py`, `meta_post_processor.py`) and the fixed executable scripts (`pyscripts/`). This resolves the import ambiguity with the HuggingFace `datasets` package and brings the code under the CI checks (Black & Ruff) that only scan the `speechain` directory. Per-dataset scripts under `datasets/{dataset_name}/` now import the base classes from the `speechain` package, and `datasets/data_dumping.sh` & `datasets/mfa_preparation.sh` point to the new script locations
+- Merge `speechain/dataset/` into `speechain/datasets/` so that all dataset-related code lives in a single sub-package instead of two confusing one-letter-apart directories. The `dataset_type` strings in existing experiment configuration files (e.g., `speech_text.SpeechTextDataset`) remain valid because only the hardcoded module prefix in `speechain/iterator/abs.py` is changed
 
 ### 💼 Other
 

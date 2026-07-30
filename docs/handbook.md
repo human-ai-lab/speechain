@@ -445,7 +445,7 @@ Based on the abstract class, many implementation classes are included in the sam
 ```
 
 Read more about [`/speechain/criterion`](./criterion.md)  
-Read more about [`/speechain/dataset`](./dataset.md)  
+Read more about [`/speechain/datasets`](./dataset.md)  
 Read more about [`/speechain/iterator`](./iterator.md)  
 Read more about [`/speechain/model`](./model.md)  
 Read more about [`/speechain/module`](./module.md)  
@@ -456,7 +456,7 @@ Read more about [`/speechain/tokenizer`](./tokenizer.md)
 
 
 ### How to customize my own data loading and batching strategy
-For how to customize your own data loading strategy, please refer to the [API document](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#api-document) of `/speechain/dataset`.  
+For how to customize your own data loading strategy, please refer to the [API document](https://github.com/bagustris/SpeeChain/tree/main/speechain/datasets#api-document) of `/speechain/datasets`.  
 
 For how to customize your own data batching, please refer to the [API document](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#api-document) of `/speechain/iterator`.  
 

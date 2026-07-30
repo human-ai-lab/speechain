@@ -84,8 +84,7 @@ Anytime you encounter problems when using our toolkit, please don't hesitate to 
 ├── setup.py
 └── speechain             # directory for speechain toolkit code
     ├── criterion
-    ├── dataset
-    ├── datasets            # shared dataset-dumping code (base classes & pyscripts)
+    ├── datasets            # dataset classes & shared dataset-dumping code
     ├── infer_func
     ├── inference.py        # standalone inference engine for trained ASR/TTS models
     ├── iterator

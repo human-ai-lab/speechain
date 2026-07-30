@@ -77,8 +77,7 @@ speechain/
 ├── monitor.py           # Training/testing monitors
 ├── snapshooter.py       # Figure generation for visualization
 ├── criterion/           # Loss functions
-├── dataset/             # Data loading classes
-├── datasets/            # Shared dataset-dumping base classes & pyscripts
+├── datasets/            # Dataset classes & shared dataset-dumping code (base classes & pyscripts)
 ├── infer_func/          # Inference functions (beam search, TTS decoding)
 ├── iterator/            # Data batching iterators
 ├── model/               # Model definitions (ASR, TTS, LM)

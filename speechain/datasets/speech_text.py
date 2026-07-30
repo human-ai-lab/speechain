@@ -15,7 +15,7 @@ import torch
 import torchaudio
 from g2p_en import G2p
 
-from speechain.dataset.abs import Dataset
+from speechain.datasets.abs import Dataset
 from speechain.tokenizer.g2p import abnormal_phns
 from speechain.utilbox.data_loading_util import load_idx2data_file, read_data_by_path
 from speechain.utilbox.feat_util import convert_wav_to_pitch
