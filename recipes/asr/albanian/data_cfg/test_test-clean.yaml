@@ -1,0 +1,38 @@
+################################################################################
+# Testing: test_full of Albanian ASR
+# Description: This configuration is used to evaluate the final ASR model on the Albanian test split.
+################################################################################
+
+
+###################################
+# Experiment Parameters and setup #
+###################################
+dataset_path: datasets/
+dataset: albanian_asr
+valid_dset: &valid_dset test_full
+
+wav_format: wav
+txt_format: no-punc
+
+
+
+##############################
+# Data Loading Configuration #
+##############################
+data_root: !ref <dataset_path>/<dataset>/data
+# Note: there must be a blank between the anchor '*valid_dset' and the colon ':'
+test:
+    *valid_dset :
+        type: abs.Iterator
+        conf:
+            dataset_type: speech_text.SpeechTextDataset
+            dataset_conf:
+                main_data:
+                    feat: !ref <data_root>/<wav_format>/<valid_dset>/idx2wav
+                    text: !ref <data_root>/<wav_format>/<valid_dset>/idx2<txt_format>_text
+
+            shuffle: False
+            data_len: !ref <data_root>/<wav_format>/<valid_dset>/idx2wav_len
+            group_info:
+                speaker: !ref <data_root>/<wav_format>/<valid_dset>/idx2spk
+                gender: !ref <data_root>/<wav_format>/<valid_dset>/idx2gen

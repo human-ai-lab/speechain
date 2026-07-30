@@ -1,0 +1,38 @@
+################################################################################
+# Testing: dev_full of Albanian ASR
+# Description: This configuration is used to evaluate or tune inference hyperparameters on the Albanian dev split.
+################################################################################
+
+
+###################################
+# Experiment Parameters and setup #
+###################################
+dataset_path: datasets/
+valid_dset: &valid_dset dev_full
+dataset: albanian_asr
+
+wav_format: wav
+txt_format: no-punc
+
+
+
+##############################
+# Data Loading Configuration #
+##############################
+data_root: !ref <dataset_path>/<dataset>/data
+
+test:
+    *valid_dset :
+        type: abs.Iterator
+        conf:
+            dataset_type: speech_text.SpeechTextDataset
+            dataset_conf:
+                main_data:
+                    feat: !ref <data_root>/<wav_format>/<valid_dset>/idx2wav
+                    text: !ref <data_root>/<wav_format>/<valid_dset>/idx2<txt_format>_text
+
+            shuffle: False
+            data_len: !ref <data_root>/<wav_format>/<valid_dset>/idx2wav_len
+            group_info:
+                speaker: !ref <data_root>/<wav_format>/<valid_dset>/idx2spk
+                gender: !ref <data_root>/<wav_format>/<valid_dset>/idx2gen
