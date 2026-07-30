@@ -40,24 +40,31 @@ def parse():
 
 
 def extract_and_save_feat(data_index: str, wav_path: str, feat_type: str, feat_config: Dict, feat_path: str):
-    # read the waveform data into the memory
-    wav, sample_rate = read_data_by_path(wav_path, return_sample_rate=True)
-    if 'sr' in feat_config.keys():
-        feat_config.pop('sr')
+    # the path of the target acoustic feature file
+    feat_file_path = os.path.join(feat_path, f"{data_index}.npz")
 
-    # extract the acoustic features from the waveform by the configuration
-    if feat_type == 'stft':
-        feat = convert_wav_to_stft(wav, sr=sample_rate, **feat_config)
-    elif feat_type == 'logmel':
-        feat = convert_wav_to_logmel(wav, sr=sample_rate, **feat_config)
-    elif feat_type == 'mfcc':
-        feat = convert_wav_to_mfcc(wav, sr=sample_rate, **feat_config)
-    else:
-        raise ValueError(f"Unknown acoustic feature: {feat_type}! It should be one of ['stft', 'logmel', 'mfcc'].")
+    # caching mechanism: skip the extraction of the current utterance if its feature file already exists.
+    # In this way, re-running this script (e.g., after an interruption of a previous run) only extracts the
+    # features of the missing utterances instead of re-computing everything from scratch.
+    if not os.path.exists(feat_file_path):
+        # read the waveform data into the memory
+        wav, sample_rate = read_data_by_path(wav_path, return_sample_rate=True)
+        if 'sr' in feat_config.keys():
+            feat_config.pop('sr')
 
-    # save the acoustic features to the disk
-    np.savez(os.path.join(feat_path, f"{data_index}.npz"), feat=feat, sample_rate=sample_rate)
-    return data_index, os.path.join(feat_path, f"{data_index}.npz")
+        # extract the acoustic features from the waveform by the configuration
+        if feat_type == 'stft':
+            feat = convert_wav_to_stft(wav, sr=sample_rate, **feat_config)
+        elif feat_type == 'logmel':
+            feat = convert_wav_to_logmel(wav, sr=sample_rate, **feat_config)
+        elif feat_type == 'mfcc':
+            feat = convert_wav_to_mfcc(wav, sr=sample_rate, **feat_config)
+        else:
+            raise ValueError(f"Unknown acoustic feature: {feat_type}! It should be one of ['stft', 'logmel', 'mfcc'].")
+
+        # save the acoustic features to the disk
+        np.savez(feat_file_path, feat=feat, sample_rate=sample_rate)
+    return data_index, feat_file_path
 
 
 def main(idx2wav: str, feat_type: str, feat_config: str, feat_path: str, ncpu: int):

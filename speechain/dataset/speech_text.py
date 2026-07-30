@@ -277,12 +277,15 @@ class SpeechTextDataset(Dataset):
 
             # on-the-fly downsampling if extracted sampling rate is larger than the built-in one
             if sample_rate > self.sample_rate:
+                # cache the resampler of each encountered sampling rate to avoid re-creating it for every utterance.
+                # Note: the cache must be updated whenever a new sampling rate is encountered, otherwise utterances
+                # with a sampling rate different from the first cached one will cause a KeyError.
                 if not hasattr(self, "wav_resampler_dict"):
-                    self.wav_resampler_dict = {
-                        sample_rate: torchaudio.transforms.Resample(
-                            orig_freq=sample_rate, new_freq=self.sample_rate
-                        )
-                    }
+                    self.wav_resampler_dict = {}
+                if sample_rate not in self.wav_resampler_dict.keys():
+                    self.wav_resampler_dict[sample_rate] = torchaudio.transforms.Resample(
+                        orig_freq=sample_rate, new_freq=self.sample_rate
+                    )
                 main_data["feat"] = self.wav_resampler_dict[sample_rate](
                     main_data["feat"].squeeze(-1)
                 ).unsqueeze(-1)

@@ -936,10 +936,9 @@ class ValidMonitor(Monitor):
                 symlink_dst = os.path.join(self.model_save_path, _best_model_pointer)
                 if os.path.islink(symlink_dst) or os.path.exists(symlink_dst):
                     os.unlink(symlink_dst)
-                os.symlink(
-                    os.path.join(self.model_save_path, f"epoch_{epoch}.pth"),
-                    symlink_dst,
-                )
+                # use the relative path as the link target so that the soft link remains valid
+                # even if the experiment folder is moved to another location or machine
+                os.symlink(f"epoch_{epoch}.pth", symlink_dst)
 
         # update the symbol links of the last several models
         for epoch in range(self.epoch, max(0, self.epoch - self.last_model_number), -1):
@@ -952,9 +951,9 @@ class ValidMonitor(Monitor):
             symlink_dst = os.path.join(self.model_save_path, _last_model_pointer)
             if os.path.islink(symlink_dst) or os.path.exists(symlink_dst):
                 os.unlink(symlink_dst)
-            os.symlink(
-                os.path.join(self.model_save_path, f"epoch_{epoch}.pth"), symlink_dst
-            )
+            # use the relative path as the link target so that the soft link remains valid
+            # even if the experiment folder is moved to another location or machine
+            os.symlink(f"epoch_{epoch}.pth", symlink_dst)
 
         # remove the redundant model files
         saved_epochs = self.saved_model_epoch.copy()

@@ -71,16 +71,34 @@ def waveform_downsample(idx2src_wav: List[List[str]], tgt_path: str, sample_rate
 
         # create the downsampled waveform file
         if not os.path.exists(tgt_wav_path):
-            src_wav, src_sample_rate = read_data_by_path(src_wav_path, return_tensor=True, return_sample_rate=True)
-            if src_sample_rate > sample_rate:
+            # read the sampling rate from the file header without loading the whole waveform
+            src_sample_rate = sf.info(src_wav_path).samplerate
+            # resample and rewrite the waveform only when its sampling rate is different from the target one
+            if src_sample_rate != sample_rate:
+                src_wav = read_data_by_path(src_wav_path, return_tensor=True)
                 if src_sample_rate not in resamplers.keys():
                     resamplers[src_sample_rate] = torchaudio.transforms.Resample(orig_freq=src_sample_rate,
                                                                                  new_freq=sample_rate)
                 src_wav = resamplers[src_sample_rate](src_wav.squeeze(-1))
 
-            wav_format = file_name.split('.')[-1].upper()
-            sf.write(file=tgt_wav_path, data=src_wav, samplerate=sample_rate,
-                     format=wav_format, subtype=sf.default_subtype(wav_format))
+                wav_format = file_name.split('.')[-1].upper()
+                sf.write(file=tgt_wav_path, data=src_wav, samplerate=sample_rate,
+                         format=wav_format, subtype=sf.default_subtype(wav_format))
+            # if the source waveform already has the target sampling rate, link the source file to the target path
+            # instead of writing a duplicated copy to avoid wasting the disk space
+            else:
+                try:
+                    # hard link: no extra disk space is occupied and the target file remains valid
+                    # even if the source file is deleted afterwards
+                    os.link(src_wav_path, tgt_wav_path)
+                except OSError:
+                    try:
+                        # symbolic link: used when the hard link is unavailable
+                        # (e.g., the source and target paths are on different file systems)
+                        os.symlink(os.path.abspath(src_wav_path), tgt_wav_path)
+                    except OSError:
+                        # normal copy as the last resort
+                        shutil.copyfile(src_wav_path, tgt_wav_path)
         # record the target waveform path
         idx2tgt_wav.append([idx, tgt_wav_path])
 
@@ -133,7 +151,7 @@ def main(src_file: str, spk_file: str, tgt_path: str, sample_rate: int = 16000, 
             idx2tgt_wav += idx2tgt_wav_list
         np.savetxt(idx2tgt_wav_path, sorted(idx2tgt_wav, key=lambda x: x[0]), fmt='%s')
     else:
-        print(f"Downsampled waveforms have already existed in {args.tgt_path}, so the dowmsampling process is skipped.")
+        print(f"Downsampled waveforms have already existed in {tgt_path}, so the dowmsampling process is skipped.")
 
     print(f"Copying statistic information from {os.path.dirname(src_file)} to {tgt_path}")
     src_dir = os.path.dirname(src_file)
