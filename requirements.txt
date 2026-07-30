@@ -1,7 +1,6 @@
 g2p_en
 GPUtil
 h5py
-librosa
 matplotlib
 numpy
 pyworld-prebuild # pyworld has issue with python 12: use pyworld-prebuild
