@@ -1,0 +1,18 @@
+##############################################################################
+# TTS inference configuration: default generation with the HiFi-GAN neural vocoder
+# Usage: bash run.sh --train false --exp_cfg {your-exp_cfg} --infer_cfg config/infer/tts/default.yaml
+# Note: this configuration is for the non-autoregressive TTS models (speechain/model/nar_tts.py).
+# The autoregressive ones (speechain/model/ar_tts.py) only support Griffin-Lim vocoding and take
+# 'return_gl_wav' instead of 'vocoder' & 'return_wav'.
+# Note: the HiFi-GAN vocoder is downloaded from SpeechBrain on the first use and only the models
+# working on 16kHz or 22.05kHz are available. Please use 'vocoder: gl' for the other sampling rates.
+# For the details of all available arguments, please refer to the docstring of inference()
+# in speechain/model/nar_tts.py and speechain/model/ar_tts.py
+# ############################################################################
+
+# the vocoder used to convert the generated acoustic features into waveforms ('hifigan' or 'gl')
+vocoder: hifigan
+
+# whether to return the generated waveforms and acoustic features
+return_wav: true
+return_feat: false

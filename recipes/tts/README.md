@@ -8,6 +8,7 @@ This folder contains recipes for training a Text-To-Speech Synthesis (TTS) model
 1. [Available Backbones](https://github.com/bagustris/SpeeChain/tree/main/recipes/tts#available-backbones)
 2. [Preparing Durations for FastSpeech2](https://github.com/bagustris/SpeeChain/tree/main/recipes/tts#preparing-durations-for-fastspeech2)
 3. [Training a TTS model](https://github.com/bagustris/SpeeChain/tree/main/recipes/tts#training-a-tts-model)
+4. [Synthesizing your own text](https://github.com/bagustris/SpeeChain/tree/main/recipes/tts#synthesizing-your-own-text)
 
 ## Available Backbones
 Below is a table of available backbones:
@@ -80,5 +81,24 @@ Please process each dataset one at a time.
 ## Training an TTS model
 To train a TTS model, follow the [ASR model training instructions](https://github.com/bagustris/SpeeChain/tree/main/recipes/asr#training-an-asr-model) located in `recipes/asr`. 
 Make sure to replace the folder names and configuration file names from `recipes/asr` with their corresponding names in `recipes/tts`.
+
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/recipes/tts#table-of-contents)
+
+## Synthesizing your own text
+Once your TTS model is trained, you can synthesize your own raw sentences directly with the standalone inference engine, without preparing any dataset metadata:
+```bash
+python speechain/inference.py \
+    --exp_path ${SPEECHAIN_ROOT}/recipes/tts/ljspeech/exp/22.05khz_mfa_fastspeech2 \
+    --test_model latest \
+    --text "This is a test of the SpeeChain toolkit." \
+    --output_path ./syn_wavs
+```
+**Note:**  
+   1. `--exp_path` only needs to point to the experiment folder of your trained model (i.e., the folder containing `exp_cfg.yaml` and `models/`).  
+   2. The sentences can also be given by `--text_file /path/to/sentences.txt` where each line is a sentence to be synthesized.  
+   3. The HiFi-GAN vocoder is automatically downloaded from SpeechBrain on the first use and is only available for the models working on 16kHz or 22.05kHz. Please give `--infer_cfg "vocoder:gl"` (Griffin-Lim) for the other sampling rates.  
+   4. The synthetic waveforms (`syn_001.wav`, `syn_002.wav`, ...) and the index-to-sentence mapping (`idx2text.txt`) are saved to `--output_path` (`{exp_path}/standalone_inference/` by default).  
+
+For more details, please refer to [the standalone inference document](./inference.md).
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/recipes/tts#table-of-contents)

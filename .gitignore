@@ -66,7 +66,12 @@ build
 # specific folders
 recipes/
 datasets
-config/
+# ignore the contents of config/ except the shared configuration folders
+# (config/feat for acoustic feature extraction & config/infer for model inference,
+# which are referenced by datasets/data_dumping.sh and recipes/run.sh)
+config/*
+!config/feat/
+!config/infer/
 site/
 .ruff-cache/
 bak/

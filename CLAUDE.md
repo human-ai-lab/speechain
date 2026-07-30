@@ -28,12 +28,11 @@ CI checks: `black --check speechain/` and `ruff check --select I speechain/`.
 ## Testing
 
 ```bash
-python -m pytest speechain/utilbox/test_humanfriendly.py -v
-python -m pytest speechain/module/encoder/test_speaker.py -v
-python -m pytest speechain/module/vocoder/test_hifigan.py -v
+python -m pytest tests/ -v
 ```
 
-Test files are named `test_*.py` co-located with the source they test.
+Test files are named `test_*.py` under `tests/`, mirroring the `speechain/` package hierarchy
+(e.g., `speechain/utilbox/humanfriendly.py` is tested by `tests/utilbox/test_humanfriendly.py`).
 
 ## Running Experiments
 
@@ -55,6 +54,29 @@ Tasks: `asr`, `tts`, `lm`, `offline_tts2asr`. Experiment configs live in `recipe
 Useful flags: `--resume true`, `--dry_run true`, `--accum_grad 4`, `--ft_factor 0.1`, `--test_model 10_valid_accuracy_average`.
 
 Results are saved under `recipes/{task}/{dataset}/{subset}/exp/{exp_name}/`.
+
+## Standalone Inference
+
+`speechain/inference.py` applies a trained ASR/TTS model directly to user inputs — no dataset metadata is needed, only the experiment folder (containing `exp_cfg.yaml` and `models/`):
+
+```bash
+# ASR: transcribe audio files (greedy decoding by default)
+python speechain/inference.py \
+  --exp_path recipes/asr/librispeech/train-clean-100/exp/100-bpe5k_conformer-small_lr2e-3 \
+  --test_model latest \
+  --audio /path/to/utterance1.wav /path/to/utterance2.flac
+
+# TTS: synthesize raw sentences (HiFi-GAN vocoder auto-downloaded on first use)
+python speechain/inference.py \
+  --exp_path recipes/tts/ljspeech/exp/22.05khz_mfa_fastspeech2 \
+  --test_model latest \
+  --text "This is a test of the SpeeChain toolkit." \
+  --output_path ./syn_wavs
+```
+
+- `--infer_cfg` accepts an inline Dict (`"beam_size:16,ctc_weight:0.3"`) or a YAML file; off-the-shelf configs live in `config/infer/asr/` (`greedy_decoding.yaml`, `beam_search.yaml`, `beam_search_lm.yaml`) and `config/infer/tts/` (`default.yaml`).
+- Checkpoints are loaded with `torch.load(weights_only=True)` via `speechain/utilbox/data_loading_util.load_model_state_dict()`; pass `--trust_checkpoint` only for legacy checkpoints whose source you trust.
+- See `docs/inference.md` for the full argument reference.
 
 ## Architecture
 
@@ -86,6 +108,8 @@ Runner (speechain/runner.py)          ← main entry point
 **Tokenizers** (`speechain/tokenizer/`): character, SentencePiece/BPE, G2P phoneme.
 
 **Inference functions** (`speechain/infer_func/`): beam search for ASR, autoregressive decoding for TTS.
+
+**Standalone inference engine** (`speechain/inference.py`): builds a trained model from its experiment folder (bypassing the Runner/Iterator pipeline) and decodes user-provided audio (ASR) or raw text (TTS) one input at a time; handles device selection, on-the-fly resampling, and checkpoint loading itself.
 
 ## Code Style
 

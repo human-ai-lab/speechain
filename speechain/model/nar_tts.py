@@ -1121,9 +1121,13 @@ class FastSpeech2(Model):
         if return_wav:
             try:
                 hypo_wav, hypo_wav_len = self.vocode_func(hypo_feat, hypo_feat_len)
-            # do not save waveforms if there is a RuntimeError
-            except RuntimeError:
-                pass
+            # do not save waveforms if there is a RuntimeError, but report it so that the absence of
+            # 'wav' in the returned Dict doesn't look like a silent failure to the caller
+            except RuntimeError as vocode_error:
+                warnings.warn(
+                    f"The {self.vocoder} vocoder fails to convert the generated acoustic features into "
+                    f"waveforms ({vocode_error}), so no waveform is returned for the current batch."
+                )
             # save waveforms if no error happen
             else:
                 # remove the redundant silence parts at the end of the synthetic waveforms

@@ -24,6 +24,7 @@ from speechain.iterator.abs import Iterator
 from speechain.model.abs import Model
 from speechain.monitor import Monitor, TestMonitor, TrainValidMonitor
 from speechain.optim_sche.abs import OptimScheduler
+from speechain.utilbox.data_loading_util import load_model_state_dict
 from speechain.utilbox.import_util import (
     get_idle_gpu,
     get_idle_port,
@@ -485,7 +486,7 @@ class Runner(object):
             type=str2list,
             default=None,
             help="The names of the model you want to evaluate during model testing. "
-            "If given, `{train_result_path}/XXXXX/model/{test_model}.pth` will be used to initialize the parameters "
+            "If given, `{train_result_path}/XXXXX/models/{test_model}.pth` will be used to initialize the parameters "
             "of the Model object. If you only want to evaluate multiple models in one job, please give the "
             "strings of their names in a List. (default: None)",
         )
@@ -1931,8 +1932,10 @@ class Runner(object):
 
                 # load the target model parameters
                 model.load_state_dict(
-                    torch.load(
-                        model_path, map_location=model.device, weights_only=False
+                    load_model_state_dict(
+                        model_path,
+                        map_location=model.device,
+                        trust_checkpoint=True,
                     )
                 )
 

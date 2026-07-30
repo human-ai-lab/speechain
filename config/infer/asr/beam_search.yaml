@@ -1,0 +1,11 @@
+##############################################################################
+# ASR inference configuration: beam-search decoding with CTC joint scoring (ASR-only, no LM)
+# Usage: bash run.sh --train false --exp_cfg {your-exp_cfg} --infer_cfg config/infer/asr/beam_search.yaml
+# Note: 'ctc_weight' is silently ignored if your ASR model was trained without the CTC loss
+# (i.e., ctc_weight is 0 in model['customize_conf'] of your exp_cfg), where plain attention-based
+# beam searching is performed instead.
+# For the details of all available arguments, please refer to speechain/infer_func/beam_search.py
+# ############################################################################
+
+beam_size: 16
+ctc_weight: 0.2

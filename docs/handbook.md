@@ -11,6 +11,7 @@ You can start exploring SpeeChain by reading the following sections or by jumpin
    2. [How to prepare a configuration file](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-prepare-configuration-files)
    3. [How to train and evaluate a model](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-train-and-evaluate-a-model)
    4. [How to interpret the files generated in the _exp_ folder](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-interpret-the-files-generated-in-the-exp-folder)
+   5. [How to run standalone inference on your own inputs](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-run-standalone-inference-on-your-own-inputs)
 2. [**For those who want to use SpeeChain for research**](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#for-those-who-want-to-use-speechain-for-research)
    1. [SpeeChain file system](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#speechain-file-system)
    2. [How to customize my own data loading and batching strategy](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#how-to-customize-my-own-data-loading-and-batching-strategy)
@@ -28,6 +29,7 @@ In SpeeChain toolkit, a basic research pipeline has 5 steps:
 3. Train a model.  
 4. Evaluate the trained model.  
 5. Analyse the evaluation results.  
+6. Apply the trained model to your own inputs by standalone inference.  
 
 The following subsections will explain how to execute the steps above one by one.
 
@@ -63,7 +65,7 @@ In SpeeChain, the path arguments can be given in 3 ways:
 3. **In-toolkit Relative Path:**  
     The path arguments can be given as the relative location under the toolkit root, i.e., `${SPEECHAIN_ROOT}`. 
     The toolkit root `${SPEECHAIN_ROOT}` is created by the bash script `envir_preparation.sh`.  
-    For example, `speechain/runn.py` will be parsed to to `${SPEECHAIN_ROOT}/speechain/runner.py`. 
+    For example, `speechain/runner.py` will be parsed to `${SPEECHAIN_ROOT}/speechain/runner.py`. 
     If you would like to specify a place outside the toolkit root, you can directly give its absolute path with a slash `/` at the beginning to notify the framework of an absolute path, e.g., `/x/xx/xxx/speechain/runner.py`.
 
 #### Convertable Arguments in the Terminal
@@ -290,8 +292,8 @@ ${SPEECHAIN_ROOT}/recipes/{task_name}/{dataset_name}/{subset_name}/run.sh
 
 For the detailed instructions about how to launch the jobs for each model, please refer to [**here**](https://github.com/bagustris/SpeeChain/tree/main/recipes#table-of-contents) and click your target model.
 
-By the way, you can also directly use the command `${SPEECHAIN_PYTHON} ${SPEECHAIN_ROOT}/speechain/runn.py` in your terminal or your own bash script to run your experimental jobs. 
-Before doing so, we recommend you to first use the command `${SPEECHAIN_PYTHON} ${SPEECHAIN_ROOT}/speechain/runn.py --help` to familiarize yourself with the involved arguments.
+By the way, you can also directly use the command `${SPEECHAIN_PYTHON} ${SPEECHAIN_ROOT}/speechain/runner.py` in your terminal or your own bash script to run your experimental jobs. 
+Before doing so, we recommend you to first use the command `${SPEECHAIN_PYTHON} ${SPEECHAIN_ROOT}/speechain/runner.py --help` to familiarize yourself with the involved arguments.
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
@@ -300,6 +302,30 @@ Before doing so, we recommend you to first use the command `${SPEECHAIN_PYTHON} 
 ### How to interpret the files generated in the _exp_ folder
 
 Please refer to [${SPEECHAIN_ROOT}/recipes/README.md](https://github.com/bagustris/SpeeChain/tree/main/recipes#experimental-file-system) for more details.
+
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
+
+
+### How to run standalone inference on your own inputs
+Different from model evaluation which is driven by the dumped dataset metadata, the standalone inference engine `speechain/inference.py` applies a trained ASR/TTS model directly to your own inputs: audio files (wav/flac) for ASR models and raw text sentences for TTS models.  
+
+Only the experiment folder of a trained model is required (i.e., the folder containing `exp_cfg.yaml` and `models/`):
+```bash
+# ASR: transcribe your own audio files (greedy decoding by default)
+python speechain/inference.py \
+    --exp_path recipes/asr/librispeech/train-clean-100/exp/100-bpe5k_conformer-small_lr2e-3 \
+    --test_model latest \
+    --audio /path/to/utterance1.wav /path/to/utterance2.flac
+
+# TTS: synthesize your own sentences (a HiFi-GAN vocoder is downloaded on the first use)
+python speechain/inference.py \
+    --exp_path recipes/tts/ljspeech/exp/22.05khz_mfa_fastspeech2 \
+    --test_model latest \
+    --text "This is a test of the SpeeChain toolkit." \
+    --output_path ./syn_wavs
+```
+The decoding hyperparameters can be adjusted by `--infer_cfg`, which accepts either an inline _Dict_ string (e.g., `"beam_size:16,ctc_weight:0.3"`) or the path of an off-the-shelf configuration file in `${SPEECHAIN_ROOT}/config/infer/`.  
+For more details, please refer to [the standalone inference document](./inference.md).
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
@@ -320,9 +346,11 @@ Folder architecture is shown below:
             /...
     /infer      # Configuration for model inference
         /asr        # Configuration files for ASR inference
-            /...
+            greedy_decoding.yaml  # Greedy decoding (beam_size: 1)
+            beam_search.yaml      # Beam-search decoding with CTC joint scoring
+            beam_search_lm.yaml   # Beam-search decoding with CTC & LM joint scoring
         /tts        # Configuration files for TTS inference
-            /...
+            default.yaml          # Default generation with the HiFi-GAN vocoder
 ```
 For more details about the configuration files in `${SPEECHAIN_ROOT}/config/feat/`, please refer to the docstring of [${SPEECHAIN_ROOT}/datasets/pyscripts/feat_extractor.py](https://github.com/bagustris/SpeeChain/blob/main/datasets/pyscripts/feat_extractor.py).
 
@@ -410,7 +438,8 @@ Based on the abstract class, many implementation classes are included in the sam
     /tokenizer
         ...
     # General part of the pipeline
-    /run.py             # The entrance of SpeeChain toolkit for both model training and testing.
+    /runner.py          # The entrance of SpeeChain toolkit for both model training and testing.
+    /inference.py       # The standalone inference engine. Used to apply a trained ASR/TTS model directly to your own inputs (audio files or raw sentences).
     /monitor.py         # The training and testing monitors. Used to record and regulate the training and testing process.
     /snapshooter.py     # The figure snapshooter. Used to transform the input snapshotting materials into the visible figures.
 ```
