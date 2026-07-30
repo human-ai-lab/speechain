@@ -40,7 +40,7 @@ function print_help_message {
       # Group4: Main Arguments for Synthesis
       [--tts_infer_cfg TTS_INFER_CFG] \\                     # The configuration for TTS inference. If not given, infer_cfg in {tts_model_path}/exp_cfg.yaml will be used. (default: none)
       [--syn_result_path SYN_RESULT_PATH] \\                 # The path where you want to place the synthetic pseudo utterances. (default: ${SPEECHAIN_ROOT}/recipes/offline_tts2asr/tts_syn_speech/)
-      [--dump_data_path DUMP_DATA_PATH] \\                   # The path where your dumped data is placed. If your data is stored outside the toolkit, please specify them by this argument. (default: ${SPEECHAIN_ROOT}/datasets/)
+      [--dump_data_path DUMP_DATA_PATH] \\                   # The path where your dumped data is placed. If your data is stored outside the toolkit, please specify them by this argument. (default: ${SPEECHAIN_ROOT}/data/)
       --tts_model_path TTS_MODEL_PATH \\                     # The path of the TTS model you want to use. There must be 'models/', 'exp_cfg.yaml', and 'train_cfg.yaml' in your specified folder.
       --tts_syn_dataset TTS_SYN_DATASET \\                   # The dataset whose text data you want to use for TTS synthesis.
       --tts_syn_subset TTS_SYN_SUBSET                       # The subset of your chosen dataset whose text data you want to use for TTS synthesis." >&2
@@ -70,7 +70,7 @@ token_num=stress
 
 tts_infer_cfg=
 syn_result_path=${SPEECHAIN_ROOT}/recipes/offline_tts2asr/tts_syn_speech
-dump_data_path=${SPEECHAIN_ROOT}/datasets/
+dump_data_path=${SPEECHAIN_ROOT}/data/
 tts_model_path=
 tts_syn_dataset=
 tts_syn_subset=

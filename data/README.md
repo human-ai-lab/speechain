@@ -8,25 +8,25 @@ If you want to contribute a new dataset, we would appreciate it if you could fol
 👆[Back to the handbook page](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#speechain-handbook)
 
 ## Table of Contents
-1. [**File System**](https://github.com/bagustris/SpeeChain/tree/main/datasets#file-system)
-2. [**Metadata Format**](https://github.com/bagustris/SpeeChain/tree/main/datasets#metadata-format)
-    1. [idx2wav](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2wav)
-    2. [idx2wav_len](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2wav_len)
-    3. [idx2feat](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2feat)
-    4. [idx2feat_len](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2feat_len)
-    5. [idx2text](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2text)
-    6. [idx2spk](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2spk)
-    7. [idx2spk_feat](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2spk_feat)
-    8. [spk_list](https://github.com/bagustris/SpeeChain/tree/main/dat/home/bagustris/github/speechain/asets#spk_list)
-    9. [idx2gen](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2gen)
-3. [**How to Dump a Dataset on your Machine**](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-dump-a-dataset-on-your-machine)
-4. [**How to Extract Speaker Embedding by my own model**](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-extract-speaker-embedding-by-my-own-model)
-6. [**How to Contribute a New Dataset**](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-contribute-a-new-dataset)
+1. [**File System**](https://github.com/bagustris/SpeeChain/tree/main/data#file-system)
+2. [**Metadata Format**](https://github.com/bagustris/SpeeChain/tree/main/data#metadata-format)
+    1. [idx2wav](https://github.com/bagustris/SpeeChain/tree/main/data#idx2wav)
+    2. [idx2wav_len](https://github.com/bagustris/SpeeChain/tree/main/data#idx2wav_len)
+    3. [idx2feat](https://github.com/bagustris/SpeeChain/tree/main/data#idx2feat)
+    4. [idx2feat_len](https://github.com/bagustris/SpeeChain/tree/main/data#idx2feat_len)
+    5. [idx2text](https://github.com/bagustris/SpeeChain/tree/main/data#idx2text)
+    6. [idx2spk](https://github.com/bagustris/SpeeChain/tree/main/data#idx2spk)
+    7. [idx2spk_feat](https://github.com/bagustris/SpeeChain/tree/main/data#idx2spk_feat)
+    8. [spk_list](https://github.com/bagustris/SpeeChain/tree/main/data#spk_list)
+    9. [idx2gen](https://github.com/bagustris/SpeeChain/tree/main/data#idx2gen)
+3. [**How to Dump a Dataset on your Machine**](https://github.com/bagustris/SpeeChain/tree/main/data#how-to-dump-a-dataset-on-your-machine)
+4. [**How to Extract Speaker Embedding by my own model**](https://github.com/bagustris/SpeeChain/tree/main/data#how-to-extract-speaker-embedding-by-my-own-model)
+6. [**How to Contribute a New Dataset**](https://github.com/bagustris/SpeeChain/tree/main/data#how-to-contribute-a-new-dataset)
 
 ## File System
 **Note:** The shared Python code used by the dumping pipeline — the abstract base classes `meta_generator.py` & `meta_post_processor.py` and the fixed executable scripts in `pyscripts/` — is placed in [`${SPEECHAIN_ROOT}/speechain/datasets/`](https://github.com/bagustris/SpeeChain/tree/main/speechain/datasets) instead of this folder, so that it is installed together with the `speechain` package and covered by the CI checks.
 
-/datasets
+/data
     data_dumping.sh             # the shared .sh script across all the speech-text datasets. It contains the complete pipeline of data dumping.
     /{dataset_name}             # root folder of each dataset
         /data                       # main folder of each dataset (the folder name 'data' is shared across all the datasets)
@@ -63,7 +63,7 @@ If you want to contribute a new dataset, we would appreciate it if you could fol
 ```
 The names in the braces({}) mean the undefined names depending on the settings of datasets and configuration.
 
-👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/data#table-of-contents)
 
 
 ## Metadata Format
@@ -78,15 +78,15 @@ Index and address are separated by a blank.
 
 For example, 
 ```
-103-1240-0000 ${SPEECHAIN_ROOT}/datasets/librispeech/data/wav/train-clean-100/103/1240/103-1240-0000.flac
-103-1240-0001 ${SPEECHAIN_ROOT}/datasets/librispeech/data/wav/train-clean-100/103/1240/103-1240-0001.flac
-103-1240-0002 ${SPEECHAIN_ROOT}/datasets/librispeech/data/wav/train-clean-100/103/1240/103-1240-0002.flac
-103-1240-0003 ${SPEECHAIN_ROOT}/datasets/librispeech/data/wav/train-clean-100/103/1240/103-1240-0003.flac
-103-1240-0004 ${SPEECHAIN_ROOT}/datasets/librispeech/data/wav/train-clean-100/103/1240/103-1240-0004.flac
+103-1240-0000 ${SPEECHAIN_ROOT}/data/librispeech/data/wav/train-clean-100/103/1240/103-1240-0000.flac
+103-1240-0001 ${SPEECHAIN_ROOT}/data/librispeech/data/wav/train-clean-100/103/1240/103-1240-0001.flac
+103-1240-0002 ${SPEECHAIN_ROOT}/data/librispeech/data/wav/train-clean-100/103/1240/103-1240-0002.flac
+103-1240-0003 ${SPEECHAIN_ROOT}/data/librispeech/data/wav/train-clean-100/103/1240/103-1240-0003.flac
+103-1240-0004 ${SPEECHAIN_ROOT}/data/librispeech/data/wav/train-clean-100/103/1240/103-1240-0004.flac
 ```
 Any audio files that can be processed by `soundfile.read()` (such as .flac, .wav, ...) are OK in _idx2wav_.
 
-👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/data#table-of-contents)
 
 
 #### idx2wav_len
@@ -102,7 +102,7 @@ For example,
 103-1240-0004 200240
 ```
 
-👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/data#table-of-contents)
 
 
 #### idx2feat
@@ -111,16 +111,16 @@ The index and absolute address are separated by a blank.
 
 For example, 
 ```
-103-1240-0000 ${SPEECHAIN_ROOT}/datasets/librispeech/data/{feat_config}/train-clean-100/103-1240-0000.npz
-103-1240-0001 ${SPEECHAIN_ROOT}/datasets/librispeech/data/{feat_config}/train-clean-100/103-1240-0001.npz
-103-1240-0002 ${SPEECHAIN_ROOT}/datasets/librispeech/data/{feat_config}/train-clean-100/103-1240-0002.npz
-103-1240-0003 ${SPEECHAIN_ROOT}/datasets/librispeech/data/{feat_config}/train-clean-100/103-1240-0003.npz
-103-1240-0004 ${SPEECHAIN_ROOT}/datasets/librispeech/data/{feat_config}/train-clean-100/103-1240-0004.npz
+103-1240-0000 ${SPEECHAIN_ROOT}/data/librispeech/data/{feat_config}/train-clean-100/103-1240-0000.npz
+103-1240-0001 ${SPEECHAIN_ROOT}/data/librispeech/data/{feat_config}/train-clean-100/103-1240-0001.npz
+103-1240-0002 ${SPEECHAIN_ROOT}/data/librispeech/data/{feat_config}/train-clean-100/103-1240-0002.npz
+103-1240-0003 ${SPEECHAIN_ROOT}/data/librispeech/data/{feat_config}/train-clean-100/103-1240-0003.npz
+103-1240-0004 ${SPEECHAIN_ROOT}/data/librispeech/data/{feat_config}/train-clean-100/103-1240-0004.npz
 ```
 feat_config is the name of the used feature extraction configuration file.
 In our toolkit, acoustic feature of a waveform is saved as a .npy file by the NumPy package.
 
-👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/data#table-of-contents)
 
 
 #### idx2feat_len
@@ -136,7 +136,7 @@ For example,
 103-1240-0004 1251
 ```
 
-👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/data#table-of-contents)
 
 
 #### idx2text
@@ -155,7 +155,7 @@ For example,
 **Note**: you don't need to worry about the blanks inside each transcript text string. 
 Those additional blanks will be ignored in the subsequent processing.
 
-👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/data#table-of-contents)
 
 
 #### idx2spk
@@ -170,7 +170,7 @@ For example,
 103-1240-0004 103
 ```
 
-👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/data#table-of-contents)
 
 
 #### idx2spk_feat
@@ -178,16 +178,16 @@ In `idx2spk_feat`, each line corresponds to a pair of file index and the absolut
 
 For example, 
 ```
-1034_121119_000001_000001 ${SPEECHAIN_ROOT}/datasets/libritts/data/wav/train-clean-100/xvector/1034_121119_000001_000001.npy
-1034_121119_000002_000001 ${SPEECHAIN_ROOT}/datasets/libritts/data/wav/train-clean-100/xvector/1034_121119_000002_000001.npy
-1034_121119_000010_000004 ${SPEECHAIN_ROOT}/datasets/libritts/data/wav/train-clean-100/xvector/1034_121119_000010_000004.npy
-1034_121119_000010_000006 ${SPEECHAIN_ROOT}/datasets/libritts/data/wav/train-clean-100/xvector/1034_121119_000010_000006.npy
-1034_121119_000012_000000 ${SPEECHAIN_ROOT}/datasets/libritts/data/wav/train-clean-100/xvector/1034_121119_000012_000000.npy
-1034_121119_000014_000000 ${SPEECHAIN_ROOT}/datasets/libritts/data/wav/train-clean-100/xvector/1034_121119_000014_000000.npy
-1034_121119_000018_000000 ${SPEECHAIN_ROOT}/datasets/libritts/data/wav/train-clean-100/xvector/1034_121119_000018_000000.npy
+1034_121119_000001_000001 ${SPEECHAIN_ROOT}/data/libritts/data/wav/train-clean-100/xvector/1034_121119_000001_000001.npy
+1034_121119_000002_000001 ${SPEECHAIN_ROOT}/data/libritts/data/wav/train-clean-100/xvector/1034_121119_000002_000001.npy
+1034_121119_000010_000004 ${SPEECHAIN_ROOT}/data/libritts/data/wav/train-clean-100/xvector/1034_121119_000010_000004.npy
+1034_121119_000010_000006 ${SPEECHAIN_ROOT}/data/libritts/data/wav/train-clean-100/xvector/1034_121119_000010_000006.npy
+1034_121119_000012_000000 ${SPEECHAIN_ROOT}/data/libritts/data/wav/train-clean-100/xvector/1034_121119_000012_000000.npy
+1034_121119_000014_000000 ${SPEECHAIN_ROOT}/data/libritts/data/wav/train-clean-100/xvector/1034_121119_000014_000000.npy
+1034_121119_000018_000000 ${SPEECHAIN_ROOT}/data/libritts/data/wav/train-clean-100/xvector/1034_121119_000018_000000.npy
 ```
 
-👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/data#table-of-contents)
 
 
 #### spk_list
@@ -208,7 +208,7 @@ For example,
 1686
 ```
 
-👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/data#table-of-contents)
 
 
 #### idx2gen
@@ -223,12 +223,12 @@ For example,
 103-1240-0004 F
 ```
 
-👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/data#table-of-contents)
 
 
 ## How to Dump a Dataset on your Machine
 For dumping an existing dataset,  
-   1. Go to the folder of your target dataset `${SPEECHAIN_ROOT}/datasets/{dataset_name}` (e.g. if you want to dump LibriTTS, please go to `${SPEECHAIN_ROOT}/datasets/libritts`)  
+   1. Go to the folder of your target dataset `${SPEECHAIN_ROOT}/data/{dataset_name}` (e.g. if you want to dump LibriTTS, please go to `${SPEECHAIN_ROOT}/data/libritts`)  
    2. Run `bash run.sh --help` to familiarize yourself with the involved arguments.  
    3. Run `bash run.sh` to dump your target dataset (add some arguments if needed).
 
@@ -238,7 +238,7 @@ For dumping an existing dataset,
    2. **If you want to save the dumped data and metadata files outside the toolkit folder (`${SPEECHAIN_ROOT}`)**, please attach the argument `--tgt_path {the-path-you-want-to-save-files}` to the command `bash run.sh` in the no.3 step above.  
    Please make sure that `tgt_path` is an absolute path starting with a slash '/'.
 
-👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/data#table-of-contents)
 
 ## How to Extract Speaker Embedding by my own model
 If you want to use the pretrained speaker embedding model on your machine, please:  
@@ -247,31 +247,31 @@ If you want to use the pretrained speaker embedding model on your machine, pleas
 Please save all the speaker embedding vectors to a specific folder in the same directory of `idx2wav` and give a metadata file named `idx2spk_feat` for data reference.  
 
 **Note:**  
-   1. For the file format of `idx2spk_feat`, please click [here](https://github.com/bagustris/SpeeChain/tree/main/datasets#idx2spk_feat) for reference.  
+   1. For the file format of `idx2spk_feat`, please click [here](https://github.com/bagustris/SpeeChain/tree/main/data#idx2spk_feat) for reference.  
    2. Please keep the same data index with `idx2wav` in your `idx2spk_feat`.  
    3. Each speaker embedding vector should be in the shape of `[1, spk_feat_dim]`.  
    4. Speaker embedding vectors could be saved in two ways:  
       1. save each vector to an individual `.npy` file  
       2. save all vectors to a `.npz` file where the index of each vector is exactly the one in `idx2spk_feat`.
 
-👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/data#table-of-contents)
 
 ## How to Contribute a New Dataset
 If the dataset that you want to use for your experiments is not included here, 
 you could make the dumping pipeline of your target dataset by the following instructions:
 
-1. Go to `${SPEECHAIN_ROOT}/datasets/`.  
+1. Go to `${SPEECHAIN_ROOT}/data/`.  
 2. Run `bash data_dumping.sh --help` to familiarize yourself with the involved arguments.  
-3. Make a new folder in `${SPEECHAIN_ROOT}/datasets/` with the name as your target dataset.  
-4. Make a new ***data_download.sh*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to download your target dataset from the internet. Please download the dataset into `${SPEECHAIN_ROOT}/datasets/{dataset_name}/data/wav`.
-5. Make a new ***meta_generator.py*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to extract the metadata files of your target dataset. Please refer to `${SPEECHAIN_ROOT}/speechain/datasets/meta_generator.py` for instructions of how to override the pipeline of metadata generation.  
-6. If needed, make a new ***meta_post_processor.py*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to post-process the extracted metadata files of all the subsets.   
+3. Make a new folder in `${SPEECHAIN_ROOT}/data/` with the name as your target dataset.  
+4. Make a new ***data_download.sh*** in `${SPEECHAIN_ROOT}/data/{dataset_name}` to download your target dataset from the internet. Please download the dataset into `${SPEECHAIN_ROOT}/data/{dataset_name}/data/wav`.
+5. Make a new ***meta_generator.py*** in `${SPEECHAIN_ROOT}/data/{dataset_name}` to extract the metadata files of your target dataset. Please refer to `${SPEECHAIN_ROOT}/speechain/datasets/meta_generator.py` for instructions of how to override the pipeline of metadata generation.  
+6. If needed, make a new ***meta_post_processor.py*** in `${SPEECHAIN_ROOT}/data/{dataset_name}` to post-process the extracted metadata files of all the subsets.   
 (e.g. combine _train-clean-100_ and _train-clean-360_ of _LibriSpeech_ into _train-clean-460_)
 Please refer to `${SPEECHAIN_ROOT}/speechain/datasets/meta_post_processor.py` for instructions of how to override the pipeline of metadata post-processing.  
-7. Make a new ***run.sh*** in `${SPEECHAIN_ROOT}/datasets/{dataset_name}` to manipulate the dumping pipeline of your target dataset.   
+7. Make a new ***run.sh*** in `${SPEECHAIN_ROOT}/data/{dataset_name}` to manipulate the dumping pipeline of your target dataset.   
 You could refer to the ones in the existing dataset folders as a template.
 
 **Note**:   
 Please keep the same script names (i.e., `data_download.sh`, `meta_generator.py`, and `meta_post_processor.py`) for the compatibility with `data_dumping.sh`.
 
-👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/datasets#table-of-contents)
+👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/tree/main/data#table-of-contents)

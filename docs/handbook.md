@@ -361,21 +361,23 @@ For more details about the configuration files in `${SPEECHAIN_ROOT}/config/infe
 
 #### Dataset Folder
 This folder contains off-the-shelf processing scripts to dump datasets into your machine. 
-Each type of datasets corresponds to a specific sub-folder where each dataset corresponds a specific sub-sub-folder.
+Each dataset corresponds to a specific sub-folder.
 
 Folder architecture is shown below:
 ```bash
-/datasets
-    /speech_text        # Datasets that are made up of speech and text data
-        /librispeech        # Processing scripts for the LibriSpeech dataset
-            /...
-        /libritts           # Processing scripts for the LibriTTS dataset
-            /...
-        /ljspeech           # Processing scripts for the LJSpeech dataset
-            /...
-        /data_dumping.sh    # all-in-one speech-text dataset dumping script
+/data
+    /librispeech        # Processing scripts for the LibriSpeech dataset
+        /...
+    /libritts           # Processing scripts for the LibriTTS dataset
+        /...
+    /ljspeech           # Processing scripts for the LJSpeech dataset
+        /...
+    /vctk               # Processing scripts for the VCTK dataset
+        /...
+    data_dumping.sh     # all-in-one speech-text dataset dumping script
+    mfa_preparation.sh  # all-in-one MFA alignment preparation script
 ```
-For more details, please refer to the README.md of each type of dataset in [${SPEECHAIN_ROOT}/datasets/](https://github.com/bagustris/SpeeChain/tree/main/datasets).
+For more details, please refer to the README.md in [${SPEECHAIN_ROOT}/data/](https://github.com/bagustris/SpeeChain/tree/main/data).
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 

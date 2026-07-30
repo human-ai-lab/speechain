@@ -61,7 +61,7 @@ Anytime you encounter problems when using our toolkit, please don't hesitate to 
 │   └── infer             # configuration for model inference (ASR decoding & TTS vocoding)
 ├── CONTRIBUTING.md       # convention for contributor
 ├── create_env.sh         # bash shell to create environment
-├── datasets              # dataset folder, put data here, make softlink, or set in config file
+├── data                  # dataset folder, put data here, make softlink, or set in config file
 │   ├── data_dumping.sh
 │   ├── librispeech
 │   ├── libritts

@@ -52,8 +52,9 @@ tmp/
 # others
 *.egg-info
 
-# datasets, use -f to force add
-datasets/
+# dumped dataset contents: the top-level data/ folder is ignored by default;
+# use `git add -f` to track new pipeline files under data/
+/data/
 
 
 # virtual environment
@@ -65,13 +66,6 @@ build
 
 # specific folders
 recipes/
-datasets
-# but never ignore the shared dataset-dumping code inside the speechain package
-# (moved from the top-level datasets/ folder, see issue #2)
-!speechain/datasets/
-!speechain/datasets/**
-# ...except its python cache files
-speechain/datasets/**/__pycache__/
 # ignore the contents of config/ except the shared configuration folders
 # (config/feat for acoustic feature extraction & config/infer for model inference,
 # which are referenced by datasets/data_dumping.sh and recipes/run.sh)

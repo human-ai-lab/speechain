@@ -23,7 +23,7 @@ Prepared splits:
 The dataset itself is not included in this repository.
 
 Recommended data root directory:
-datasets/albanian_asr
+data/albanian_asr
 
 ## ASR Model
 

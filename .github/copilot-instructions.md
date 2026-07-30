@@ -59,7 +59,7 @@ python -c "import speechain; print(speechain)"
 ```
 speechain/               # Main Python package (source code)
 recipes/                 # Task-specific experiment configurations
-datasets/                # Dataset processing scripts and metadata
+data/                    # Dataset dumping pipelines, downloaded data, and metadata
 config/                  # Shared configuration files
 docs/                    # Documentation (mkdocs)
 .github/workflows/       # CI workflows (Black, Ruff, Documentation)
@@ -138,7 +138,7 @@ All workflows trigger on `push` and `pull_request` events.
 - **Conda Environment:** `environment.yaml` (Python 3.8) --> obsolete
 - **(UV) Pip Requirements:** `requirements.txt`
 - **Documentation:** `mkdocs.yml`
-- **Git Ignore:** `.gitignore` (includes datasets/, recipes/, config/, site/)
+- **Git Ignore:** `.gitignore` (includes data/, recipes/, config/, site/)
 
 ## Common Workflows
 

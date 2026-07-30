@@ -40,13 +40,13 @@ This exports two required variables:
 
 ### 2. Prepare the Dataset
 
-Use the dataset scripts under `datasets/librispeech/` to download and dump the data.
+Use the dataset scripts under `data/librispeech/` to download and dump the data.
 After preparation the following paths must exist:
 
 ```
-datasets/librispeech/data/wav/train-clean-5/
-datasets/librispeech/data/wav/dev-clean-2/
-datasets/librispeech/data/wav/test-clean/
+data/librispeech/data/wav/train-clean-5/
+data/librispeech/data/wav/dev-clean-2/
+data/librispeech/data/wav/test-clean/
 ```
 
 ### 3. Train

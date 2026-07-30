@@ -20,7 +20,7 @@ function print_help_message {
     [--start_step START_STEP] \\                          # Which step you would like to start from. (default: 1)
     [--stop_step STOP_STEP] \\                            # Which step you would like to end at. (default: 10000)
     [--src_path SRC_PATH] \\                              # If you already have the decompressed folder 'LibriSpeech' downloaded from https://www.openslr.org/resources/12, you can give its absolute path (starting by a slash '/', i.e. /xxx/xxx/LibriSpeech) to this argument so that the data downloading step will be skipped. (default: none)
-    [--tgt_path TGT_PATH] \\                              # The dumped data and metadata files will be generated to {tgt_path}/librispeech. If tgt_path is not given, those files will be saved to ${SPEECHAIN_ROOT}/datasets/librispeech. If you want to save metadata files elsewhere, please give its absolute path (starting by a slash '/') by this argument. (default: none)
+    [--tgt_path TGT_PATH] \\                              # The dumped data and metadata files will be generated to {tgt_path}/librispeech. If tgt_path is not given, those files will be saved to ${SPEECHAIN_ROOT}/data/librispeech. If you want to save metadata files elsewhere, please give its absolute path (starting by a slash '/') by this argument. (default: none)
     [--feat_type FEAT_TYPE] \\                            # The type of the feature you would like to dump. (default: wav)
     [--feat_config FEAT_CONFIG] \\                        # The name of acoustic feature extraction configuration file. (default: none)
     [--sample_rate SAMPLE_RATE] \\                        # The sampling rate you want the waveforms to have. If not given, the original sampling rate of LibriSpeech (16kHz) will be used for the folder 'librispeech/data/wav' (default: none)
@@ -41,7 +41,7 @@ function print_help_message {
 
 # --- Arguments --- #
 # the dataset root for speech-text datasets, don't need to be changed
-datatype_root=${SPEECHAIN_ROOT}/datasets
+datatype_root=${SPEECHAIN_ROOT}/data
 
 # general arguments, their values are shared across different datasets
 # execution-related arguments

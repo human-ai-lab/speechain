@@ -12,7 +12,7 @@ fi
 function print_help_message {
   echo "usage:
   $0 \\ (The arguments in [] are optional while other arguments must be given by your run.sh.)
-      [--src_path SRC_PATH] \\                              # The path of the dumped dataset. If src_path is not given, it will be initialized to ${SPEECHAIN_ROOT}/datasets/. If you have already dumped the dataset, please give its full path (starting by a slash '/') by this argument. (default: none)
+      [--src_path SRC_PATH] \\                              # The path of the dumped dataset. If src_path is not given, it will be initialized to ${SPEECHAIN_ROOT}/data/. If you have already dumped the dataset, please give its full path (starting by a slash '/') by this argument. (default: none)
       [--tgt_path TGT_PATH] \\                              # The mfa-related files will be saved to {tgt_path}/{dataset_name}/mfa. If tgt_path is not given, those files will be saved to {src_path}/{dataset_name}/mfa. If you want to save the files elsewhere, please give its full path (starting by a slash '/') by this argument. (default: none)
       [--lab_cover_flag LAB_COVER_FLAG] \\                  # Whether to cover the old .lab files. (default: false)
       [--pretrained PRETRAINED] \\                          # Whether to use the pretrained acoustic model for alignment. If pretrained is set to true but pretrained_dataset and pretrained_subset are not give, the default MFA pretrained English model (english_us_arpa) will be used which is pretrained on LibriSpeech corpus. (default: true)
@@ -28,7 +28,7 @@ function print_help_message {
   exit 1
 }
 
-src_path=${SPEECHAIN_ROOT}/datasets
+src_path=${SPEECHAIN_ROOT}/data
 tgt_path=
 lab_cover_flag=false
 pretrained=true

@@ -14,8 +14,8 @@ function print_help_message {
   $0 \\ (The arguments in [] are optional while other arguments must be given by your run.sh.)
       [--start_step START_STEP] \\                          # Which step you would like to start from. (default: 1)
       [--stop_step STOP_STEP] \\                            # Which step you would like to end at. (default: 10000)
-      [--src_path SRC_PATH] \\                              # The path of the source dataset. If src_path is not given, the dataset will be downloaded to ${SPEECHAIN_ROOT}/datasets/{dataset_name}. If you have already downloaded the dataset, please give its absolute path (starting by a slash '/') by this argument. (default: none)
-      [--tgt_path TGT_PATH] \\                              # The metadata files will be generated to {tgt_path}/{dataset_name}. If tgt_path is not given, metadata files will be saved to ${SPEECHAIN_ROOT}/datasets/{dataset_name}. If you want to save metadata files elsewhere, please give its absolute path (starting by a slash '/') by this argument. (default: none)
+      [--src_path SRC_PATH] \\                              # The path of the source dataset. If src_path is not given, the dataset will be downloaded to ${SPEECHAIN_ROOT}/data/{dataset_name}. If you have already downloaded the dataset, please give its absolute path (starting by a slash '/') by this argument. (default: none)
+      [--tgt_path TGT_PATH] \\                              # The metadata files will be generated to {tgt_path}/{dataset_name}. If tgt_path is not given, metadata files will be saved to ${SPEECHAIN_ROOT}/data/{dataset_name}. If you want to save metadata files elsewhere, please give its absolute path (starting by a slash '/') by this argument. (default: none)
       [--feat_type FEAT_TYPE] \\                            # The type of the feature you would like to dump. If given, its value should match the name of the folder in ${SPEECHAIN_ROOT}/config/feat/ (default: wav)
       [--feat_config FEAT_CONFIG] \\                        # The name of acoustic feature extraction configuration file under ${SPEECHAIN_ROOT}/config/feat/{feat_type}/. (default: none)
       [--sample_rate SAMPLE_RATE] \\                        # The sampling rate you want the waveforms to have. (default: none)
@@ -42,7 +42,7 @@ pyscript_root=${SPEECHAIN_ROOT}/speechain/datasets/pyscripts
 # the absolute path of the toolkit config folder
 config_root=${SPEECHAIN_ROOT}/config/feat
 # the absolute path of the current dataset folder
-data_root=${SPEECHAIN_ROOT}/datasets
+data_root=${SPEECHAIN_ROOT}/data
 
 
 

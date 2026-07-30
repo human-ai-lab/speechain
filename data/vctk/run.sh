@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 #  Author: Heli Qi
 #  Affiliation: NAIST
 #  Date: 2022.11
@@ -15,30 +14,30 @@ function print_help_message {
   $0 \\ (The arguments in [] are optional while other arguments must be given by your run.sh.)
       [--start_step START_STEP] \\                          # Which step you would like to start from. (default: 1)
       [--stop_step STOP_STEP] \\                            # Which step you would like to end at. (default: 10000)
-      [--src_path SRC_PATH] \\                              # If you already have the decompressed folder 'LibriTTS' downloaded from https://www.openslr.org/resources/60, you can give its absolute path (starting by a slash '/', i.e. /xxx/xxx/LibriTTS) to this argument so that the data downloading step will be skipped. (default: none)
-      [--tgt_path TGT_PATH] \\                              # The metadata files will be generated to {tgt_path}/libritts. If tgt_path is not given, metadata files will be saved to ${SPEECHAIN_ROOT}/datasets/libritts. If you want to save metadata files elsewhere, please give its absolute path (starting by a slash '/') by this argument. (default: none)
+      [--src_path SRC_PATH] \\                              # You can give the absolute path (starting by a slash '/') of your downloaded data to this argument so that the data downloading step will be skipped. (default: none)
+      [--tgt_path TGT_PATH] \\                              # The metadata files will be generated to {tgt_path}/ljspeech. If tgt_path is not given, metadata files will be saved to ${SPEECHAIN_ROOT}/data/ljspeech. If you want to save metadata files elsewhere, please give its absolute path (starting by a slash '/') by this argument. (default: none)
       [--feat_type FEAT_TYPE] \\                            # The type of the feature you would like to dump. (default: wav)
       [--feat_config FEAT_CONFIG] \\                        # The name of acoustic feature extraction configuration file. (default: none)
-      [--sample_rate SAMPLE_RATE] \\                        # The sampling rate you want the waveforms to have. If not given, the original sampling rate of LibriTTS (24kHz) will be used for the folder 'libritts/data/wav' (default: none)
+      [--sample_rate SAMPLE_RATE] \\                        # The sampling rate you want the waveforms to have. If not given, the original sampling rate of LJSpeech (22.05kHz) will be used for the folder 'ljspeech/data/wav' (default: none)
       [--spk_emb_model SPK_EMB_MODEL] \\                    # The speaker recognition model you want to use to extract the speaker embeddings. If given, this argument must be either 'xvector' or 'ecapa'. (default: none)
       [--token_type TOKEN_TYPE] \\                          # The type of the token you want your tokenizer to have. (default: g2p)
       [--txt_format TXT_FORMAT] \\                          # The text processing format for the transcripts in the dataset. (default: tts)
       [--ncpu NCPU] \\                                      # The number of processes used for all the multiprocessing jobs. (default: 8)
       [--ngpu NGPU] \\                                      # The number of GPUs used to extract speaker embeddings. If not given, extraction will be done by CPUs. (default: 1)
-      [--vocab_size VOCAB_SIZE] \\                          # The size of the tokenizer vocabulary. (default: none)
+      [--vocab_size VOCAB_SIZE] \\                          # The size of the tokenizer vocabulary. (default: 1000 for dump_part '100'; 5000 for dump_part '460'; 10000 for dump_part '960')
       [--model_type MODEL_TYPE] \\                          # The model_type argument for building sentencepiece tokenzier model. (default: bpe)
       [--character_coverage CHARACTER_COVERAGE] \\          # The character_coverage argument for building sp tokenizer model. (default: 1.0)
       [--split_by_whitespace SPLIT_BY_WHITESPACE] \\        # The split_by_whitespace argument for building sp tokenizer model. (default: true)
       [--separator SEPARATOR] \\                            # The separator used to separate the 'subsets' arguments from a string into an array of string. (default: ',')
-      [--dump_part DUMP_PART]                              # Which part of LibriTTS you would like to dump. '100' means 'train-clean-100'; '460' means 'train-clean-100' + 'train-clean-360'; '960' means 'train-clean-100' + 'train-clean-360' + 'train-other-500'. 'dev-clean', 'dev-other', 'test-clean', 'test-other' will be dumped for all options. (default: '960')" >&2
+      [--valid_speakers VALID_SPEAKERS] \\                  # The speakers in VCTK you want to use as the validation set. Two consecutive speakers are separated by a comma. (default: 'p226,p228,p265,p241,p306,p311')
+      [--test_speakers TEST_SPEAKERS]                      # The speakers in VCTK you want to use as the testing set. Two consecutive speakers are separated by a comma (default: 'p225,p256,p249,p237,p362,p345')" >&2
   exit 1
 }
 
 
-
 # --- Arguments --- #
 # the dataset root for speech-text datasets, don't need to be changed
-datatype_root=${SPEECHAIN_ROOT}/datasets
+datatype_root=${SPEECHAIN_ROOT}/data
 
 # general arguments, their values are shared across different datasets
 # execution-related arguments
@@ -52,32 +51,29 @@ ngpu=1
 feat_type=wav
 # empty feat_config means no feature extraction configuration
 feat_config=
-# empty sample_rate means the sampling rate of the original LibriTTS (24kHz) will be used
-sample_rate=16000
+# empty sample_rate means the sampling rate of the original LJSpeech (22.05kHz) will be used
+sample_rate=
 # empty spk_emb_model means no speaker embedding will be extracted
-spk_emb_model=ecapa
-# tokenizer for LibriTTS is default to be g2p
+spk_emb_model=
+# tokenization-related arguments
 token_type=g2p
 # empty vocab_size will be automatically initialized if token_type is 'word' or 'sentencepiece':
-# 1000 (sentencepiece) & 5000 (word) for dump_part '100';
-# 5000 (sentencepiece) & 10000 (word) for dump_part '460';
-# 5000 (sentencepiece) & 10000 (word) for dump_part '960'
+# 1000 for dump_part '100'; 5000 for dump_part '460'; 10000 for dump_part '960'
 vocab_size=stress
-# sentencepiece-specific arguments, won't be used if token_type is not 'sentencepiece'
+# sentencepiece-specific arguments, won't be used if token_type is 'char' or 'word'
 model_type=bpe
 character_coverage=1.0
 split_by_whitespace=true
-# arguments used by data_download.sh
-separator=','
-# text format for LibriTTS is default to be normal
-txt_format=punc # punc or no-punc
+# arguments used by stat_info_generator.py
+txt_format=no-punc
 
 
-# LibriTTS-specific arguments
-# which portion of LibriTTS corpus you want to process
-# 100: train-clean-100; 460: train-clean-100 + train-clean-360; 960: train-clean-100 + train-clean-360 + train-other-500
-# dev-clean, dev-other, test-clean, test-other will be downloaded regardless of your input dump_part
-dump_part=100
+# LJSpeech-specific arguments
+# the speakers in VCTK you want to use as the validation set
+# Two consecutive speakers are separated by a comma
+valid_speakers="p226,p228,p265,p241,p306,p311"
+# the speakers in VCTK you want to use as the testing set
+test_speakers="p225,p256,p249,p237,p362,p345"
 
 
 ### get args from the command line ###
@@ -145,13 +141,13 @@ while getopts ":h-:" optchar; do
           val="${!OPTIND}"; OPTIND=$(( OPTIND + 1 ))
           ngpu=${val}
           ;;
-        dump_part)
+        valid_speakers)
           val="${!OPTIND}"; OPTIND=$(( OPTIND + 1 ))
-          dump_part=${val}
+          valid_speakers=${val}
           ;;
-        separator)
+        test_speakers)
           val="${!OPTIND}"; OPTIND=$(( OPTIND + 1 ))
-          separator=${val}
+          test_speakers=${val}
           ;;
         txt_format)
           val="${!OPTIND}"; OPTIND=$(( OPTIND + 1 ))
@@ -176,57 +172,10 @@ while getopts ":h-:" optchar; do
   esac
 done
 
-# --- Argument Checking --- #
-if [ ${separator} == ' ' ]; then
-  echo "Your input separator cannot be a blank!"
-  exit 1
-fi
-
 
 # --- Argument Initialization --- #
-# only generate the vocabulary for the training sets (vocab_subsets)
-case "${dump_part}" in
-  100)
-    subsets="train-clean-100"
-    subsets_args="train-clean-100"
-    vocab_src_subsets="${subsets} dev-clean test-clean"
-
-    if [ ${token_type} == 'sentencepiece' ] && [ -z ${vocab_size} ]; then
-      vocab_size=1000
-    elif [ ${token_type} == 'word' ] && [ -z ${vocab_size} ];then
-      vocab_size=5000
-    fi
-    ;;
-  460)
-    subsets="train-clean-100 train-clean-360"
-    subsets_args="train-clean-100${separator}train-clean-360"
-    vocab_src_subsets="${subsets} train-clean-460 dev-clean test-clean"
-
-    if [ ${token_type} == 'sentencepiece' ] && [ -z ${vocab_size} ]; then
-      vocab_size=5000
-    elif [ ${token_type} == 'word' ] && [ -z ${vocab_size} ];then
-      vocab_size=10000
-    fi
-    ;;
-  960)
-    subsets="train-clean-100 train-clean-360 train-other-500"
-    subsets_args="train-clean-100${separator}train-clean-360${separator}train-other-500"
-    vocab_src_subsets="${subsets} train-clean-460 train-960 dev-clean dev-other dev test-clean test-other"
-
-    if [ ${token_type} == 'sentencepiece' ] && [ -z ${vocab_size} ]; then
-      vocab_size=5000
-    elif [ ${token_type} == 'word' ] && [ -z ${vocab_size} ];then
-      vocab_size=10000
-    fi
-    ;;
-  ?)
-    echo "Your input dump_part '${dump_part}' is invalid. It must be one of [100, 460, 960]!"
-    exit 1
-esac
-
-# attach dev and test sets to 'subsets' arguments for any input dump_part
-subsets="${subsets} dev-clean dev-other test-clean test-other"
-subsets_args="${subsets_args}${separator}dev-clean${separator}dev-other${separator}test-clean${separator}test-other"
+# There is no official subsets of LJSpeech, so the names are simply set to 'train', 'valid', and 'test' here.
+subsets="train-mic1 valid-mic1 test-mic1 train-mic2 valid-mic2 test-mic2"
 # enter extra arguments for vocab_generator.py
 vocab_generate_args=
 # number of tokens in the vocabulary
@@ -251,11 +200,10 @@ fi
   --spk_emb_model "${spk_emb_model}" \
   --token_type "${token_type}" \
   --txt_format "${txt_format}" \
-  --dataset_name "libritts" \
-  --download_args "--subsets ${subsets_args} --separator ${separator}" \
-  --meta_generate_args "--subsets ${subsets_args} --separator ${separator} --ncpu ${ncpu}" \
+  --dataset_name "vctk" \
+  --meta_generate_args "--valid_speakers ${valid_speakers} --test_speakers ${test_speakers}" \
   --subsets "${subsets}" \
-  --vocab_src_subsets "${vocab_src_subsets}" \
+  --vocab_src_subsets "train-mic1 valid-mic1 test-mic1 train-mic2 valid-mic2 test-mic2" \
   --vocab_generate_args "${vocab_generate_args}" \
   --ncpu "${ncpu}" \
   --ngpu "${ngpu}"
