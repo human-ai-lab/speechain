@@ -76,7 +76,6 @@ dependencies:
     - joblib==1.1.0
     - kiwisolver==1.4.2
     - libclang==14.0.6
-    - librosa==0.9.1
     - lit==15.0.7
     - llvmlite==0.39.1
     - markdown==3.3.6
