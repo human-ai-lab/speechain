@@ -96,13 +96,24 @@ class TestParseReadableNumber:
         assert parse_readable_number("5h") == 500
 
     def test_roundtrip_kilo(self):
-        # Only single-level strings roundtrip correctly in the current implementation
         original = 3000
         assert parse_readable_number(get_readable_number(original)) == original
 
     def test_roundtrip_million(self):
         original = 5_000_000
         assert parse_readable_number(get_readable_number(original)) == original
+
+    def test_roundtrip_billion(self):
+        original = 1_000_000_000
+        assert parse_readable_number(get_readable_number(original)) == original
+
+    def test_roundtrip_multi_level(self):
+        # combined units (e.g. "3k5h", "1b234m567k8h90") used to crash both
+        # get_readable_number (float contamination via `%= 1e9`-style floats)
+        # and parse_readable_number (the split-based parsing only handled a
+        # single unit)
+        for original in (305, 3500, 999, 5_003_000, 1_500_000_000, 1_234_567_890):
+            assert parse_readable_number(get_readable_number(original)) == original
 
 
 class TestGetReadableMemory:

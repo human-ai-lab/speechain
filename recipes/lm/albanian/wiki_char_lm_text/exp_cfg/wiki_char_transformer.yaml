@@ -4,7 +4,7 @@
 # Training text: Wikipedia external text + oversampled Common Voice train text
 ###############################################################################
 
-data_root: datasets/albanian_asr
+data_root: data/albanian_asr
 lm_train_set: wiki300k_cvtrainx20
 valid_set: dev_full
 test_set: test_full

@@ -16,7 +16,7 @@
 ###################################
 # if your dumped dataset is outside the toolkit folder, please change real_dataset_path & syn_dataset_path.
 # There should be a folder named 'libritts' in dataset_path
-real_dataset_path: datasets/
+real_dataset_path: data/
 syn_dataset_path: recipes/offline_tts2asr/tts_syn_speech/
 
 # data-related

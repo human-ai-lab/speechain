@@ -39,7 +39,7 @@ def feat_derivation(feat: np.ndarray, delta_order: int, delta_N: int) -> np.ndar
             )
             comb_feat.append(delta2_feat)
 
-    return np.hstack(comb_feat)
+    return np.vstack(comb_feat)
 
 
 def compute_stft(

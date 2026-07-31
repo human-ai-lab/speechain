@@ -8,7 +8,11 @@ setup(name="speechain",
       platforms=["any"],  # or more specific, e.g. "win32", "cygwin", "osx"
       license="BSD",
       url="",
-      packages=find_packages(include=['speechain', 'datasets']),
+      # Note: 'speechain.*' is necessary so that all the sub-packages are installed;
+      # the top-level 'datasets' folder is NOT a package anymore (its shared code has
+      # been moved to 'speechain.datasets'), which also avoids shadowing the
+      # HuggingFace 'datasets' package after installation.
+      packages=find_packages(include=['speechain', 'speechain.*']),
       install_requires=['numpy',
                         'scipy',
                         'torch',

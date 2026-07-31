@@ -7,7 +7,7 @@
 ###################################
 # Experiment Parameters and setup #
 ###################################
-dataset_path: datasets/
+dataset_path: data/
 dataset: albanian_asr
 valid_dset: &valid_dset test_full
 

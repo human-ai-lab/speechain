@@ -1,7 +1,7 @@
 # Iterator
 
 [*Iterator*](https://github.com/bagustris/SpeeChain/blob/main/speechain/iterator/abs.py) is the base class that takes charge of grouping data instances into batches for training or testing models.
-Each iterator object has a built-in _speechain.dataset.Dataset_ object as a member variable. 
+Each iterator object has a built-in _speechain.datasets.Dataset_ object as a member variable. 
 Actually, an _Iterator_ object cannot directly access the data instances in the built-in _Dataset_ object but maintains a batching view of the indices of the data instances used for model training or testing.
 
 The iterators are divided into 3 groups: *train*, *valid*, and *test*. 
@@ -75,13 +75,13 @@ test:
      The configuration is made up of the following 4 fourth-level keys:
 
          1. **dataset_type:**  
-         The value of this key acts as the query string to pick up your target built-in _Dataset_ subclass in `SPEECHAIN_ROOT/speechain/dataset/`.
-         Your given query should be in the form of `{file_name}.{class_name}` where `file_name` specifies your target _.py_ file in `SPEECHAIN_ROOT/speechain/dataset/`, and `class_name` indicates your target _Dataset_ subclass in `SPEECHAIN_ROOT/speechain/dataset/{file_name}.py`.   
-         For example, `speech_text.SpeechTextDataset` means the subclass `SpeechTextDataset` in `./speechain/dataset/speech_text.py`.
+         The value of this key acts as the query string to pick up your target built-in _Dataset_ subclass in `SPEECHAIN_ROOT/speechain/datasets/`.
+         Your given query should be in the form of `{file_name}.{class_name}` where `file_name` specifies your target _.py_ file in `SPEECHAIN_ROOT/speechain/datasets/`, and `class_name` indicates your target _Dataset_ subclass in `SPEECHAIN_ROOT/speechain/datasets/{file_name}.py`.   
+         For example, `speech_text.SpeechTextDataset` means the subclass `SpeechTextDataset` in `./speechain/datasets/speech_text.py`.
 
          2. **dataset_conf:**  
          The value of this key contains all the configuration used to initialize the built-in *Dataset* object. 
-         Please refer to [Dataset API Document](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#api-document) for more details.
+         Please refer to [Dataset API Document](https://github.com/bagustris/SpeeChain/tree/main/speechain/datasets#api-document) for more details.
 
          3. **General Iterator Configuration:**  
          These configurations are used to initialize the general part shared by all iterator subclasses. 
@@ -132,7 +132,7 @@ Each iterator subclass should override a static hook function `batches_generate_
     _Dataset_ initialization is automatically done here by the given _dataset_type_ and _dataset_conf_.
 * **Arguments:**
     * **_dataset_type:_** str  
-      Query string to pick up the target Dataset subclass in `SPEECHAIN_ROOT/speechain/dataset/`
+      Query string to pick up the target Dataset subclass in `SPEECHAIN_ROOT/speechain/datasets/`
     * **_dataset_conf:_**  Dict  
       Dataset configuration for the automatic initialization of the built-in _Dataset_ object.
     * **_batches_per_epoch:_** int = None  

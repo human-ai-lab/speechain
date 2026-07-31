@@ -52,8 +52,9 @@ tmp/
 # others
 *.egg-info
 
-# datasets, use -f to force add
-datasets/
+# dumped dataset contents: the top-level data/ folder is ignored by default;
+# use `git add -f` to track new pipeline files under data/
+/data/
 
 
 # virtual environment
@@ -65,10 +66,9 @@ build
 
 # specific folders
 recipes/
-datasets
 # ignore the contents of config/ except the shared configuration folders
 # (config/feat for acoustic feature extraction & config/infer for model inference,
-# which are referenced by datasets/data_dumping.sh and recipes/run.sh)
+# which are referenced by data/data_dumping.sh and recipes/run.sh)
 config/*
 !config/feat/
 !config/infer/

@@ -37,12 +37,12 @@ The following subsections will explain how to execute the steps above one by one
 
 ### How to dump a dataset to your machine
 In our toolkit, the datasets are grouped by their data types. 
-Each available dataset corresponds a specific folder in `${SPEECHAIN_ROOT}/datasets`:
+Each available dataset corresponds to a specific folder in `${SPEECHAIN_ROOT}/data`:
 
 SpeeChain follows the all-in-one dumping style by a bash script named `data_dumping.sh` where the procedure of dataset dumping is divided into individual steps and each step is executed by a specific script.
 
-We provide an executable script named `run.sh` in each dataset folder under `${SPEECHAIN_ROOT}/datasets`. 
-Please refer to [**here**](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-dump-a-dataset-on-your-machine) before starting the dumping pipeline.
+We provide an executable script named `run.sh` in each dataset folder under `${SPEECHAIN_ROOT}/data`. 
+Please refer to [**here**](https://github.com/bagustris/SpeeChain/tree/main/data#how-to-dump-a-dataset-on-your-machine) before starting the dumping pipeline.
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
@@ -352,7 +352,7 @@ Folder architecture is shown below:
         /tts        # Configuration files for TTS inference
             default.yaml          # Default generation with the HiFi-GAN vocoder
 ```
-For more details about the configuration files in `${SPEECHAIN_ROOT}/config/feat/`, please refer to the docstring of [${SPEECHAIN_ROOT}/datasets/pyscripts/feat_extractor.py](https://github.com/bagustris/SpeeChain/blob/main/datasets/pyscripts/feat_extractor.py).
+For more details about the configuration files in `${SPEECHAIN_ROOT}/config/feat/`, please refer to the docstring of [${SPEECHAIN_ROOT}/speechain/datasets/pyscripts/feat_extractor.py](https://github.com/bagustris/SpeeChain/blob/main/speechain/datasets/pyscripts/feat_extractor.py).
 
 For more details about the configuration files in `${SPEECHAIN_ROOT}/config/infer/`, please refer to the docstring of the corresponding inference function in [${SPEECHAIN_ROOT}/speechain/infer_func/](https://github.com/bagustris/SpeeChain/tree/main/config/infer).
 
@@ -361,21 +361,23 @@ For more details about the configuration files in `${SPEECHAIN_ROOT}/config/infe
 
 #### Dataset Folder
 This folder contains off-the-shelf processing scripts to dump datasets into your machine. 
-Each type of datasets corresponds to a specific sub-folder where each dataset corresponds a specific sub-sub-folder.
+Each dataset corresponds to a specific sub-folder.
 
 Folder architecture is shown below:
 ```bash
-/datasets
-    /speech_text        # Datasets that are made up of speech and text data
-        /librispeech        # Processing scripts for the LibriSpeech dataset
-            /...
-        /libritts           # Processing scripts for the LibriTTS dataset
-            /...
-        /ljspeech           # Processing scripts for the LJSpeech dataset
-            /...
-        /data_dumping.sh    # all-in-one speech-text dataset dumping script
+/data
+    /librispeech        # Processing scripts for the LibriSpeech dataset
+        /...
+    /libritts           # Processing scripts for the LibriTTS dataset
+        /...
+    /ljspeech           # Processing scripts for the LJSpeech dataset
+        /...
+    /vctk               # Processing scripts for the VCTK dataset
+        /...
+    data_dumping.sh     # all-in-one speech-text dataset dumping script
+    mfa_preparation.sh  # all-in-one MFA alignment preparation script
 ```
-For more details, please refer to the README.md of each type of dataset in [${SPEECHAIN_ROOT}/datasets/](https://github.com/bagustris/SpeeChain/tree/main/datasets).
+For more details, please refer to the README.md in [${SPEECHAIN_ROOT}/data/](https://github.com/bagustris/SpeeChain/tree/main/data).
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 
@@ -445,7 +447,7 @@ Based on the abstract class, many implementation classes are included in the sam
 ```
 
 Read more about [`/speechain/criterion`](./criterion.md)  
-Read more about [`/speechain/dataset`](./dataset.md)  
+Read more about [`/speechain/datasets`](./dataset.md)  
 Read more about [`/speechain/iterator`](./iterator.md)  
 Read more about [`/speechain/model`](./model.md)  
 Read more about [`/speechain/module`](./module.md)  
@@ -456,7 +458,7 @@ Read more about [`/speechain/tokenizer`](./tokenizer.md)
 
 
 ### How to customize my own data loading and batching strategy
-For how to customize your own data loading strategy, please refer to the [API document](https://github.com/bagustris/SpeeChain/tree/main/speechain/dataset#api-document) of `/speechain/dataset`.  
+For how to customize your own data loading strategy, please refer to the [API document](https://github.com/bagustris/SpeeChain/tree/main/speechain/datasets#api-document) of `/speechain/datasets`.  
 
 For how to customize your own data batching, please refer to the [API document](https://github.com/bagustris/SpeeChain/tree/main/speechain/iterator#api-document) of `/speechain/iterator`.  
 

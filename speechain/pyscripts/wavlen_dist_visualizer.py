@@ -90,7 +90,7 @@ def main(
 ):
 
     if dump_path is None:
-        dump_path = parse_path_args("datasets")
+        dump_path = parse_path_args("data")
 
     idx2wav_len_path = os.path.join(
         dump_path, dataset, "data", f"wav{sample_rate}", subset, "idx2wav_len"
