@@ -135,9 +135,3 @@ class SpeechTextMetaGenerator(ABC):
                     ),
                     fmt="%s",
                 )
-
-
-# For your personal stat_info_generator.py, please call the main function of your SpeechTextStatGenerator in the main
-# branch like the way below. (Note: don't forget to change SpeechTextStatGenerator() to YourStatGenerator())
-if __name__ == "__main__":
-    SpeechTextMetaGenerator().main()

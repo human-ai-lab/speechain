@@ -37,7 +37,7 @@ The following subsections will explain how to execute the steps above one by one
 
 ### How to dump a dataset to your machine
 In our toolkit, the datasets are grouped by their data types. 
-Each available dataset corresponds a specific folder in `${SPEECHAIN_ROOT}/data`:
+Each available dataset corresponds to a specific folder in `${SPEECHAIN_ROOT}/data`:
 
 SpeeChain follows the all-in-one dumping style by a bash script named `data_dumping.sh` where the procedure of dataset dumping is divided into individual steps and each step is executed by a specific script.
 

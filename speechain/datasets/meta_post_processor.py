@@ -79,9 +79,3 @@ class SpeechTextMetaPostProcessor(ABC):
 
         # --- 1. Metadata Post-processing --- #
         self.meta_post_process(src_path, **args)
-
-
-# For your personal stat_post_processor.py, please call the main function of your SpeechTextPostProcessor in the main
-# branch like the way below. (Note: don't forget to change SpeechTextPostProcessor() to YourPostProcessor())
-if __name__ == "__main__":
-    SpeechTextMetaPostProcessor().main()

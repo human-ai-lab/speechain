@@ -185,7 +185,14 @@ def main(
         chunk_size = "40m" if idx2data_len is not None else "2k"
     # turn the readable value to the raw integer value
     if isinstance(chunk_size, str):
-        chunk_size = parse_readable_number(chunk_size)
+        try:
+            chunk_size = parse_readable_number(chunk_size)
+        except (ValueError, AssertionError) as e:
+            raise ValueError(
+                f"Invalid --chunk_size {chunk_size!r}: {e}. Expected a plain integer "
+                "or a readable number such as '2k', '40m', '1b500m' "
+                "(units: b=1e9, m=1e6, k=1e3, h=1e2)."
+            ) from e
 
     # --- 1. Collect Chunk Information --- #
     # loop each wav file
