@@ -153,7 +153,7 @@ For reproducibility of our ASR model configuration files in `${SPEECHAIN_ROOT}/r
 
 ## Training an ASR model  
 Before training an ASR model, ensure that your target datasets are dumped by the scripts in `${SPEECHAIN_ROOT}/data/{your-target-dataset}`.
-More details on how to dump a dataset can be found [here](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-dump-a-dataset-on-your-machine).
+More details on how to dump a dataset can be found [here](https://github.com/bagustris/SpeeChain/tree/main/data#how-to-dump-a-dataset-on-your-machine).
 
 ### Use an existing dataset with a pre-tuned configuration
 1. Locate a _.yaml_ configuration file in `${SPEECHAIN_ROOT}/recipes/asr`. 
@@ -181,7 +181,7 @@ More details on how to dump a dataset can be found [here](https://github.com/bag
 
 ### Creating a new configuration for a non-existing dataset  
 
-1. Dump your target dataset from the Internet following these [instructions](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-contribute-a-new-dataset).  
+1. Dump your target dataset from the Internet following these [instructions](https://github.com/bagustris/SpeeChain/tree/main/data#how-to-contribute-a-new-dataset).  
 
 2. Create a folder for your dumped dataset `${SPEECHAIN_ROOT}/recipes/asr/{your-new-dataset}/{your-target-subset}`:
    ```bash  

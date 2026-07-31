@@ -1,6 +1,6 @@
 # Datasets (Directory)
 
-The `datasets` folder contains all the available datasets in this toolkit. 
+The `data` folder contains all the available datasets in this toolkit. 
 Each dataset corresponds to a sub-folder and has a uniform file system. 
 You can easily dump your target dataset to your machine by following the instructions below. 
 If you want to contribute a new dataset, we would appreciate it if you could follow our file systems and metadata formats.

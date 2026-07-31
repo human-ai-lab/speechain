@@ -37,12 +37,12 @@ The following subsections will explain how to execute the steps above one by one
 
 ### How to dump a dataset to your machine
 In our toolkit, the datasets are grouped by their data types. 
-Each available dataset corresponds a specific folder in `${SPEECHAIN_ROOT}/datasets`:
+Each available dataset corresponds a specific folder in `${SPEECHAIN_ROOT}/data`:
 
 SpeeChain follows the all-in-one dumping style by a bash script named `data_dumping.sh` where the procedure of dataset dumping is divided into individual steps and each step is executed by a specific script.
 
-We provide an executable script named `run.sh` in each dataset folder under `${SPEECHAIN_ROOT}/datasets`. 
-Please refer to [**here**](https://github.com/bagustris/SpeeChain/tree/main/datasets#how-to-dump-a-dataset-on-your-machine) before starting the dumping pipeline.
+We provide an executable script named `run.sh` in each dataset folder under `${SPEECHAIN_ROOT}/data`. 
+Please refer to [**here**](https://github.com/bagustris/SpeeChain/tree/main/data#how-to-dump-a-dataset-on-your-machine) before starting the dumping pipeline.
 
 👆[Back to the table of contents](https://github.com/bagustris/SpeeChain/blob/main/handbook.md#table-of-contents)
 

@@ -1,7 +1,7 @@
 # Dataset (Class)
 
 **Note:** This page documents the *Dataset* classes of the toolkit.
-The `speechain/datasets` folder also contains the shared dataset-**dumping** code (the abstract `meta_generator.py` & `meta_post_processor.py` base classes and the fixed scripts in `pyscripts/`), which is documented in [the README of the top-level `datasets` folder](https://github.com/bagustris/SpeeChain/tree/main/datasets).
+The `speechain/datasets` folder also contains the shared dataset-**dumping** code (the abstract `meta_generator.py` & `meta_post_processor.py` base classes and the fixed scripts in `pyscripts/`), which is documented in [the README of the top-level `data` folder](https://github.com/bagustris/SpeeChain/tree/main/data).
 
 [*Dataset*](https://github.com/bagustris/SpeeChain/blob/main/speechain/datasets/abs.py) is the base class that takes charge of reading the data instances from the disk into the memory and packaging them into a batch for model training or testing.
 
