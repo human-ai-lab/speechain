@@ -106,14 +106,14 @@ def en_text_process(input_text: str, txt_format: str) -> str:
 
     # 8th stage: question and exclamation marks
     # remove duplicated questions
-    input_text = re.sub("([.,!?]\s*)+!", "!", input_text)
+    input_text = re.sub(r"([.,!?]\s*)+!", "!", input_text)
     input_text = re.sub(
-        "([.,!?]\s*)+\?", "?", input_text
+        r"([.,!?]\s*)+\?", "?", input_text
     )  # remove duplicated exclamations
     # remove duplicated periods
-    input_text = re.sub("([.,!?]\s*)+\.", ".", input_text)
+    input_text = re.sub(r"([.,!?]\s*)+\.", ".", input_text)
     # remove duplicated commas
-    input_text = re.sub("([.,!?]\s*)+,", ",", input_text)
+    input_text = re.sub(r"([.,!?]\s*)+,", ",", input_text)
 
     # remove the blanks and punctuation marks at the beginning
     while input_text.startswith(" ") or is_punc(input_text[0]):
@@ -168,21 +168,21 @@ def get_readable_number(raw_number: int or float) -> str:
 
     read_number = ""
     # billion-level
-    if raw_number // 1e9 > 0:
-        read_number += f"{int(raw_number // 1e9)}b"
-        raw_number %= 1e9
+    if raw_number // 1_000_000_000 > 0:
+        read_number += f"{raw_number // 1_000_000_000}b"
+        raw_number %= 1_000_000_000
     # million-level
-    if raw_number // 1e6 > 0:
-        read_number += f"{int(raw_number // 1e6)}m"
-        raw_number %= 1e6
+    if raw_number // 1_000_000 > 0:
+        read_number += f"{raw_number // 1_000_000}m"
+        raw_number %= 1_000_000
     # kilo-level
-    if raw_number // 1e3 > 0:
-        read_number += f"{int(raw_number // 1e3)}k"
-        raw_number %= 1e3
+    if raw_number // 1_000 > 0:
+        read_number += f"{raw_number // 1_000}k"
+        raw_number %= 1_000
     # hundred-level
-    if raw_number // 1e2 > 0:
-        read_number += f"{int(raw_number // 1e2)}h"
-        raw_number %= 1e2
+    if raw_number // 100 > 0:
+        read_number += f"{raw_number // 100}h"
+        raw_number %= 100
     # 1~99
     if raw_number > 0:
         read_number += f"{raw_number:d}"
@@ -196,11 +196,9 @@ def parse_readable_number(read_number: str) -> int or float:
 
     def split_and_record(_raw_number: int, _read_number: str, spliter: str = None):
         if spliter is not None:
-            read_number_split = _read_number.split(spliter)
-            read_number_split.remove("")
-            assert len(read_number_split) <= 2
+            digits, remainder = _read_number.split(spliter, maxsplit=1)
 
-            addend = int(read_number_split[0])
+            addend = int(digits)
             if spliter == "b":
                 assert addend > 0
                 addend *= 1e9
@@ -213,9 +211,7 @@ def parse_readable_number(read_number: str) -> int or float:
             elif spliter == "h":
                 assert 0 < addend < 10
                 addend *= 1e2
-            return _raw_number + int(addend), (
-                read_number_split[1] if len(read_number_split) == 2 else ""
-            )
+            return _raw_number + int(addend), remainder
 
         else:
             assert read_number.isdigit()
@@ -224,7 +220,7 @@ def parse_readable_number(read_number: str) -> int or float:
 
     # billion-level
     if "b" in read_number:
-        raw_number, read_number = split_and_record(raw_number, read_number, "m")
+        raw_number, read_number = split_and_record(raw_number, read_number, "b")
     # million-level
     if "m" in read_number:
         raw_number, read_number = split_and_record(raw_number, read_number, "m")
