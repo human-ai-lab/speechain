@@ -93,7 +93,7 @@ def main(
         target_dataset = source_dataset
 
     if dump_path is None:
-        dump_path = "datasets"
+        dump_path = "data"
     token_path = os.path.join(
         dump_path,
         source_dataset,

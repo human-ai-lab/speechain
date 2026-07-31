@@ -13,10 +13,22 @@ All notable changes to this project will be documented in this file.
 ### 🐛 Bug Fixes
 
 - Skip the unnecessary resampling for the dumped acoustic features whose sampling rate is unknown, cache the resampler of each encountered sampling rate, and keep the sampling rate consistent after the on-the-fly resampling (`speechain/dataset/speech_text.py`)
+- `setup.py` only installed the top-level `speechain` package without any of its sub-packages (`find_packages(include=['speechain'])` does not match sub-packages) and shipped a top-level `datasets` package that could shadow the HuggingFace `datasets` package after installation
+- The bare `datasets` pattern in `.gitignore` also ignored the shared dataset-dumping code after it was moved into `speechain/datasets/`; negation rules are added so that the moved code is always tracked by git
+- `lab_file_generator.py` aborted the whole multiprocessing chunk when meeting an existing `.lab` file (`return` instead of `continue`), so re-running MFA preparation on a partially-generated corpus silently skipped most of the remaining utterances
+- `np.loadtxt` in `data_packager.py` and `vocab_generator.py` crashed with `IndexError` when the loaded metadata file contains only one line (`ndmin=2` is now given)
+- `vocab_generator.py` crashed with `IndexError` when a transcript starts with a punctuation mark (the phoneme list is empty at that point)
+- Correct the wrong default value of `txt_format` in the help messages of `meta_generator.py` and `data_dumping.sh` (`normal` → `no-punc`)
 - Bugs in metadata_generator.py librispeech
 - Conflict in lm_text/exp_cfg/100-*
 - Linting
 - Linting
+
+### ♻️ Code Refactoring
+
+- Move all the shared dataset-dumping Python code from the top-level `datasets/` folder into `speechain/datasets/` (issue #2): the abstract base classes (`meta_generator.py`, `meta_post_processor.py`) and the fixed executable scripts (`pyscripts/`). This resolves the import ambiguity with the HuggingFace `datasets` package and brings the code under the CI checks (Black & Ruff) that only scan the `speechain` directory. Per-dataset scripts under `datasets/{dataset_name}/` now import the base classes from the `speechain` package, and `datasets/data_dumping.sh` & `datasets/mfa_preparation.sh` point to the new script locations
+- Merge `speechain/dataset/` into `speechain/datasets/` so that all dataset-related code lives in a single sub-package instead of two confusing one-letter-apart directories. The `dataset_type` strings in existing experiment configuration files (e.g., `speech_text.SpeechTextDataset`) remain valid because only the hardcoded module prefix in `speechain/iterator/abs.py` is changed
+- **Breaking:** Rename the top-level `datasets/` folder to `data/` to avoid confusion with the `speechain.datasets` package and the HuggingFace `datasets` package. **Migration:** rename your existing dumped-data folder (`mv datasets data`) and update `datasets/...` paths in your own experiment configuration files to `data/...` (e.g., `dataset_path: data/`). The `.gitignore` rules are simplified accordingly: `/data/` is now the only dataset-related ignore rule, and the `speechain/datasets/` package no longer needs ignore-negation rules
 
 ### 💼 Other
 

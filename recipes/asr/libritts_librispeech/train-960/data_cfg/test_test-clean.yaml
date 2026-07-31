@@ -9,7 +9,7 @@
 # Experiment Parameters and setup #
 ###################################
 # if your dumped dataset is outside the toolkit folder, please change dataset_path. There should be a folder named 'libritts' in dataset_path
-dataset_path: datasets/
+dataset_path: data/
 dataset: librispeech
 test_dset: &test_dset test-clean
 

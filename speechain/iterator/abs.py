@@ -33,7 +33,7 @@ def worker_init_fn(worker_id: int, base_seed: int, same_worker_seed: bool):
 class Iterator(ABC):
     """Iterator is the base class that takes charge of grouping data instances into
     batches for training or testing models. Each iterator has a built-in
-    speechain.dataset.Dataset object as one of its member variables. Actually, an
+    speechain.datasets.Dataset object as one of its member variables. Actually, an
     Iterator object cannot directly access the data instances in the built- in Dataset
     object but maintains a batching view of the indices of the data instances used for
     model training or testing.
@@ -73,7 +73,7 @@ class Iterator(ABC):
 
         Args:
             dataset_type: str
-                Query string to pick up the target Dataset subclass in `speechain/dataset/`
+                Query string to pick up the target Dataset subclass in `speechain/datasets/`
             dataset_conf: Dict
                 Dataset configuration for its automatic initialization
             batches_per_epoch: int = None
@@ -112,7 +112,7 @@ class Iterator(ABC):
                 iterator configuration for customized batch generation
         """
         # initialize the built-in dataset of the iterator
-        dataset_class = import_class("speechain.dataset." + dataset_type)
+        dataset_class = import_class("speechain.datasets." + dataset_type)
         self.dataset = dataset_class(**dataset_conf)
 
         # initialize the general part of the iterator

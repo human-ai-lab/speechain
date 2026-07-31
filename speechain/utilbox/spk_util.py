@@ -75,7 +75,7 @@ def extract_spk_feat(
         return []
 
     # initialize the speaker embedding model and downloading path for speechbrain API
-    download_dir = parse_path_args("datasets/spk_emb_models")
+    download_dir = parse_path_args("data/spk_emb_models")
     if spk_emb_model == "ecapa":
         speechbrain_args = dict(
             source="speechbrain/spkrec-ecapa-voxceleb",

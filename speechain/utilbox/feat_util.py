@@ -6,11 +6,12 @@ Date: 2022.12
 
 import math
 
-import librosa
 import numpy as np
 import pyworld
 import torch
+import torchaudio
 from scipy import signal
+from scipy.fftpack import dct
 from scipy.interpolate import interp1d
 
 from speechain.utilbox.tensor_util import to_native
@@ -23,16 +24,118 @@ def preemphasize_wav(wav: np.ndarray, coeff: float) -> np.ndarray:
 def feat_derivation(feat: np.ndarray, delta_order: int, delta_N: int) -> np.ndarray:
     comb_feat = [feat]
     if delta_order >= 1:
-        delta_feat = librosa.feature.delta(feat, width=2 * delta_N + 1, order=1)
+        delta_feat = signal.savgol_filter(
+            feat, window_length=2 * delta_N + 1, polyorder=1, deriv=1, mode="interp"
+        )
         comb_feat.append(delta_feat)
 
         if delta_order >= 2:
-            delta2_feat = librosa.feature.delta(
-                delta_feat, width=2 * delta_N + 1, order=2
+            delta2_feat = signal.savgol_filter(
+                delta_feat,
+                window_length=2 * delta_N + 1,
+                polyorder=2,
+                deriv=2,
+                mode="interp",
             )
             comb_feat.append(delta2_feat)
 
-    return np.hstack(comb_feat)
+    return np.vstack(comb_feat)
+
+
+def compute_stft(
+    wav: np.ndarray,
+    n_fft: int,
+    hop_length: int,
+    win_length: int,
+    window: str = "hann",
+    center: bool = True,
+) -> np.ndarray:
+    """A drop-in replacement for librosa.stft() implemented with numpy and scipy, so
+    that speechain doesn't have to depend on librosa. It assumes zero-padded
+    centering (center=True) and produces bit-identical results to librosa.stft() for
+    the same arguments.
+
+    Args:
+        wav: (n_sample,)
+            The single-channel waveform to be processed.
+        n_fft: int
+            The number of Fourier points.
+        hop_length: int
+            The number of time steps between two adjacent frames.
+        win_length: int
+            The window length used to extract each frame.
+        window: str
+            The window function used to extract each frame. Has to be a name
+            recognized by scipy.signal.get_window().
+        center: bool
+            Whether to pad the waveform so that the t-th frame is centered at
+            wav[t * hop_length].
+
+    Returns:
+        The complex-valued STFT results in the shape (1 + n_fft // 2, n_frame).
+    """
+    fft_window = signal.get_window(window, win_length, fftbins=True)
+    if win_length < n_fft:
+        pad = n_fft - win_length
+        l_pad = pad // 2
+        fft_window = np.pad(fft_window, (l_pad, pad - l_pad))
+
+    if center:
+        wav = np.pad(wav, n_fft // 2, mode="constant")
+
+    n_frames = 1 + (len(wav) - n_fft) // hop_length
+    frames = np.lib.stride_tricks.as_strided(
+        wav,
+        shape=(n_fft, n_frames),
+        strides=(wav.strides[0], wav.strides[0] * hop_length),
+    )
+    return np.fft.rfft(fft_window[:, None] * frames, axis=0)
+
+
+def mel_filterbank(
+    sr: int,
+    n_fft: int,
+    n_mels: int,
+    fmin: float = 0.0,
+    fmax: float = None,
+    htk: bool = False,
+    norm: str or None = "slaney",
+) -> np.ndarray:
+    """A drop-in replacement for librosa.filters.mel() based on
+    torchaudio.functional.melscale_fbanks(), which speechain already depends on for
+    its main mel-spectrogram frontend
+    (speechain/module/frontend/linear2mel.py).
+
+    Args:
+        sr: int
+            The sampling rate of the incoming signal.
+        n_fft: int
+            The number of Fourier points used to obtain the linear spectrogram.
+        n_mels: int
+            The number of filters in the mel-fbank.
+        fmin: float
+            The minimal frequency for the mel-fbank.
+        fmax: float
+            The maximal frequency for the mel-fbank. sr / 2 is used if not given.
+        htk: bool
+            Whether to use the HTK formula instead of the Slaney one for the mel scale.
+        norm: str or None
+            Whether to perform Slaney-style area normalization on the mel-fbank filters.
+
+    Returns:
+        The mel-fbank matrix in the shape (n_mels, 1 + n_fft // 2).
+    """
+    fmax = sr / 2 if fmax is None else fmax
+    mel_basis = torchaudio.functional.melscale_fbanks(
+        n_freqs=n_fft // 2 + 1,
+        f_min=fmin,
+        f_max=fmax,
+        n_mels=n_mels,
+        sample_rate=sr,
+        norm=norm,
+        mel_scale="htk" if htk else "slaney",
+    )
+    return mel_basis.numpy().T
 
 
 def convert_wav_to_stft(
@@ -78,7 +181,7 @@ def convert_wav_to_stft(
             raise ValueError
 
     # --- 3. STFT Processing --- #
-    stft_results = librosa.stft(
+    stft_results = compute_stft(
         wav.squeeze(-1) if len(wav.shape) == 2 else wav,
         n_fft=n_fft,
         hop_length=hop_length,
@@ -152,21 +255,16 @@ def convert_wav_to_logmel(
     )
 
     # --- 2. Linear Spectrogram -> Mel Spectrogram --- #
-    mel_spec = librosa.feature.melspectrogram(
-        S=linear_spec.transpose(1, 0),
+    mel_basis = mel_filterbank(
         sr=sr,
         n_fft=n_fft,
         n_mels=n_mels,
-        hop_length=hop_length,
-        win_length=win_length,
         fmin=fmin,
         fmax=fmax,
-        window=window,
-        center=center,
-        power=1 if mag_spec else 2,
         htk=htk,
         norm=norm,
     )
+    mel_spec = mel_basis @ linear_spec.transpose(1, 0)
     # take the logarithm operation
     if logging:
         # pre-log clamping for numerical stability
@@ -206,7 +304,7 @@ def convert_wav_to_mfcc(
 ) -> np.ndarray:
     """For the details about the arguments and returns, please refer to
     ${SPEECHAIN_ROOT}/speechain/utilbox/feat_util.convert_wav_to_logmel() and
-    librosa.feature.mfcc."""
+    scipy.fftpack.dct."""
     # if hop_length and win_length are given in the unit of seconds, turn them into the corresponding time steps
     hop_length = int(hop_length * sr) if isinstance(hop_length, float) else hop_length
     win_length = int(win_length * sr) if isinstance(win_length, float) else win_length
@@ -244,8 +342,8 @@ def convert_wav_to_mfcc(
 
     # --- 2. Log-Mel Power Spectrogram -> MFCC --- #
     # remove the first mel cepstral coefficient
-    # mfcc = librosa.feature.mfcc(S=mel_spec.transpose(1, 0), sr=sr, n_mfcc=n_mfcc)[1:, :]
-    mfcc = librosa.feature.mfcc(S=mel_spec.transpose(1, 0), sr=sr, n_mfcc=n_mfcc)
+    # mfcc = dct(mel_spec.transpose(1, 0), axis=-2, type=2, norm="ortho")[1:n_mfcc, :]
+    mfcc = dct(mel_spec.transpose(1, 0), axis=-2, type=2, norm="ortho")[:n_mfcc, :]
     if num_ceps is not None:
         mfcc = mfcc[:num_ceps, :]
 

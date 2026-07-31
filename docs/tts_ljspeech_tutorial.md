@@ -65,13 +65,13 @@ pip install -e .
 export SPEECHAIN_ROOT=/path/to/speechain
 
 # Navigate to dataset directory
-cd $SPEECHAIN_ROOT/datasets/ljspeech
+cd $SPEECHAIN_ROOT/data/ljspeech
 
 # Download LJSpeech dataset
 bash data_download.sh
 ```
 
-This downloads and extracts the LJSpeech dataset (~2.6GB) to `datasets/ljspeech/data/`.
+This downloads and extracts the LJSpeech dataset (~2.6GB) to `data/ljspeech/data/`.
 
 ## Step 2: Install Montreal Forced Aligner (MFA)
 
@@ -97,7 +97,7 @@ source $SPEECHAIN_ROOT/.venv/bin/activate  # or: conda activate speechain
 
 # Set environment
 export SPEECHAIN_ROOT=/path/to/speechain
-cd $SPEECHAIN_ROOT/datasets/ljspeech
+cd $SPEECHAIN_ROOT/data/ljspeech
 
 # Generate metadata for train/valid/test splits
 python meta_generator.py
@@ -112,7 +112,7 @@ python meta_generator.py
 conda activate aligner
 
 # Navigate to dataset preparation scripts
-cd $SPEECHAIN_ROOT/datasets
+cd $SPEECHAIN_ROOT/data
 
 # Prepare data for MFA alignment
 bash mfa_preparation.sh ljspeech
@@ -120,10 +120,10 @@ bash mfa_preparation.sh ljspeech
 # Run MFA alignment (this may take 30-60 minutes)
 # The script aligns phonemes to audio using the english_us_arpa model
 mfa align \
-    $SPEECHAIN_ROOT/datasets/ljspeech/data/mfa_input \
+    $SPEECHAIN_ROOT/data/ljspeech/data/mfa_input \
     english_us_arpa \
     english_us_arpa \
-    $SPEECHAIN_ROOT/datasets/ljspeech/data/mfa/acoustic=english_us_arpa_lexicon=english_us_arpa \
+    $SPEECHAIN_ROOT/data/ljspeech/data/mfa/acoustic=english_us_arpa_lexicon=english_us_arpa \
     --clean
 ```
 
@@ -133,7 +133,7 @@ mfa align \
 # Switch back to main environment
 source $SPEECHAIN_ROOT/.venv/bin/activate  # or: conda activate speechain
 
-cd $SPEECHAIN_ROOT/datasets/ljspeech
+cd $SPEECHAIN_ROOT/data/ljspeech
 
 # Generate duration files from MFA alignment
 python meta_post_processor.py
@@ -142,11 +142,11 @@ python meta_post_processor.py
 ## Step 6: Generate Duration Data
 
 ```bash
-cd $SPEECHAIN_ROOT/datasets/pyscripts
+cd $SPEECHAIN_ROOT/speechain/datasets/pyscripts
 
 # Generate duration files for training
 python duration_calculator.py \
-    --data_root $SPEECHAIN_ROOT/datasets/ljspeech/data \
+    --data_root $SPEECHAIN_ROOT/data/ljspeech/data \
     --mfa_model acoustic=english_us_arpa_lexicon=english_us_arpa
 ```
 

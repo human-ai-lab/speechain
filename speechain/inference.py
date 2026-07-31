@@ -41,7 +41,7 @@ from typing import Dict, List
 
 # register the toolkit root into both the environmental variables and sys.path so that
 # 1. the speechain package can be imported no matter where this script is executed from;
-# 2. in-toolkit relative paths in the configuration files (e.g., datasets/..., recipes/...) can be resolved
+# 2. in-toolkit relative paths in the configuration files (e.g., data/..., recipes/...) can be resolved
 _TOOLKIT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.environ.setdefault("SPEECHAIN_ROOT", _TOOLKIT_ROOT)
 sys.path.insert(0, _TOOLKIT_ROOT)

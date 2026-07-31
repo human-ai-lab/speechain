@@ -275,7 +275,7 @@ if __name__ == "__main__":
 
     # test str2dict function
     result_dict = str2dict(
-        "test:{recipes/tts/libritts/train-clean-100/exp/16khz_transformer_v1_accum1_20gb:{type:block.BlockIterator,conf:{dataset_type:speech_text.SpeechTextDataset,dataset_conf:{main_data:{text:datasets/speech_text/libritts/data/g2p/train-clean-360/full_tokens/normal/idx2text},data_selection:[min,0.95,datasets/speech_text/libritts/data/g2p/train-clean-360/full_tokens/normal/idx2text_len]},shuffle:false,data_len:datasets/speech_text/libritts/data/g2p/train-clean-360/full_tokens/normal/idx2text_len,batch_len:1000}}}"
+        "test:{recipes/tts/libritts/train-clean-100/exp/16khz_transformer_v1_accum1_20gb:{type:block.BlockIterator,conf:{dataset_type:speech_text.SpeechTextDataset,dataset_conf:{main_data:{text:data/speech_text/libritts/data/g2p/train-clean-360/full_tokens/normal/idx2text},data_selection:[min,0.95,data/speech_text/libritts/data/g2p/train-clean-360/full_tokens/normal/idx2text_len]},shuffle:false,data_len:data/speech_text/libritts/data/g2p/train-clean-360/full_tokens/normal/idx2text_len,batch_len:1000}}}"
     )
     print(result_dict)
     result_dict = str2dict("a:{b:12.3,c:{d:123,e:{g:xyz}}},g:xyz")

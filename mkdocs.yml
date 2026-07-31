@@ -50,7 +50,7 @@ extra_css:
 nav:
   - index.md
   - handbook.md
-  - datasets.md
+  - data.md
   - recipes.md
   - asr.md
   - tts.md

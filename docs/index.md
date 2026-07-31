@@ -61,13 +61,11 @@ Anytime you encounter problems when using our toolkit, please don't hesitate to 
 │   └── infer             # configuration for model inference (ASR decoding & TTS vocoding)
 ├── CONTRIBUTING.md       # convention for contributor
 ├── create_env.sh         # bash shell to create environment
-├── datasets              # dataset folder, put data here, make softlink, or set in config file
+├── data                  # dataset folder, put data here, make softlink, or set in config file
 │   ├── data_dumping.sh
 │   ├── librispeech
 │   ├── libritts
 │   ├── ljspeech
-│   ├── meta_generator.py
-│   ├── meta_post_processor.py
 │   ├── mfa_preparation.sh
 │   └── vctk
 ├── docs                  # folder to build docs
@@ -86,7 +84,7 @@ Anytime you encounter problems when using our toolkit, please don't hesitate to 
 ├── setup.py
 └── speechain             # directory for speechain toolkit code
     ├── criterion
-    ├── dataset
+    ├── datasets            # dataset classes & shared dataset-dumping code
     ├── infer_func
     ├── inference.py        # standalone inference engine for trained ASR/TTS models
     ├── iterator
