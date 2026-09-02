@@ -3,11 +3,11 @@ from typing import Dict, Tuple
 
 import numpy as np
 import torch
-import torchaudio
 from tqdm import tqdm
 
 # from speechbrain.pretrained import EncoderClassifier
 from speechain.module.encoder.speaker import EncoderClassifier  # New module
+from speechain.utilbox.audio_util import get_cached_resampler
 from speechain.utilbox.data_loading_util import read_data_by_path
 from speechain.utilbox.data_saving_util import save_data_by_format
 from speechain.utilbox.import_util import parse_path_args
@@ -112,11 +112,9 @@ def extract_spk_feat(
             if wav.dim() == 0:
                 wav = wav.unsqueeze(0)  # Handle edge case of single sample
             if sample_rate > 16000:
-                if sample_rate not in resamplers.keys():
-                    resamplers[sample_rate] = torchaudio.transforms.Resample(
-                        orig_freq=sample_rate, new_freq=16000
-                    ).to(device)
-                wav = resamplers[sample_rate](wav)
+                wav = get_cached_resampler(
+                    resamplers, sample_rate, 16000, device=device
+                )(wav)
 
             elif sample_rate < 16000:
                 raise RuntimeError
@@ -155,7 +153,9 @@ def extract_spk_feat(
                 if wav.dim() == 0:
                     wav = wav.unsqueeze(0)
                 if sample_rate > 16000:
-                    wav = resamplers[sample_rate](wav)
+                    wav = get_cached_resampler(
+                        resamplers, sample_rate, 16000, device=device
+                    )(wav)
                 curr_batch.append([wav_idx, wav])
 
             # reprocess the failed waveforms and check again

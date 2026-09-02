@@ -17,6 +17,7 @@ from g2p_en import G2p
 
 from speechain.datasets.abs import Dataset
 from speechain.tokenizer.g2p import abnormal_phns
+from speechain.utilbox.audio_util import get_cached_resampler
 from speechain.utilbox.data_loading_util import load_idx2data_file, read_data_by_path
 from speechain.utilbox.feat_util import convert_wav_to_pitch
 from speechain.utilbox.train_util import get_min_indices_by_freq
@@ -284,15 +285,12 @@ class SpeechTextDataset(Dataset):
                 # with a sampling rate different from the first cached one will cause a KeyError.
                 if not hasattr(self, "wav_resampler_dict"):
                     self.wav_resampler_dict = {}
-                if sample_rate not in self.wav_resampler_dict.keys():
-                    self.wav_resampler_dict[sample_rate] = (
-                        torchaudio.transforms.Resample(
-                            orig_freq=sample_rate, new_freq=self.sample_rate
-                        )
-                    )
-                main_data["feat"] = self.wav_resampler_dict[sample_rate](
-                    main_data["feat"].squeeze(-1)
-                ).unsqueeze(-1)
+                resampler = get_cached_resampler(
+                    self.wav_resampler_dict, sample_rate, self.sample_rate
+                )
+                main_data["feat"] = resampler(main_data["feat"].squeeze(-1)).unsqueeze(
+                    -1
+                )
                 # the waveform is in the built-in sampling rate after the resampling above, so the
                 # following processing (e.g., speed perturbation) is done with the correct sampling rate
                 sample_rate = self.sample_rate
