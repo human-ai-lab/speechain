@@ -25,18 +25,18 @@ def get_cached_resampler(
         new_freq (int):
             The target sampling rate.
         device (torch.device, optional):
-            Device to move a newly created resampler to. Ignored for a cache hit, so all
-            callers sharing a cache must request a consistent device.
+            Device the returned resampler must be on. Also applied on a cache hit, so a
+            cache shared across devices (e.g. a model moved from CPU to GPU between calls)
+            always gets a resampler on the currently requested device.
 
     Returns:
         torchaudio.transforms.Resample: The cached (or newly created) resampler.
     """
     key = (orig_freq, new_freq)
     if key not in cache:
-        resampler = torchaudio.transforms.Resample(
+        cache[key] = torchaudio.transforms.Resample(
             orig_freq=orig_freq, new_freq=new_freq
         )
-        if device is not None:
-            resampler = resampler.to(device)
-        cache[key] = resampler
+    if device is not None:
+        cache[key] = cache[key].to(device)
     return cache[key]
