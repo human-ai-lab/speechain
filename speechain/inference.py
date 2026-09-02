@@ -48,8 +48,8 @@ sys.path.insert(0, _TOOLKIT_ROOT)
 
 import soundfile as sf  # noqa: E402
 import torch  # noqa: E402
-import torchaudio  # noqa: E402
 
+from speechain.utilbox.audio_util import get_cached_resampler  # noqa: E402
 from speechain.utilbox.data_loading_util import load_model_state_dict  # noqa: E402
 from speechain.utilbox.import_util import import_class, parse_path_args  # noqa: E402
 from speechain.utilbox.type_util import str2dict  # noqa: E402
@@ -406,11 +406,10 @@ def asr_inference(
         # on-the-fly resampling if the sampling rate of the input audio is different from the one of the model.
         # the resampler of each encountered sampling rate is cached to avoid re-creating it for every utterance
         if sample_rate != model.sample_rate:
-            if sample_rate not in resamplers.keys():
-                resamplers[sample_rate] = torchaudio.transforms.Resample(
-                    orig_freq=sample_rate, new_freq=model.sample_rate
-                ).to(device)
-            wav = resamplers[sample_rate](wav.squeeze(-1)).unsqueeze(-1)
+            resampler = get_cached_resampler(
+                resamplers, sample_rate, model.sample_rate, device=device
+            )
+            wav = resampler(wav.squeeze(-1)).unsqueeze(-1)
 
         # do the decoding: feat (1, n_sample, 1), feat_len (1,)
         outputs = model.inference(

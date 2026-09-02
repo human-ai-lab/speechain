@@ -10,7 +10,6 @@ from typing import Dict, List
 
 import numpy as np
 import torch
-import torchaudio
 
 from speechain.criterion.bce_logits import BCELogits
 from speechain.criterion.fbeta_score import FBetaScore
@@ -20,6 +19,7 @@ from speechain.module.decoder.nar_tts import FastSpeech2Decoder
 from speechain.module.encoder.tts import TTSEncoder
 from speechain.tokenizer.char import CharTokenizer
 from speechain.tokenizer.g2p import GraphemeToPhonemeTokenizer
+from speechain.utilbox.audio_util import get_cached_resampler
 from speechain.utilbox.data_loading_util import parse_path_args
 from speechain.utilbox.sb_util import get_speechbrain_hifigan
 from speechain.utilbox.tensor_util import to_cpu
@@ -869,21 +869,25 @@ class FastSpeech2(Model):
         # vocoder in infer_conf has the higher priority and will not be passed to self.module_forward()
         if "vocoder" in infer_conf.keys():
             vocoder = infer_conf.pop("vocoder")
-        # initialize the vocoder lazily
-        if not hasattr(self, "vocode_func"):
-            assert vocoder in [
-                "gl",
-                "hifigan",
-            ], f"Currently, we only support 'gl' and 'hifigan' as vocoder, but got vocoder={vocoder}!"
-            self.vocoder = vocoder
-            if self.vocoder == "gl":
-                self.vocode_func = self.decoder.feat_frontend.recover
+        # initialize the vocoder lazily, caching one instance per distinct vocoder choice so that
+        # switching 'vocoder' across infer_conf calls doesn't keep reusing a stale one
+        assert vocoder in [
+            "gl",
+            "hifigan",
+        ], f"Currently, we only support 'gl' and 'hifigan' as vocoder, but got vocoder={vocoder}!"
+        self.vocoder = vocoder
+        if not hasattr(self, "vocode_func_cache"):
+            self.vocode_func_cache = {}
+        if vocoder not in self.vocode_func_cache:
+            if vocoder == "gl":
+                self.vocode_func_cache[vocoder] = self.decoder.feat_frontend.recover
             else:
-                self.vocode_func = get_speechbrain_hifigan(
+                self.vocode_func_cache[vocoder] = get_speechbrain_hifigan(
                     device=self.device,
                     sample_rate=self.sample_rate,
                     use_multi_speaker=hasattr(self.decoder, "spk_emb"),
                 )
+        self.vocode_func = self.vocode_func_cache[vocoder]
 
         # return_wav in infer_conf has the higher priority and will not be passed to self.module_forward()
         if "return_wav" in infer_conf.keys():
@@ -909,12 +913,14 @@ class FastSpeech2(Model):
                 f"You should input 'return_sr' lower than the one of the model {self.sample_rate}, "
                 f"but got return_sr={return_sr}!"
             )
-            if not hasattr(self, "resampler"):
-                self.resampler = torchaudio.transforms.Resample(
-                    orig_freq=self.sample_rate, new_freq=return_sr
-                )
-                if text.is_cuda:
-                    self.resampler = self.resampler.cuda(text.device)
+            if not hasattr(self, "resampler_cache"):
+                self.resampler_cache = {}
+            self.resampler = get_cached_resampler(
+                self.resampler_cache,
+                self.sample_rate,
+                return_sr,
+                device=text.device if text.is_cuda else None,
+            )
 
         min_frame_num = (
             infer_conf.pop("min_frame_num")

@@ -14,7 +14,6 @@ from typing import List
 
 import numpy as np
 import soundfile as sf
-import torchaudio
 from tqdm import tqdm
 
 # Add SPEECHAIN_ROOT to the path so that this script can be executed directly
@@ -25,6 +24,7 @@ _SPEECHAIN_ROOT = os.path.dirname(
 if _SPEECHAIN_ROOT not in sys.path:
     sys.path.insert(0, _SPEECHAIN_ROOT)
 
+from speechain.utilbox.audio_util import get_cached_resampler
 from speechain.utilbox.data_loading_util import (
     load_idx2data_file,
     parse_path_args,
@@ -108,11 +108,10 @@ def waveform_downsample(
             # resample and rewrite the waveform only when its sampling rate is different from the target one
             if src_sample_rate != sample_rate:
                 src_wav = read_data_by_path(src_wav_path, return_tensor=True)
-                if src_sample_rate not in resamplers.keys():
-                    resamplers[src_sample_rate] = torchaudio.transforms.Resample(
-                        orig_freq=src_sample_rate, new_freq=sample_rate
-                    )
-                src_wav = resamplers[src_sample_rate](src_wav.squeeze(-1))
+                resampler = get_cached_resampler(
+                    resamplers, src_sample_rate, sample_rate
+                )
+                src_wav = resampler(src_wav.squeeze(-1))
 
                 wav_format = file_name.split(".")[-1].upper()
                 sf.write(

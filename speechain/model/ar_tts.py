@@ -15,7 +15,6 @@ from typing import Any, Dict, List
 
 import numpy as np
 import torch
-import torchaudio
 
 from speechain.criterion.accuracy import Accuracy
 from speechain.criterion.att_guid import AttentionGuidance
@@ -28,6 +27,7 @@ from speechain.module.decoder.ar_tts import ARTTSDecoder
 from speechain.module.encoder.tts import TTSEncoder
 from speechain.tokenizer.char import CharTokenizer
 from speechain.tokenizer.g2p import GraphemeToPhonemeTokenizer
+from speechain.utilbox.audio_util import get_cached_resampler
 from speechain.utilbox.data_loading_util import parse_path_args
 from speechain.utilbox.tensor_util import to_cpu
 from speechain.utilbox.train_util import make_mask_from_len
@@ -771,12 +771,14 @@ class ARTTS(Model):
                 f"You should input 'return_sr' lower than the one of the model {self.sample_rate}, "
                 f"but got return_sr={return_sr}!"
             )
-            if not hasattr(self, "resampler"):
-                self.resampler = torchaudio.transforms.Resample(
-                    orig_freq=self.sample_rate, new_freq=return_sr
-                )
-                if text.is_cuda:
-                    self.resampler = self.resampler.cuda(text.device)
+            if not hasattr(self, "resampler_cache"):
+                self.resampler_cache = {}
+            self.resampler = get_cached_resampler(
+                self.resampler_cache,
+                self.sample_rate,
+                return_sr,
+                device=text.device if text.is_cuda else None,
+            )
 
         hypo_feat, hypo_feat_len, feat_token_len_ratio, hypo_att = (
             None,
