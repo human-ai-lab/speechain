@@ -3,13 +3,16 @@
 # The TTS listens to its speech in the noise (SNR prediction + ASR loss) and re-synthesizes
 # until the ASR loss converges (at most max_loops times). The loop-0 (standard TTS) result is
 # reported as well (cer_loop0 / wer_loop0).
+#
+# Usage: bash run.sh --train false --exp_cfg {your-exp_cfg} --infer_cfg config/infer/lombard_tts/speech_chain_white.yaml
+# Note: `--infer_cfg <path>` loads this file as a single flat infer_conf (runner.py only expands
+# 'shared_args'/'exclu_args' for a Dict embedded directly in exp_cfg's own 'infer_cfg:' block, as
+# this exp_cfg does for its full 5-condition test sweep) -- so this file covers ONE noise level;
+# copy it and change `snr` (e.g. to -10) to test the other one.
 # ############################################################################
-shared_args:
-  vocoder: hifigan
-  max_loops: 4
-  loss_tol: 0.01
-  select_best: true
-  noise_type: white
-exclu_args:
-  - snr: 0
-  - snr: -10
+vocoder: hifigan
+max_loops: 4
+loss_tol: 0.01
+select_best: true
+noise_type: white
+snr: 0

@@ -723,18 +723,26 @@ class EncoderClassifier(nn.Module):
         if wav_lens is None:
             wav_lens = torch.ones(wavs.shape[0], device=wavs.device)
 
-        wavs = wavs.float()
-        feats = self.compute_features(wavs)
-        feats = self.mean_var_norm(feats, wav_lens)
-        embeddings = self.embedding_model(feats, wav_lens)
-        if normalize:
-            if self.glob_mean is None:
-                raise RuntimeError(
-                    "Global embedding statistics are not loaded; "
-                    "load the model with from_hparams() first."
+        self.eval()
+        with torch.no_grad():
+            wavs = wavs.float()
+            feats = self.compute_features(wavs)
+            feats = self.mean_var_norm(feats, wav_lens)
+            embeddings = self.embedding_model(feats, wav_lens)
+            if normalize:
+                if self.glob_mean is None:
+                    raise RuntimeError(
+                        "Global embedding statistics are not loaded; "
+                        "load the model with from_hparams() first."
+                    )
+                embeddings = (embeddings - self.glob_mean) / self.glob_std.clamp(
+                    min=1e-8
                 )
-            embeddings = (embeddings - self.glob_mean) / self.glob_std.clamp(min=1e-8)
-        return embeddings
+            # L2-normalize so averaging embeddings across utterances (spk_util.py) weighs
+            # them equally regardless of magnitude, and so existing pretrained multi-speaker
+            # TTS checkpoints (trained against unit-norm speaker conditioning vectors) keep
+            # seeing the same input distribution
+            return F.normalize(embeddings, p=2, dim=-1)
 
     @classmethod
     def from_hparams(cls, source, savedir=None, run_opts=None):

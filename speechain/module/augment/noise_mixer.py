@@ -132,9 +132,11 @@ class NoiseMixer(Module):
         profile = sorted(
             [(float(s), float(v)) for s, v in snr_spec], key=lambda x: x[0]
         )
-        assert (
-            profile[0][0] <= 0.0
-        ), "The first segment of a dynamic SNR profile must start at 0.0!"
+        assert profile[0][0] == 0.0, (
+            "The first segment of a dynamic SNR profile must start at 0.0! A negative "
+            "start_ratio would leave the leading part of the curve uninitialized, since "
+            "curve[start:end] with a negative start writes into the tail instead."
+        )
         curve = torch.empty(length, device=device)
         for i, (start_ratio, snr_db) in enumerate(profile):
             start = int(round(start_ratio * length))

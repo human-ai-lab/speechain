@@ -47,7 +47,9 @@ class TestEncoderClassifier:
         x = torch.randn(batch_size, seq_len)
         out = self.ecapa_model.encode_batch(x)
         assert out.shape == (batch_size, 1, 192)
-        assert torch.isfinite(out).all()
+        assert torch.allclose(
+            torch.norm(out.squeeze(1), p=2, dim=1), torch.ones(batch_size), atol=1e-5
+        )
 
     def test_invalid_model_type(self):
         with pytest.raises(ValueError):
