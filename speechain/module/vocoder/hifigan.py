@@ -50,6 +50,7 @@ class ResBlock1(nn.Module):
                         1,
                         dilation=dilation[i],
                         padding=get_padding(kernel_size, dilation[i]),
+                        padding_mode="reflect",
                     )
                 )
                 for i in range(len(dilation))
@@ -66,6 +67,7 @@ class ResBlock1(nn.Module):
                         1,
                         dilation=1,
                         padding=get_padding(kernel_size, 1),
+                        padding_mode="reflect",
                     )
                 )
                 for _ in range(len(dilation))
@@ -103,6 +105,7 @@ class ResBlock2(nn.Module):
                         1,
                         dilation=dilation[i],
                         padding=get_padding(kernel_size, dilation[i]),
+                        padding_mode="reflect",
                     )
                 )
                 for i in range(len(dilation))
@@ -157,9 +160,24 @@ class HiFiGAN(nn.Module):
         self.num_kernels = len(resblock_kernel_sizes)
         self.num_upsamples = len(upsample_factors)
 
+        # number of waveform samples generated per input frame
+        self.hop_length = 1
+        for factor in upsample_factors:
+            self.hop_length *= factor
+        # number of edge frames that are replicate-padded before the inference
+        # forward pass (the padded frames are cropped off the output afterwards)
+        self.inference_padding = 5
+
         # Initial convolution - named 'conv_pre' to match SpeechBrain
         self.conv_pre = weight_norm(
-            nn.Conv1d(in_channels, upsample_initial_channel, 7, 1, padding=3)
+            nn.Conv1d(
+                in_channels,
+                upsample_initial_channel,
+                7,
+                1,
+                padding=3,
+                padding_mode="reflect",
+            )
         )
 
         # Select residual block type
@@ -190,7 +208,9 @@ class HiFiGAN(nn.Module):
                 self.resblocks.append(resblock(ch, k, d))
 
         # Final convolution - named 'conv_post' to match SpeechBrain
-        self.conv_post = weight_norm(nn.Conv1d(ch, out_channels, 7, 1, padding=3))
+        self.conv_post = weight_norm(
+            nn.Conv1d(ch, out_channels, 7, 1, padding=3, padding_mode="reflect")
+        )
 
     def forward(self, x):
         """
@@ -331,7 +351,20 @@ class HiFiGAN(nn.Module):
                 )
 
         with torch.no_grad():
-            audio = self.forward(mel)
+            if self.inference_padding > 0:
+                # replicate-pad the time axis so that the convolution stack sees
+                # edge context (as the reference implementation does), then crop
+                # the padded frames off the generated waveform
+                mel = F.pad(
+                    mel,
+                    (self.inference_padding, self.inference_padding),
+                    mode="replicate",
+                )
+                audio = self.forward(mel)
+                pad_samples = self.inference_padding * self.hop_length
+                audio = audio[..., pad_samples:-pad_samples]
+            else:
+                audio = self.forward(mel)
 
         return audio.squeeze(1)  # Remove channel dimension
 

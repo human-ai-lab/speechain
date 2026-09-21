@@ -1,0 +1,14 @@
+##############################################################################
+# Lombard TTS inference: dynamic noise environment. The SNR changes inside each utterance
+# (0 dB in the first half, -10 dB in the second half) and the SNR feedback is given at the
+# token level (short-term feedback) so that the TTS adapts each part of the utterance.
+# ############################################################################
+vocoder: hifigan
+max_loops: 4
+loss_tol: 0.01
+select_best: true
+noise_type: white
+snr:
+  - [0.0, 0]
+  - [0.5, -10]
+feedback_level: token

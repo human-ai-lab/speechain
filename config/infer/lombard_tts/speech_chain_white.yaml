@@ -1,0 +1,15 @@
+##############################################################################
+# Lombard TTS inference: closed-loop machine speech chain in static white noise.
+# The TTS listens to its speech in the noise (SNR prediction + ASR loss) and re-synthesizes
+# until the ASR loss converges (at most max_loops times). The loop-0 (standard TTS) result is
+# reported as well (cer_loop0 / wer_loop0).
+# ############################################################################
+shared_args:
+  vocoder: hifigan
+  max_loops: 4
+  loss_tol: 0.01
+  select_best: true
+  noise_type: white
+exclu_args:
+  - snr: 0
+  - snr: -10

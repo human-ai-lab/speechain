@@ -1,0 +1,10 @@
+##############################################################################
+# Lombard TTS inference: standard TTS without auditory feedback (max_loops: 0), evaluated
+# in the given noise environment by the ASR listener (cer / wer).
+# Usage: bash run.sh --train false --exp_cfg {your-exp_cfg} --infer_cfg config/infer/lombard_tts/standard_tts.yaml
+# For all available arguments, see the docstring of inference() in speechain/model/lombard_tts.py
+# ############################################################################
+vocoder: hifigan
+max_loops: 0
+snr: 0
+noise_type: white
