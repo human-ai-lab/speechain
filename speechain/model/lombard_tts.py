@@ -586,7 +586,9 @@ class LombardFastSpeech2(FastSpeech2):
             )
         infer_conf["return_wav"] = True
         return_feat = infer_conf.get("return_feat", False)
-        infer_conf.pop("return_sr", None)
+        # applied to the final selected wav below, not threaded through every loop's synthesis
+        # (the closed loop always needs native-rate audio internally for the feedback listener)
+        return_sr = infer_conf.pop("return_sr", None)
 
         batch_size = text.size(0)
         if snr == "__from_batch__":
@@ -677,7 +679,9 @@ class LombardFastSpeech2(FastSpeech2):
         if select_best and loss_matrix is not None:
             best_loop = loss_matrix.argmin(dim=0)
         else:
-            best_loop = torch.full((batch_size,), len(history) - 1, dtype=torch.long)
+            best_loop = torch.full(
+                (batch_size,), len(history) - 1, dtype=torch.long, device=text.device
+            )
 
         final = dict()
         for key in [
@@ -694,6 +698,26 @@ class LombardFastSpeech2(FastSpeech2):
                     history[int(best_loop[i])]["outputs"][key]["content"][i]
                     for i in range(batch_size)
                 ]
+        if return_sr is not None and return_sr != self.sample_rate and "wav" in final:
+            if not hasattr(self, "output_resampler_cache"):
+                self.output_resampler_cache = {}
+            resampler = get_cached_resampler(
+                self.output_resampler_cache,
+                self.sample_rate,
+                return_sr,
+                device=text.device,
+            )
+            resampled_wav = []
+            for w in final["wav"]["content"]:
+                wav_t = torch.as_tensor(w, device=text.device).float()
+                wav_t = wav_t.squeeze(-1) if wav_t.dim() == 2 else wav_t
+                resampled_wav.append(resampler(wav_t))
+            final["wav"]["content"] = to_cpu(resampled_wav, tgt="numpy")
+            final["wav"]["sample_rate"] = return_sr
+            if "wav_len" in final:
+                final["wav_len"]["content"] = to_cpu(
+                    torch.LongTensor([w.size(0) for w in resampled_wav])
+                )
         if not return_feat:
             final.pop("feat", None), final.pop("feat_len", None)
 
@@ -738,7 +762,12 @@ class LombardFastSpeech2(FastSpeech2):
             )
             final["asr_loss"] = dict(
                 format="txt",
-                content=to_cpu(loss_matrix[best_loop, torch.arange(batch_size)]),
+                content=to_cpu(
+                    loss_matrix[
+                        best_loop,
+                        torch.arange(batch_size, device=loss_matrix.device),
+                    ]
+                ),
             )
             final["asr_loss_loop0"] = dict(format="txt", content=to_cpu(loss_matrix[0]))
 

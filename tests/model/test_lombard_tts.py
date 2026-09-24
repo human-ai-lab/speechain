@@ -244,6 +244,26 @@ class TestLombardFastSpeech2:
         )
         assert "wav" in out and "asr_loss" not in out
 
+    def test_return_sr_in_closed_loop(self, token_path, tmp_path):
+        model = build_model(token_path, tmp_path)
+        model.train()
+        model(fake_batch())
+        model.eval()
+        phon = ["DH", "AH0", "<space>", "K", "AH0", "T"]
+        batch = dict(
+            text=[phon, phon[:4]],
+            text_asr=["the cat", "the"],
+            snr_cond=["snr0", "snr-10"],
+        )
+        out = model.evaluate(
+            batch,
+            infer_conf=dict(vocoder="gl", max_loops=2, loss_tol=-1.0, return_sr=8000),
+        )
+        # the closed loop must honor a requested output rate on the final selected wav,
+        # not silently return audio at the model's native rate (see PR review comment)
+        assert out["wav"]["sample_rate"] == 8000
+        assert all(len(w) > 0 for w in out["wav"]["content"])
+
     def test_frame_to_token_emb(self, token_path, tmp_path):
         model = build_model(token_path, tmp_path)
         frame_emb = torch.arange(10.0).view(1, 10, 1)
