@@ -140,6 +140,40 @@ run a second pass with a single flat `infer_cfg` (see
 `max_loops: 0` and the matching `snr`/`noise_type` — pass it via
 `--infer_cfg /path/to/your.yaml`.
 
+## 4. Results
+
+Measured on the full 523-utterance LJSpeech test set, fine-tuning the
+`22.05khz_mfa_lombard_fastspeech2` exp_cfg for 17 epochs (early-stopped at
+`early_stopping_patience: 10`, `5_valid_loss_average` checkpoint) from the
+pretrained `22.05khz_mfa_fastspeech2` backbone. `loop 0` is the same model
+with the closed feedback loop disabled (`max_loops: 0`) — the fairest
+baseline, since it's the identical network and checkpoint.
+
+| Condition | CER loop 0 | CER adapted | Δ CER (rel.) | WER loop 0 | WER adapted | Δ WER (rel.) |
+|---|---:|---:|---:|---:|---:|---:|
+| Clean, no noise | — | 17.5% | — | — | 24.6% | — |
+| Babble, 0 dB | 83.7% | 73.6% | **−12.1%** | 133.6% | 117.5% | **−12.1%** |
+| Babble, −10 dB | 89.2% | 84.9% | **−4.8%** | 139.0% | 127.3% | **−8.4%** |
+| White noise, 0 dB | 88.9% | 87.6% | −1.5% | 97.1% | 96.7% | −0.4% |
+| White noise, −10 dB | 88.9% | 86.4% | −2.8% | 99.3% | 99.4% | +0.1% (flat) |
+
+The closed loop reduces CER in every noisy condition, most clearly in babble
+noise; white noise shows a smaller CER improvement with WER essentially flat.
+Adaptation is selective, not uniform: averaged loop count per condition
+ranges from 0.88 to 1.43 (out of a maximum of 4), so the model is picking a
+subset of utterances to spend extra feedback rounds on rather than always
+maxing out.
+
+Caveats:
+- This is a resource-constrained fine-tune (17 epochs from a pretrained
+  backbone, early-stopped) rather than the paper's full training schedule —
+  treat these as a demonstration that the mechanism works, not as a
+  reproduction of the paper's reported numbers.
+- Absolute error rates stay high at −10 dB in both noise types: the
+  adaptation helps, but this checkpoint doesn't make heavily-masked speech
+  reliably intelligible to the listener ASR.
+- CER and WER don't always agree at this scale (see white noise, −10 dB).
+
 ## Known gotchas
 
 - **`infer_cfg` shared vs. exclusive args**: `runner.py` rejects any key that
