@@ -1,0 +1,20 @@
+##############################################################################
+# Testing: valid of LJSpeech (phoneme text by MFA + raw transcripts for the ASR listener)
+# Description: replaces the test set of exp_cfg for tuning the closed-loop inference on the validation set
+# ############################################################################
+dataset_path: data/
+dataset: ljspeech
+lombard_root: !ref <dataset_path>/<dataset>/data/lombard
+
+test:
+  valid:
+    type: abs.Iterator
+    conf:
+      dataset_type: lombard.LombardSpeechTextDataset
+      dataset_conf:
+        main_data:
+          text: !ref <lombard_root>/clean/valid/idx2text
+          text_asr: !ref <lombard_root>/clean/valid/idx2text_asr
+
+      shuffle: False
+      data_len: !ref <lombard_root>/clean/valid/idx2wav_len

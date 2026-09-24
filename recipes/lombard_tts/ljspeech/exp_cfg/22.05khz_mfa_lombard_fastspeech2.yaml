@@ -1,0 +1,388 @@
+##############################################################################
+# Model: Lombard FastSpeech2 in a machine speech chain (SNR + ASR-loss auditory feedback)
+#        S. Novitasari, S. Sakti, S. Nakamura, "A Machine Speech Chain Approach for Dynamically
+#        Adaptive Lombard TTS in Static and Dynamic Noise Environments", IEEE/ACM TASLP 2022.
+# Tokens: Phoneme by MFA (pretrained model: english_us_arpa)
+# Listener: Conformer-small ASR trained on train-clean-100 of LibriSpeech (frozen)
+# losses: L1 for mel prediction, L2 for variance prediction, CE for the SNR predictor
+# Training: train of LJSpeech in 3 noise conditions (clean / synthetic Lombard for 0 dB / -10 dB)
+#           fine-tuned from recipes/tts/ljspeech/exp/22.05khz_mfa_fastspeech2
+# Validation: valid of LJSpeech (3 conditions)
+# Testing: test of LJSpeech (noisy speech intelligibility measured by the ASR CER/WER)
+# Data preparation: see recipes/lombard_tts/README.md
+# Required GPUs: 1 × NVIDIA GeForce RTX 5090 (32GB)
+# ############################################################################
+
+
+###################################
+# Experiment Parameters and setup #
+###################################
+# dataset-related
+dataset_path: data/
+dataset: ljspeech
+train_set: train
+valid_set: valid
+test_set: test
+
+# waveform-related
+sample_rate: 22050
+hop_length: 256
+feedback_sample_rate: 16000
+
+# tokenizer-related
+token_type: mfa
+mfa_model: acoustic=english_us_arpa_lexicon=english_us_arpa
+token_num: stress
+txt_format: no-punc
+
+# batch-related
+batch_len: 1.0e7
+
+# model-related
+reduction_factor: 1
+layer_num: 4
+head_num: 2
+d_model: 384
+fdfwd_dim: 1536
+conv_dropout: 0.5
+trmf_dropout: 0.2
+snr_loss_weight: 1.0
+snr_jitter: 2.0
+
+# pretrained TTS used for initialization (the feedback modules are randomly initialized)
+pretrained_tts: recipes/tts/ljspeech/exp/22.05khz_mfa_fastspeech2/models/10_train_loss_average.pth
+# the ASR listener
+asr_exp_path: recipes/asr/librispeech/train-clean-100/exp/100-bpe5k_conformer-small_lr2e-3
+asr_test_model: 10_valid_accuracy_average
+
+# optimizer-related
+warmup_steps: 2000
+
+# running-related
+seed: 0
+train_num_workers: 12
+valid_num_workers: 4
+pin_memory: True
+non_blocking: True
+
+# gradient-related
+accum_grad: 1
+ft_factor: 1.0
+grad_clip: 1.0
+
+# multi-GPU-related
+ngpu: 1
+gpus: null
+
+# training-related
+train: True
+num_epochs: 30
+early_stopping_patience: 10
+best_model_selection: !tuple (valid, loss, min, 5)
+last_model_number: 5
+valid_per_epochs: 1
+
+# snapshot-related
+visual_snapshot_number: 2
+visual_snapshot_interval: 5
+
+# testing-related
+test: True
+test_model: 5_valid_loss_average
+
+# This argument is shared by data_cfg and train_cfg
+data_root: !ref <dataset_path>/<dataset>/data
+lombard_root: !ref <data_root>/lombard
+
+
+
+#################################
+# Model Inference Configuration #
+#################################
+# Each exclusive configuration is one noise environment. The closed loop (max_loops > 0) reports
+# both the adapted output (cer / wer) and the loop-0 standard-TTS output (cer_loop0 / wer_loop0).
+infer_cfg:
+  shared_args:
+    vocoder: hifigan
+    loss_tol: 0.01
+    select_best: true
+  # max_loops can't live in shared_args since the clean condition overrides it to 0
+  exclu_args:
+    - snr: null
+      max_loops: 0
+    - snr: 0
+      noise_type: white
+      max_loops: 4
+    - snr: -10
+      noise_type: white
+      max_loops: 4
+    - snr: 0
+      noise_type: babble
+      max_loops: 4
+    - snr: -10
+      noise_type: babble
+      max_loops: 4
+
+
+
+##############################
+# Data Loading Configuration #
+##############################
+data_cfg:
+  train:
+    type: block.BlockIterator
+    conf:
+      dataset_type: lombard.LombardSpeechTextDataset
+      dataset_conf:
+        main_data:
+          feat:
+            - !ref <lombard_root>/clean/<train_set>/idx2wav
+            - !ref <lombard_root>/snr0/<train_set>/idx2wav
+            - !ref <lombard_root>/snr-10/<train_set>/idx2wav
+          feat_ref:
+            - !ref <lombard_root>/clean/<train_set>/idx2wav_ref
+            - !ref <lombard_root>/snr0/<train_set>/idx2wav_ref
+            - !ref <lombard_root>/snr-10/<train_set>/idx2wav_ref
+          text:
+            - !ref <lombard_root>/clean/<train_set>/idx2text
+            - !ref <lombard_root>/snr0/<train_set>/idx2text
+            - !ref <lombard_root>/snr-10/<train_set>/idx2text
+          duration:
+            - !ref <lombard_root>/clean/<train_set>/idx2duration
+            - !ref <lombard_root>/snr0/<train_set>/idx2duration
+            - !ref <lombard_root>/snr-10/<train_set>/idx2duration
+          text_asr:
+            - !ref <lombard_root>/clean/<train_set>/idx2text_asr
+            - !ref <lombard_root>/snr0/<train_set>/idx2text_asr
+            - !ref <lombard_root>/snr-10/<train_set>/idx2text_asr
+          snr_cond:
+            - !ref <lombard_root>/clean/<train_set>/idx2snr_cond
+            - !ref <lombard_root>/snr0/<train_set>/idx2snr_cond
+            - !ref <lombard_root>/snr-10/<train_set>/idx2snr_cond
+
+        pitch_conf:
+          hop_length: !ref <hop_length>
+        sample_rate: !ref <sample_rate>
+
+      data_len:
+        - !ref <lombard_root>/clean/<train_set>/idx2wav_len
+        - !ref <lombard_root>/snr0/<train_set>/idx2wav_len
+        - !ref <lombard_root>/snr-10/<train_set>/idx2wav_len
+      shuffle: True
+      is_descending: True
+      batch_len: !ref <batch_len>
+
+  valid:
+    type: block.BlockIterator
+    conf:
+      dataset_type: lombard.LombardSpeechTextDataset
+      dataset_conf:
+        main_data:
+          feat:
+            - !ref <lombard_root>/clean/<valid_set>/idx2wav
+            - !ref <lombard_root>/snr0/<valid_set>/idx2wav
+            - !ref <lombard_root>/snr-10/<valid_set>/idx2wav
+          feat_ref:
+            - !ref <lombard_root>/clean/<valid_set>/idx2wav_ref
+            - !ref <lombard_root>/snr0/<valid_set>/idx2wav_ref
+            - !ref <lombard_root>/snr-10/<valid_set>/idx2wav_ref
+          text:
+            - !ref <lombard_root>/clean/<valid_set>/idx2text
+            - !ref <lombard_root>/snr0/<valid_set>/idx2text
+            - !ref <lombard_root>/snr-10/<valid_set>/idx2text
+          duration:
+            - !ref <lombard_root>/clean/<valid_set>/idx2duration
+            - !ref <lombard_root>/snr0/<valid_set>/idx2duration
+            - !ref <lombard_root>/snr-10/<valid_set>/idx2duration
+          text_asr:
+            - !ref <lombard_root>/clean/<valid_set>/idx2text_asr
+            - !ref <lombard_root>/snr0/<valid_set>/idx2text_asr
+            - !ref <lombard_root>/snr-10/<valid_set>/idx2text_asr
+          snr_cond:
+            - !ref <lombard_root>/clean/<valid_set>/idx2snr_cond
+            - !ref <lombard_root>/snr0/<valid_set>/idx2snr_cond
+            - !ref <lombard_root>/snr-10/<valid_set>/idx2snr_cond
+
+        pitch_conf:
+          hop_length: !ref <hop_length>
+        sample_rate: !ref <sample_rate>
+
+      data_len:
+        - !ref <lombard_root>/clean/<valid_set>/idx2wav_len
+        - !ref <lombard_root>/snr0/<valid_set>/idx2wav_len
+        - !ref <lombard_root>/snr-10/<valid_set>/idx2wav_len
+      shuffle: False
+      is_descending: True
+      batch_len: !ref <batch_len>
+
+  test:
+    test:
+      type: abs.Iterator
+      conf:
+        dataset_type: lombard.LombardSpeechTextDataset
+        dataset_conf:
+          main_data:
+            text: !ref <lombard_root>/clean/<test_set>/idx2text
+            text_asr: !ref <lombard_root>/clean/<test_set>/idx2text_asr
+
+        shuffle: False
+        data_len: !ref <lombard_root>/clean/<test_set>/idx2wav_len
+
+
+
+####################################
+# Model Construction Configuration #
+####################################
+train_cfg:
+  model:
+    model_type: lombard_tts.LombardFastSpeech2
+    model_conf:
+      pretrained_model:
+        path: !ref <pretrained_tts>
+        strict: false
+      customize_conf:
+        sample_rate: !ref <sample_rate>
+        token_type: !ref <token_type>
+        token_path: !ref <data_root>/<token_type>/<mfa_model>/<train_set>/<token_num>/<txt_format>
+        reduction_factor: !ref <reduction_factor>
+        # --- Lombard machine speech chain --- #
+        snr_conditions:
+          clean: null
+          snr0: 0
+          snr-10: -10
+        asr_exp_path: !ref <asr_exp_path>
+        asr_test_model: !ref <asr_test_model>
+        feedback_sample_rate: !ref <feedback_sample_rate>
+        train_noise_types: !list [white, babble]
+        noise:
+          snr_jitter: !ref <snr_jitter>
+          noise_files:
+            babble: !ref <lombard_root>/noise/babble.wav
+        feedback:
+          snr_coeff: 1.0
+          asr_coeff: 1.0
+          asr_loss_hidden: 64
+
+    module_conf:
+      snr_predictor:
+        frontend:
+          type: frontend.speech2mel.Speech2MelSpec
+          conf:
+            sr: !ref <feedback_sample_rate>
+            hop_length: 0.010
+            win_length: 0.025
+            n_mels: 80
+        conv_dims: !list [128, 128, 128, 128]
+        conv_kernel: 3
+        res_blocks: 1
+        emb_dim: !ref <d_model>
+        dropout: 0.1
+
+      enc_emb:
+        type: prenet.embed.EmbedPrenet
+        conf:
+          embedding_dim: !ref <d_model>
+
+      encoder:
+        type: transformer.encoder.TransformerEncoder
+        conf:
+          posenc_dropout: !ref <trmf_dropout>
+          posenc_scale: true
+          emb_scale: false
+          emb_layernorm: true
+          d_model: !ref <d_model>
+          num_heads: !ref <head_num>
+          num_layers: !ref <layer_num>
+          att_dropout: !ref <trmf_dropout>
+          fdfwd_dim: !ref <fdfwd_dim>
+          fdfwd_type: conv
+          fdfwd_args:
+            kernel_size: 3
+          fdfwd_dropout: !ref <trmf_dropout>
+          res_dropout: !ref <trmf_dropout>
+          layernorm_first: true
+
+      duration_predictor:
+        type: prenet.var_pred.Conv1dVarPredictor
+        conf:
+          conv_dims: !list [256, -1]
+          conv_kernel: 3
+          conv_dropout: !ref <conv_dropout>
+
+      pitch_predictor:
+        type: prenet.var_pred.Conv1dVarPredictor
+        conf:
+          conv_dims: !list [256, -1, -1, -1, -1]
+          conv_kernel: 5
+          conv_dropout: !ref <conv_dropout>
+          conv_emb_kernel: 1
+          conv_emb_dropout: 0.0
+
+      energy_predictor:
+        type: prenet.var_pred.Conv1dVarPredictor
+        conf:
+          conv_dims: !list [256, -1]
+          conv_kernel: 3
+          conv_dropout: !ref <conv_dropout>
+          conv_emb_kernel: 1
+          conv_emb_dropout: 0.0
+
+      feat_frontend:
+        type: frontend.speech2mel.Speech2MelSpec
+        conf:
+          sr: !ref <sample_rate>
+          mag_spec: True
+          hop_length: !ref <hop_length>
+          win_length: 1024
+          n_mels: 80
+          fmin: 0
+          fmax: 8000
+          log_base: null
+          clamp: 1e-5
+
+      feat_normalize: True
+      pitch_normalize: True
+      energy_normalize: True
+
+      decoder:
+        type: transformer.encoder.TransformerEncoder
+        conf:
+          posenc_dropout: !ref <trmf_dropout>
+          posenc_scale: true
+          emb_scale: false
+          emb_layernorm: true
+          d_model: !ref <d_model>
+          num_heads: !ref <head_num>
+          num_layers: !ref <layer_num>
+          att_dropout: !ref <trmf_dropout>
+          fdfwd_dim: !ref <fdfwd_dim>
+          fdfwd_type: conv
+          fdfwd_args:
+            kernel_size: 3
+          fdfwd_dropout: !ref <trmf_dropout>
+          res_dropout: !ref <trmf_dropout>
+          layernorm_first: true
+
+      dec_postnet:
+        type: postnet.conv1d.Conv1dPostnet
+        conf:
+          conv_dims: !list [256, -1, -1, -1, 0]
+          conv_kernel: 5
+          conv_batchnorm: true
+          conv_activation: Tanh
+          conv_dropout: !ref <conv_dropout>
+
+    criterion_conf:
+      snr_loss_weight: !ref <snr_loss_weight>
+
+
+  optim_sches:
+    type: noam.Noamlr
+    conf:
+      optim_type: Adam
+      optim_conf:
+        betas:
+          - 0.9
+          - 0.98
+        eps: 1.0e-9
+      warmup_steps: !ref <warmup_steps>

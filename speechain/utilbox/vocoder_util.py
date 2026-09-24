@@ -7,15 +7,15 @@ from speechain.module.vocoder import HiFiGAN
 from speechain.utilbox.data_loading_util import parse_path_args
 
 
-class SpeechBrainWrapper(object):
-    """A wrapper class for the vocoder forward function of the speechbrain package.
+class VocoderWrapper(object):
+    """A wrapper class for the vocoder forward function.
 
     This wrapper is not implemented as a Module because we don't want it to be in the computational graph of a TTS model.
 
     Before wrapping:
         feat -> vocoder -> wav
     After wrapping:
-        feat, feat_len -> SpeechBrainWrapper(vocoder) -> wav, wav_len
+        feat, feat_len -> VocoderWrapper(vocoder) -> wav, wav_len
     """
 
     def __init__(self, vocoder: HiFiGAN):
@@ -47,11 +47,29 @@ class SpeechBrainWrapper(object):
         return wav[:, : wav_len.max()], wav_len
 
 
-def get_speechbrain_hifigan(
+def get_hifigan_vocoder(
     device: Union[int, str, torch.device],
     sample_rate: int = 22050,
     use_multi_speaker: bool = True,
-) -> SpeechBrainWrapper:
+) -> VocoderWrapper:
+    """Initialize the built-in HiFiGAN vocoder with pretrained weights.
+
+    The pretrained checkpoints hosted on the HuggingFace hub (under the
+    ``speechbrain/`` namespace) are automatically downloaded on the first call
+    and loaded into SpeeChain's own HiFiGAN implementation
+    (:class:`speechain.module.vocoder.HiFiGAN`) — no third-party vocoder
+    toolkit is required.
+
+    Args:
+        device: The device to run the vocoder on (GPU index, 'cuda:x', or 'cpu').
+        sample_rate: The sampling rate of the generated waveforms (16000 or 22050).
+        use_multi_speaker: Whether to use the multi-speaker (LibriTTS) vocoder.
+            If False, the single-speaker (LJSpeech) vocoder is used.
+
+    Returns:
+        VocoderWrapper: The wrapped HiFiGAN vocoder ready for
+        ``wav, wav_len = vocoder(feat, feat_len)`` calls.
+    """
     assert sample_rate in [16000, 22050]
 
     # initialize the HiFiGAN model
@@ -61,7 +79,7 @@ def get_speechbrain_hifigan(
         if device != "cpu":
             assert device.startswith("cuda:")
 
-    download_dir = parse_path_args("recipes/tts/speechbrain_vocoder")
+    download_dir = parse_path_args("recipes/tts/vocoder_models")
 
     if not use_multi_speaker:
         assert sample_rate == 22050
@@ -79,4 +97,4 @@ def get_speechbrain_hifigan(
             device=device,
         )
 
-    return SpeechBrainWrapper(hifi_gan)
+    return VocoderWrapper(hifi_gan)
