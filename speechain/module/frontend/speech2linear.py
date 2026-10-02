@@ -118,6 +118,10 @@ class Speech2LinearSpec(Module):
         # normalization type before STFT
         self.pre_stft_norm = pre_stft_norm
 
+        # kept separately because self.stft_config['window'] is lazily replaced by the
+        # actual window tensor on the first forward() call (see below)
+        self.window_type = window
+
         # during stft
         self.stft_config = dict(
             n_fft=n_fft,
@@ -283,9 +287,9 @@ class Speech2LinearSpec(Module):
                 win_length=self.win_length,
                 hop_length=self.hop_length,
                 window_fn=(
-                    getattr(torch, f"{self.stft_config['window']}_window")
-                    if isinstance(self.stft_config["window"], str)
-                    else self.stft_config["window"]
+                    getattr(torch, f"{self.window_type}_window")
+                    if isinstance(self.window_type, str)
+                    else self.window_type
                 ),
                 power=1 if self.mag_spec else 2,
             )

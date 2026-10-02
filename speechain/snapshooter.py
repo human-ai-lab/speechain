@@ -9,6 +9,12 @@ import os
 import warnings
 from contextlib import contextmanager
 
+import matplotlib
+
+# force the non-interactive backend: figures are saved (never shown) by a background daemon
+# Process with no GUI event loop, so an auto-selected interactive backend (e.g. TkAgg, picked
+# whenever a display is available) hangs indefinitely on the first plt.savefig()/close() call
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns

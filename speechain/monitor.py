@@ -1336,15 +1336,22 @@ class TrainValidMonitor(object):
             sleep_time: The sleep time in seconds between each check. Default is 10 seconds.
             max_wait_round: The maximum number of waiting rounds. Default is 60 rounds.
         """
-        if not self.train_monitor.empty_queue() or not self.valid_monitor.empty_queue():
-            for _ in range(max_wait_round):
-                message = ""
-                if not self.train_monitor.empty_queue():
-                    message += "The training snapshooter is still snapshotting. "
-                if not self.valid_monitor.empty_queue():
-                    message += "The validation snapshooter is still snapshotting. "
-                self.logger.info(message + f"Waiting for {sleep_time} seconds......")
-                time.sleep(sleep_time)
+        for _ in range(max_wait_round):
+            train_empty, valid_empty = (
+                self.train_monitor.empty_queue(),
+                self.valid_monitor.empty_queue(),
+            )
+            # the queues may have already emptied by the time we finish the round; stop polling
+            if train_empty and valid_empty:
+                break
+            message = ""
+            if not train_empty:
+                message += "The training snapshooter is still snapshotting. "
+            if not valid_empty:
+                message += "The validation snapshooter is still snapshotting. "
+            self.logger.info(message + f"Waiting for {sleep_time} seconds......")
+            time.sleep(sleep_time)
+        else:
             self.logger.info(
                 f"The maximal waiting time {max_wait_round * sleep_time} seconds is reached, "
                 f"so the snapshooters will be shut down......"

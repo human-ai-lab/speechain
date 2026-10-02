@@ -11,7 +11,6 @@ from typing import Dict, List, Union
 
 import numpy as np
 import torch
-from speechbrain.pretrained import HIFIGAN
 from tqdm import tqdm
 
 from speechain.module.abs import Module
@@ -25,7 +24,7 @@ from speechain.utilbox.data_loading_util import (
 )
 from speechain.utilbox.data_saving_util import save_data_by_format
 from speechain.utilbox.import_util import get_idle_gpu
-from speechain.utilbox.sb_util import get_speechbrain_hifigan
+from speechain.utilbox.vocoder_util import get_hifigan_vocoder
 from speechain.utilbox.type_util import str2bool, str2dict
 from speechain.utilbox.yaml_util import load_yaml
 
@@ -150,7 +149,7 @@ def vocode_by_hifigan(idx2feat: Dict, gpu_id: int, batch_size: int, save_path: s
     idx2wav, idx2wav_len = convert_feat_to_wav(
         idx2feat=idx2feat, device=device, batch_size=batch_size, sample_rate=sample_rate,
         save_path=os.path.join(save_path, 'hifigan_wav'),
-        feat_to_wav_func=get_speechbrain_hifigan(
+        feat_to_wav_func=get_hifigan_vocoder(
             device=device, sample_rate=sample_rate, use_multi_speaker=use_multi_speaker
         ))
     return idx2wav, idx2wav_len
